@@ -1,4 +1,4 @@
-module github.com/my-monkeys/singe-de-bureau
+module github.com/my-monkeys/desktop-monkey
 
 go 1.25.0
 

@@ -12,6 +12,7 @@ import (
 // Reglages regroupe ce que l'utilisateur peut modifier sans recompiler.
 type Reglages struct {
 	Planche        string     `json:"planche"`
+	Langue         string     `json:"langue"`
 	EchelleBulle   int        `json:"echelle_bulle"`
 	Vitesse        float64    `json:"vitesse"`
 	DistArret      float64    `json:"distance_arret"`
@@ -34,6 +35,7 @@ type Reglages struct {
 func reglagesParDefaut() Reglages {
 	return Reglages{
 		Planche:        "assets/singe2.json",
+		Langue:         "auto",
 		EchelleBulle:   1,
 		Vitesse:        2.6,
 		DistArret:      64,

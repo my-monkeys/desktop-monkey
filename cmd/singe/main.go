@@ -23,14 +23,15 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/my-monkeys/singe-de-bureau/internal/bulle"
-	"github.com/my-monkeys/singe-de-bureau/internal/calque"
-	"github.com/my-monkeys/singe-de-bureau/internal/coeurs"
-	"github.com/my-monkeys/singe-de-bureau/internal/paroles"
-	"github.com/my-monkeys/singe-de-bureau/internal/planche"
-	"github.com/my-monkeys/singe-de-bureau/internal/ressources"
-	"github.com/my-monkeys/singe-de-bureau/internal/souris"
-	"github.com/my-monkeys/singe-de-bureau/internal/vie"
+	"github.com/my-monkeys/desktop-monkey/internal/bulle"
+	"github.com/my-monkeys/desktop-monkey/internal/calque"
+	"github.com/my-monkeys/desktop-monkey/internal/coeurs"
+	"github.com/my-monkeys/desktop-monkey/internal/langue"
+	"github.com/my-monkeys/desktop-monkey/internal/paroles"
+	"github.com/my-monkeys/desktop-monkey/internal/planche"
+	"github.com/my-monkeys/desktop-monkey/internal/ressources"
+	"github.com/my-monkeys/desktop-monkey/internal/souris"
+	"github.com/my-monkeys/desktop-monkey/internal/vie"
 )
 
 const (
@@ -226,7 +227,7 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 		log.Printf("explosion de coeur indisponible : %v", err)
 	}
 	perso := filepath.Join(dossierConfig(), "phrases.json")
-	if rec, err := paroles.Charger(ressources.Fichiers, "assets/phrases.json", perso); err == nil {
+	if rec, err := paroles.Charger(ressources.Fichiers, recueilPhrases(r.Langue), perso); err == nil {
 		s.p = rec
 	} else {
 		log.Printf("phrases indisponibles : %v", err)
@@ -405,6 +406,16 @@ func (s *scene) teinter(src *image.RGBA) *image.RGBA {
 		s.teinte.Pix[i+3] = src.Pix[i+3]
 	}
 	return s.teinte
+}
+
+// recueilPhrases choisit le fichier de phrases embarque : anglais par
+// defaut, francais si le systeme de l'utilisateur l'est (ou si la config le
+// force avec "fr" / "en").
+func recueilPhrases(reglage string) string {
+	if reglage == "fr" || (reglage != "en" && langue.Francais()) {
+		return "assets/phrases.fr.json"
+	}
+	return "assets/phrases.en.json"
 }
 
 func poser(dst, src *image.RGBA, x, y int) {

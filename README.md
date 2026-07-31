@@ -1,118 +1,123 @@
 <div align="center">
 
-# 🐒 Singe de bureau
+# 🐒 Desktop Monkey
 
-**Une petite mascotte pixel art qui vit sur ton bureau Windows.**
+**A tiny pixel-art monkey that lives on your Windows desktop.**
 
-<img src="docs/retrouvailles.png" width="440" alt="Le singe accourt : « Mon ami est de retour ! »">
+<img src="docs/hero.png" width="440" alt="The monkey rushing over: “My friend has returned!”">
 
-*Un seul fichier `.exe`, aucune installation, aucune dépendance.*
+*A single `.exe`, no installation, no dependencies.*
 
 </div>
 
 ---
 
-Le curseur est **son meilleur ami** : tant qu'il bouge de temps en temps, le
-singe passe l'essentiel de son temps à le rejoindre et le suivre partout — et
-quand tu reprends la souris après une longue pause, il accourt. Parfois
-l'amitié tourne au jeu : il prend la flèche en chasse pour l'attaquer, et ses
-coups de patte la repoussent pour de vrai ; il lui arrive même de **voler le
-curseur** et de s'enfuir avec, avant de le rendre en arrivant au bout — ou dès
-que tu secoues la souris pour te débattre.
+Your cursor is **his best friend**: as long as it moves once in a while, the
+monkey spends most of his time catching up with it and following it around —
+and when you grab the mouse again after a long break, he comes running.
+Sometimes friendship turns into play: he hunts the arrow down to attack it,
+and his paw strikes actually knock it back; he may even **steal your cursor**
+and run away with it, returning it when he gets where he's going — or as soon
+as you shake the mouse to break free.
 
-Quand la souris ne bouge plus pendant un moment, il vit sa vie : il se
-promène, mange, bondit, escalade les bords de l'écran avant de se laisser
-tomber, finit par faire la sieste, et dit un mot de temps en temps.
+When the mouse stops moving for a while, he gets on with his own life:
+wandering around, eating, bouncing, climbing the edges of the screen before
+letting himself drop, and eventually taking a nap — with the occasional
+speech bubble along the way.
 
-## Ce qu'il sait faire
+## What he does
 
 | | |
 |:---:|:---:|
-| <img src="docs/attaque.png" width="400"><br>**Chasser la flèche** et l'attaquer à coups de banane — chaque coup la repousse | <img src="docs/vol-curseur.png" width="400"><br>**Voler le curseur** et s'enfuir avec, jusqu'à ce que tu te débattes |
-| <img src="docs/coeurs.png" width="400"><br>**Encaisser tes clics** : trois cœurs, flash de dégâts, et des protestations | <img src="docs/grimpe.png" width="400"><br>**Escalader les bords** de l'écran, souffler en haut, se laisser tomber |
-| <img src="docs/chute-coeur.png" width="400"><br>**Rater ses réceptions** — la chute coûte un cœur, il ne grimpe plus quand il n'en a qu'un | <img src="docs/saut.png" width="400"><br>**Bondir partout** en vraies paraboles, avec rebond sur les bords |
-| <img src="docs/cadavre-taskbar.png" width="400"><br>**Mourir pour de bon** : le corps tombe et reste étendu sur la barre des tâches | <img src="docs/retrouvailles.png" width="400"><br>**T'accueillir en fanfare** dès que ta souris revient à la vie |
+| <img src="docs/attaque.png" width="400"><br>**Hunts the arrow** and attacks it with bananas — every hit knocks it back | <img src="docs/vol-curseur.png" width="400"><br>**Steals the cursor** and runs away with it, until you fight back |
+| <img src="docs/coeurs.png" width="400"><br>**Takes your clicks**: three hearts, a damage flash, and loud complaints | <img src="docs/grimpe.png" width="400"><br>**Climbs the screen edges**, catches his breath at the top, lets go |
+| <img src="docs/chute-coeur.png" width="400"><br>**Botches his landings** — the fall costs a heart, and he won't climb on his last one | <img src="docs/saut.png" width="400"><br>**Bounces around** in real parabolas, rebounding off the screen edges |
+| <img src="docs/cadavre-taskbar.png" width="400"><br>**Dies for real**: the body falls and lies on the taskbar | <img src="docs/hero.png" width="400"><br>**Welcomes you back** the moment your mouse comes back to life |
 
-Et le reste se découvre à l'usage : la sieste quand on l'ignore, le réveil en
-sursaut, les bulles selon l'heure de la journée, la peur après une
-résurrection…
+The rest is yours to discover: the nap when you ignore him, the startled
+wake-up, time-of-day small talk, the post-resurrection jitters…
 
-### Le tuer, le ranimer
+### Killing him, reviving him
 
-Trois clics et c'est l'agonie : explosion de cœur, le corps tombe sur la barre
-des tâches et y reste étendu. Tu peux le traîner à la souris — relâché, il
-retombe. Pour le ranimer : **attrape-le et secoue-le franchement**. Le pouvoir
-de l'amour fait le reste (mais il restera craintif un moment — ne t'approche
-pas trop vite).
+Three clicks and it's over: a heart explosion, then the body falls onto the
+taskbar and lies there. You can drag it around with the mouse — released, it
+falls right back down. To bring him back: **grab the body and shake it,
+hard**. The power of love does the rest (he'll be skittish for a while
+though — don't get too close too fast).
 
-Un cœur perdu revient tout seul après 45 secondes de tranquillité.
+A lost heart comes back on its own after 45 seconds of peace.
 
-## Installation
+## Install
 
-1. Télécharge `singe.exe` depuis les
-   [Releases](https://github.com/my-monkeys/singe-de-bureau/releases).
-2. Double-clique. C'est tout.
+1. Download `monkey.exe` from the
+   [Releases](https://github.com/my-monkeys/desktop-monkey/releases).
+2. Double-click it. That's all.
 
-Pour l'arrêter : `Stop-Process -Name singe` dans un PowerShell (il n'a ni
-fenêtre ni icône — il *vit* sur le bureau, c'est le principe).
+To stop him: `Stop-Process -Name monkey` in PowerShell (he has no window and
+no tray icon — he *lives* on the desktop, that's the whole point).
 
-### Démarrage automatique avec Windows
+### Start automatically with Windows
 
-L'application doit tourner dans la session de l'utilisateur. Une tâche
-planifiée à l'ouverture de session fait l'affaire :
+The app must run inside the user's session. A scheduled task at logon does
+the job:
 
 ```powershell
-$a = New-ScheduledTaskAction -Execute "C:\Chemin\vers\singe.exe"
+$a = New-ScheduledTaskAction -Execute "C:\Path\to\monkey.exe"
 $p = New-ScheduledTaskPrincipal -UserId "$env:COMPUTERNAME\$env:USERNAME" -LogonType Interactive
 $s = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
      -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew
 $t = New-ScheduledTaskTrigger -AtLogOn -User "$env:COMPUTERNAME\$env:USERNAME"
 $t.Delay = "PT25S"
-Register-ScheduledTask -TaskName "Singe" -Action $a -Principal $p -Settings $s -Trigger $t
+Register-ScheduledTask -TaskName "Monkey" -Action $a -Principal $p -Settings $s -Trigger $t
 ```
 
-`-AllowStartIfOnBatteries` est indispensable sur un portable : sans lui,
-Windows laisse la tâche en file d'attente et ne la démarre jamais.
+`-AllowStartIfOnBatteries` matters on a laptop: without it, Windows queues
+the task and never starts it.
 
-## Personnalisation
+## Languages
 
-Au premier lancement, un fichier de configuration est créé dans
-`%APPDATA%\SingeDeBureau\config.json` :
+The monkey speaks **English** by default, and **French** if your Windows is
+set to French. You can force either with `"langue": "en"` or `"langue": "fr"`
+in the config file below.
 
-- `chance_ami` : probabilité d'aller retrouver un curseur encore vivant à la
-  fin d'une activité, quelle que soit la distance (défaut `0.85`).
-- `secondes_avant_vie_seule` : immobilité de la souris au-delà de laquelle il
-  la délaisse et vit sa vie (défaut `10`).
-- `coeurs` : nombre de clics avant la mort (défaut `3`).
-- `chance_chasse` : proportion des poursuites qui tournent à la chasse
-  (défaut `0.35`). Il abandonne si la souris ne bouge plus.
-- `chance_vol` : probabilité qu'une chasse au contact finisse en vol du
-  curseur (défaut `0.35`).
-- `chance_grimpe` : probabilité d'aller escalader un bord de l'écran
-  (défaut `0.12`).
-- `cache_apres_clic` : à `0` (défaut) le corps mort tombe sur la barre des
-  tâches ; à une valeur positive, il disparaît ce nombre de secondes puis
-  revient ailleurs.
-- `secondes_avant_resurrection` : à une valeur positive, le cadavre resté au
-  sol ce temps-là se relève tout seul (défaut `0` : seules les secousses le
-  raniment).
+## Customizing
 
-Plus la vitesse, les distances, la fréquence des paroles, l'heure de la
-sieste… tout est dans le fichier.
+On first launch, a configuration file is created at
+`%APPDATA%\SingeDeBureau\config.json`:
 
-**Changer ce qu'il raconte** : dépose un `phrases.json` dans le même dossier —
-il remplace les phrases embarquées, sans recompiler. Le format est le même que
-[celui du recueil embarqué](internal/ressources/assets/phrases.json) : des
-listes de phrases par contexte (`bonjour`, `touche`, `chasse`, `abandon`,
+- `chance_ami`: probability of going to see a still-alive cursor at the end
+  of an activity, whatever the distance (default `0.85`).
+- `secondes_avant_vie_seule`: seconds of mouse stillness after which he gives
+  up on it and lives his own life (default `10`).
+- `coeurs`: number of clicks before he dies (default `3`).
+- `chance_chasse`: how often a pursuit turns into a hunt (default `0.35`).
+  He gives up if the mouse stops moving.
+- `chance_vol`: probability that a hunt at close range ends with him
+  stealing the cursor (default `0.35`).
+- `chance_grimpe`: probability of going to climb a screen edge
+  (default `0.12`).
+- `cache_apres_clic`: at `0` (default) the dead body falls onto the taskbar;
+  set a positive value and he disappears for that many seconds, then comes
+  back somewhere else.
+- `secondes_avant_resurrection`: with a positive value, a body left on the
+  ground that long gets back up on its own (default `0`: only shaking
+  revives him).
+
+Plus speed, distances, chattiness, nap timing… it's all in the file.
+
+**Change what he says**: drop a `phrases.json` next to the config — it
+replaces the embedded lines, no recompiling. Same format as
+[the embedded collection](internal/ressources/assets/phrases.en.json): lists
+of lines per context (`bonjour`, `touche`, `chasse`, `abandon`,
 `retrouvailles`, `ranime`…).
 
-### Changer de personnage
+### Change the character
 
-<img src="docs/animations.gif" width="500" alt="Aperçu des animations de la planche">
+<img src="docs/animations.gif" width="500" alt="Preview of the sprite sheet animations">
 
-Les planches de sprites sont décrites par un fichier JSON, jamais en dur dans
-le code. Pour un autre personnage, il suffit de déposer une image dans
-`internal/ressources/assets/` et son descripteur à côté :
+Sprite sheets are described by a JSON file, never hard-coded. For another
+character, drop an image in `internal/ressources/assets/` with its
+descriptor next to it:
 
 ```json
 {
@@ -127,87 +132,89 @@ le code. Pour un autre personnage, il suffit de déposer une image dans
 }
 ```
 
-Les noms d'animation suivent la convention `action` ou `action_direction`
-(directions `bas`, `gauche`, `droite`, `haut`). Actions reconnues : `repos`,
-`marche`, `mange`, `dort`, `meurt`, `touche`, `attaque`, `saute`, `grimpe`,
-`tombe` — **toutes facultatives**. Le comportement s'adapte à ce que la
-planche propose : sans animation `mange`, le singe n'aura simplement jamais
-faim ; sans `grimpe`, il restera au sol.
+Animation names follow the `action` or `action_direction` convention
+(directions `bas`, `gauche`, `droite`, `haut`). Recognized actions: `repos`
+(idle), `marche` (walk), `mange` (eat), `dort` (sleep), `meurt` (die),
+`touche` (hit), `attaque` (attack), `saute` (jump), `grimpe` (climb),
+`tombe` (fall) — **all optional**. Behavior adapts to what the sheet
+provides: without an eating animation, the monkey simply never gets hungry;
+without a climbing one, he stays on the ground.
 
-`vue` vaut `dessus` (quatre directions, style RPG Maker) ou `profil` (vue de
-côté, gauche et droite seulement). `outils/composer_planche.py` normalise les
-packs de sprites du commerce en une planche unique et génère le descripteur.
+`vue` is either `dessus` (four directions, RPG Maker style) or `profil`
+(side view, left and right only). `outils/composer_planche.py` normalizes
+store-bought sprite packs into a single sheet and writes the descriptor.
 
-## Compiler
+## Build from source
 
 ```bash
-./build.sh windows     # produit dist/singe.exe
-./build.sh mac         # produit dist/singe-mac
+./build.sh windows     # produces dist/singe.exe
+./build.sh mac         # produces dist/singe-mac
 ```
 
-L'exécutable Windows se compile depuis n'importe quelle machine — aucun cgo.
-Toutes les ressources (images, phrases) sont embarquées dans le binaire.
+The Windows executable builds from any machine — no cgo. All resources
+(images, lines) are embedded in the binary.
 
-L'affichage sur le bureau n'est pour l'instant implémenté que sous Windows
-(`internal/calque`). Le reste du programme est indépendant de la plateforme :
-le portage macOS se limitera à une `NSWindow` à fond transparent et à la
-lecture du curseur.
+Desktop rendering is currently implemented for Windows only
+(`internal/calque`). The rest of the program is platform-independent: a
+macOS port comes down to a transparent `NSWindow` and reading the cursor.
 
-## Comment ça marche
+> **Note** — the source code is written in French (identifiers, comments,
+> package names). It's a French monkey. 🥖
 
-L'application est une petite fenêtre sans bordure, absente de la barre des
-tâches, toujours au premier plan et *traversante* : les clics et les frappes
-la traversent comme si elle n'existait pas. Elle se déplace avec le singe au
-lieu de couvrir l'écran, ce qui la rend légère et inoffensive.
+## How it works
 
-La traversée est obtenue sans le style `WS_EX_TRANSPARENT` : sur une fenêtre
-en couche, Windows teste les clics **au pixel près**. Ils traversent donc là
-où l'image est transparente, et sont absorbés là où le singe est dessiné.
-La fenêtre ne recevant pas d'événement souris utilisable dans cette
-configuration, la position du curseur et l'état du bouton sont lus directement
-auprès du système (`internal/souris`) — c'est aussi ce qui lui permet de
-voler la flèche et de la repousser à coups de patte.
+The app is a small borderless window, absent from the taskbar, always on
+top and *click-through*: clicks and keystrokes pass through it as if it
+didn't exist. It moves along with the monkey instead of covering the screen,
+which keeps it light and harmless.
+
+Click-through is achieved without `WS_EX_TRANSPARENT`: on a layered window,
+Windows hit-tests clicks **per pixel**. They pass through where the image is
+transparent, and are absorbed where the monkey is drawn. Since the window
+receives no usable mouse events in this setup, cursor position and button
+state are read straight from the system (`internal/souris`) — which is also
+what lets him steal the arrow and knock it around.
 
 ```
-cmd/singe/          point d'entrée, boucle, composition de la scène
+cmd/singe/          entry point, main loop, scene composition
 internal/
-  calque/           fenêtre à canal alpha posée sur le bureau (par plateforme)
-  planche/          chargement des planches de sprites (décrites en JSON)
-  vie/              comportement : machine à états, décisions, déplacements
-  bulle/            rendu du phylactère
-  coeurs/           rendu des points de vie
-  paroles/          choix des phrases selon le contexte
-  souris/           lecture globale de la souris (par plateforme)
-  ressources/       images et phrases embarquées
+  calque/           alpha-channel window laid on the desktop (per platform)
+  planche/          sprite sheet loading (JSON-described)
+  vie/              behavior: state machine, decisions, movement
+  bulle/            speech bubble rendering
+  coeurs/           health hearts rendering
+  paroles/          picking what he says, per context
+  langue/           user language detection
+  souris/           global mouse reading (per platform)
+  ressources/       embedded images and lines
 ```
 
-### Pourquoi pas de moteur de jeu
+### Why no game engine
 
-Le rendu est entièrement logiciel, dans une `image.RGBA` affichée par
-`UpdateLayeredWindow`. Ce n'est pas un choix par défaut : Ebitengine en
-fenêtre transparente bascule sur OpenGL (et compose un fond noir opaque sur
-les machines sans pilote utilisable), et la présentation « flip » de DXGI est
-incompatible avec les fenêtres en couche. `UpdateLayeredWindow` est le
-mécanisme que Windows prévoit pour cet usage : aucun pilote 3D requis, ça
-fonctionne jusque dans une machine virtuelle sans GPU, et le canal alpha par
-pixel donne des bords lisses.
+Rendering is fully software, into an `image.RGBA` displayed through
+`UpdateLayeredWindow`. That's not a default choice: Ebitengine with a
+transparent window falls back to OpenGL (and composes an opaque black
+background on machines without a usable driver), and DXGI's flip
+presentation is incompatible with layered windows. `UpdateLayeredWindow` is
+the mechanism Windows actually provides for this: no 3D driver required, it
+works even in a GPU-less virtual machine, and the per-pixel alpha channel
+gives smooth edges.
 
-Pour vérifier le rendu sans ouvrir de fenêtre, sur n'importe quelle
-plateforme :
+To check rendering without opening a window, on any platform:
 
 ```bash
-go run ./cmd/singe -capture apercu.png
+go run ./cmd/singe -capture preview.png
 ```
 
-`outils/` contient aussi les scripts qui compilent, déploient et pilotent la
-souris d'une VM Windows de test pour éprouver les interactions (clics, mort,
-secousses) sans intervention humaine.
+`outils/` also contains the scripts that build, deploy and drive the mouse
+of a Windows test VM to exercise the interactions (clicks, death, shaking)
+without human intervention.
 
-## Crédits
+## Credits
 
-- Sprites du singe : [Pixel Art Monkey](https://tiki-ted.itch.io/pixel-art-monkey) de tiki-ted
-- Planche alternative vue de dessus : [WhtDragon](https://forums.rpgmakerweb.com/threads/whtdragons-animals-and-running-horses-now-with-more-dragons.53552/)
-- Explosion de cœur : [Reactorcore](https://reactorcore.itch.io/explosion-spriteanim-sheet-minipack)
+- Monkey sprites: [Pixel Art Monkey](https://tiki-ted.itch.io/pixel-art-monkey) by tiki-ted
+- Alternative top-down sheet: [WhtDragon](https://forums.rpgmakerweb.com/threads/whtdragons-animals-and-running-horses-now-with-more-dragons.53552/)
+- Heart explosion: [Reactorcore](https://reactorcore.itch.io/explosion-spriteanim-sheet-minipack)
 
-Les sprites appartiennent à leurs auteurs respectifs et ne sont pas couverts
-par la licence MIT du code.
+The sprites belong to their respective authors and are not covered by the
+code's MIT license.

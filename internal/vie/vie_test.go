@@ -4,8 +4,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/my-monkeys/singe-de-bureau/internal/planche"
-	"github.com/my-monkeys/singe-de-bureau/internal/ressources"
+	"github.com/my-monkeys/desktop-monkey/internal/planche"
+	"github.com/my-monkeys/desktop-monkey/internal/ressources"
 )
 
 const dt = 1.0 / 60

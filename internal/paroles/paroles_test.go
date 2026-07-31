@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/my-monkeys/singe-de-bureau/internal/ressources"
+	"github.com/my-monkeys/desktop-monkey/internal/ressources"
 )
 
 func TestSurchargeAvecBOM(t *testing.T) {
@@ -15,7 +15,7 @@ func TestSurchargeAvecBOM(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	r, err := Charger(ressources.Fichiers, "assets/phrases.json", chemin)
+	r, err := Charger(ressources.Fichiers, "assets/phrases.fr.json", chemin)
 	if err != nil {
 		t.Fatalf("chargement : %v", err)
 	}
@@ -31,7 +31,7 @@ func TestSurchargeInvalideIgnoree(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	r, err := Charger(ressources.Fichiers, "assets/phrases.json", chemin)
+	r, err := Charger(ressources.Fichiers, "assets/phrases.fr.json", chemin)
 	if err != nil {
 		t.Fatalf("un fichier perso invalide ne doit pas faire echouer le chargement : %v", err)
 	}

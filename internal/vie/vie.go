@@ -14,7 +14,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/my-monkeys/singe-de-bureau/internal/planche"
+	"github.com/my-monkeys/desktop-monkey/internal/planche"
 )
 
 // Etat est l'activite en cours.
