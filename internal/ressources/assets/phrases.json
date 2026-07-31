@@ -1,0 +1,190 @@
+{
+  "bonjour": [
+    "Coucou 🐒",
+    "Me revoilà !",
+    "Devine qui c'est",
+    "Salut l'humain !",
+    "Prêt pour aujourd'hui ?"
+  ],
+  "hasard": [
+    "Pense à boire de l'eau 💧",
+    "Encore un petit effort, tu vas y arriver",
+    "N'oublie pas de faire une pause",
+    "Je suis fier de toi",
+    "Tu gères, vraiment",
+    "Tu savais que je sais grimper aux rideaux ?",
+    "Il se passe quoi d'intéressant ici ?",
+    "J'ai vu une banane passer, je reviens",
+    "Étire-toi un peu, ça fait du bien",
+    "Ton écran est très confortable",
+    "Je surveille ton travail. C'est du bon travail.",
+    "Souris ! Pas celle-là, l'autre."
+  ],
+  "matin": [
+    "Bien dormi ? ☀️",
+    "Bonne journée !",
+    "Un café ? ☕",
+    "Belle journée qui commence",
+    "Allez hop, on attaque la journée !",
+    "Le petit-déj est le repas préféré des singes"
+  ],
+  "soir": [
+    "Bonne soirée 🌙",
+    "Tu as bien travaillé aujourd'hui",
+    "Pense à te reposer",
+    "On se fait un film ?",
+    "La journée a filé, non ?"
+  ],
+  "nuit": [
+    "Il est tard… au lit 😴",
+    "Va dormir, humain",
+    "Demain est un autre jour",
+    "Même les singes dorment à cette heure-ci",
+    "Je baille rien qu'à te regarder"
+  ],
+  "repas": [
+    "Miam 🍌",
+    "J'avais un petit creux",
+    "Et toi, tu as mangé ?",
+    "Une banane, ça ne se refuse pas",
+    "C'est l'heure du goûter quelque part dans le monde"
+  ],
+  "sieste": [
+    "Je fais une petite sieste… 😴",
+    "Réveille-moi si tu reviens…",
+    "Cinq minutes, pas plus…"
+  ],
+  "reveil": [
+    "Ah, te revoilà !",
+    "Je m'étais assoupi…",
+    "Tu m'as réveillé 🐒",
+    "Enfin ! Je m'ennuyais de toi",
+    "J'ai rêvé de bananes géantes"
+  ],
+  "joue": [
+    "Youpi !",
+    "Hop hop hop !",
+    "Regarde comme je saute haut !",
+    "La forme olympique 🐒",
+    "Personne ne saute mieux que moi"
+  ],
+  "grimpe": [
+    "Je m'entraîne pour l'Everest",
+    "On voit tout de là-haut !",
+    "Champion d'escalade 🐒",
+    "Jusqu'en haut !",
+    "Personne ne m'arrête"
+  ],
+  "tombe": [
+    "Banzaïïï !",
+    "Ouuups…",
+    "Ça glisse !",
+    "Tout va bieeeen !",
+    "J'ai fait exprès."
+  ],
+  "vole": [
+    "Elle est à moi maintenant !",
+    "Je t'emprunte ça !",
+    "Attrape-moi si tu peux !",
+    "La flèche est en otage !",
+    "Hé hé hé…"
+  ],
+  "lache": [
+    "Tiens, reprends-la.",
+    "Ok ok, je te la rends…",
+    "Pfiou, elle gigote trop.",
+    "C'était juste un prêt !",
+    "Bon, elle est nulle ta flèche."
+  ],
+  "retrouvailles": [
+    "Te revoilà !!",
+    "Mon ami est de retour !",
+    "Attends-moi, j'arrive !",
+    "Enfin ! On va où ?",
+    "Tu m'as manqué !"
+  ],
+  "delaisse": [
+    "Bon… tu me diras.",
+    "Je t'attends là, hein.",
+    "D'accord, je m'occupe.",
+    "Reviens vite 🐒",
+    "Appelle-moi quand tu bouges."
+  ],
+  "fuite": [
+    "Aaaah, pas toi !",
+    "Ne t'approche pas !",
+    "Laisse-moi tranquille !",
+    "J'ai déjà donné, merci.",
+    "Pitié, j'ai une famille !",
+    "Plus jamais tu me touches !"
+  ],
+  "ranime": [
+    "Je suis vivant !",
+    "Où suis-je ?",
+    "Le pouvoir de l'amour 💕",
+    "J'ai vu une grande banane lumineuse…",
+    "Plus jamais ça.",
+    "Tu m'as secoué les puces !"
+  ],
+  "chasse": [
+    "Je vais t'attraper !",
+    "Reviens ici toi !",
+    "Tu ne m'échapperas pas !",
+    "La chasse est ouverte 🐒",
+    "Petite souris, petite souris…",
+    "Cette flèche me nargue depuis trop longtemps"
+  ],
+  "attaque": [
+    "Attrapée !",
+    "Prends ça !",
+    "Graou !",
+    "Je te tiens !",
+    "Paf ! Dans les moustaches !"
+  ],
+  "abandon": [
+    "Pfff, elle ne bouge même plus…",
+    "Bon, j'en ai marre.",
+    "C'est nul, je retourne à ma vie.",
+    "Même pas drôle 😤",
+    "J'abandonne… pour cette fois.",
+    "On dira que j'ai gagné.",
+    "Elle est cassée ta souris."
+  ],
+  "aie_chute": [
+    "Ouille, la réception…",
+    "Je me suis fait mal !",
+    "L'atterrissage, c'est pas mon fort.",
+    "Ça compte pas, j'ai glissé !",
+    "Le sol a triché.",
+    "Aïe… mais ça valait le coup."
+  ],
+  "touche": [
+    "Aïe !",
+    "Ouille…",
+    "Hé, ça fait mal !",
+    "Mais euh 😾",
+    "Pourquoi tu me tapes ?",
+    "Aïe aïe aïe !",
+    "Je croyais qu'on s'aimait…",
+    "Ça pique !",
+    "Doucement, je suis fragile !",
+    "Attention, il ne m'en reste plus beaucoup…",
+    "Tu vas le regretter 😤",
+    "Pas la tête !"
+  ],
+  "mort": [
+    "Aïe !",
+    "Oh…",
+    "Tu m'as eu 💔",
+    "Adieu, monde cruel…",
+    "Je meurs… pour de vrai cette fois.",
+    "Dis à la banane que je l'aimais…"
+  ],
+  "retour": [
+    "Je suis revenu 🐒",
+    "Tu m'as manqué",
+    "Coucou, encore moi !",
+    "On efface tout et on recommence",
+    "Les singes ont neuf vies aussi"
+  ]
+}
