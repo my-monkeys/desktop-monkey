@@ -31,6 +31,7 @@ import (
 	"github.com/my-monkeys/desktop-monkey/internal/planche"
 	"github.com/my-monkeys/desktop-monkey/internal/ressources"
 	"github.com/my-monkeys/desktop-monkey/internal/souris"
+	"github.com/my-monkeys/desktop-monkey/internal/tray"
 	"github.com/my-monkeys/desktop-monkey/internal/vie"
 )
 
@@ -146,6 +147,14 @@ func lancer(r Reglages) error {
 	// les crottes vivent dans leurs propres fenetres : on ne les ouvre qu'ici
 	s.fenetresOK = true
 	defer s.fermerCrottes()
+
+	// icone dans la zone de notification : menu de reglages, quitter, demarrage
+	exe, _ := os.Executable()
+	cfg := filepath.Join(dossierConfig(), "config.json")
+	if err := tray.Nouvelle(nomApp, exe, cfg, iconeSinge(s)); err != nil {
+		log.Printf("tray indisponible : %v", err)
+	}
+	defer tray.Fermer()
 
 	image := image.NewRGBA(image.Rect(0, 0, sceneLarg, sceneHaut))
 	intervalle := time.Second / imagesParSeconde
@@ -473,6 +482,38 @@ func recueilPhrases(reglage string) string {
 func poser(dst, src *image.RGBA, x, y int) {
 	b := src.Bounds()
 	draw.Draw(dst, image.Rect(x, y, x+b.Dx(), y+b.Dy()), src, b.Min, draw.Over)
+}
+
+// iconeSinge fabrique l'icone 32x32 du tray a partir d'une image du singe,
+// mise a l'echelle en preservant ses proportions et centree.
+func iconeSinge(s *scene) *image.RGBA {
+	anim, _ := s.v.Animation()
+	src := anim.Image(0)
+	if src == nil {
+		return nil
+	}
+	sb := src.Bounds()
+	sw, sh := sb.Dx(), sb.Dy()
+	if sw == 0 || sh == 0 {
+		return nil
+	}
+	dst := image.NewRGBA(image.Rect(0, 0, 32, 32))
+	ech := 32.0 / float64(sw)
+	if e := 32.0 / float64(sh); e < ech {
+		ech = e
+	}
+	nw, nh := int(float64(sw)*ech), int(float64(sh)*ech)
+	dx, dy := (32-nw)/2, (32-nh)/2
+	for y := 0; y < nh; y++ {
+		sy := sb.Min.Y + y*sh/nh
+		for x := 0; x < nw; x++ {
+			sx := sb.Min.X + x*sw/nw
+			i := dst.PixOffset(dx+x, dy+y)
+			j := src.PixOffset(sx, sy)
+			copy(dst.Pix[i:i+4], src.Pix[j:j+4])
+		}
+	}
+	return dst
 }
 
 // ouvrirJournal redirige les messages vers un fichier a cote de la config :

@@ -54,21 +54,25 @@ He lives on the desktop on both **Windows** and **macOS**.
 
 **Windows:** download `monkey.exe` from the
 [Releases](https://github.com/my-monkeys/desktop-monkey/releases) and
-double-click it. To stop him: `Stop-Process -Name monkey` in PowerShell.
+double-click it. A monkey icon appears in the notification area — right-click
+it for a small menu: **Launch at startup** (toggle), **Open settings**
+(opens `config.json`), and **Quit**.
 
 **macOS:** download `monkey-mac` from the Releases, then in a terminal
 `chmod +x monkey-mac && ./monkey-mac`. To stop him: `pkill monkey-mac`. No
 Accessibility permission is needed — he reads and moves the cursor through
 CoreGraphics. (The binary is unsigned, so on first launch macOS may ask you to
-allow it in System Settings → Privacy & Security.)
+allow it in System Settings → Privacy & Security.) *The menu-bar icon and
+"launch at login" toggle are coming to macOS; for now use the config file
+below.*
 
-He has no window and no tray/dock icon — he *lives* on the desktop, that's the
-whole point.
+He otherwise has no window — he *lives* on the desktop, that's the whole point.
 
 ### Start automatically with Windows
 
-The app must run inside the user's session. A scheduled task at logon does
-the job:
+The easy way is the tray menu: right-click the monkey icon → **Launch at
+startup** (it toggles a `HKCU\…\Run` entry). If you'd rather use a scheduled
+task at logon:
 
 ```powershell
 $a = New-ScheduledTaskAction -Execute "C:\Path\to\monkey.exe"
