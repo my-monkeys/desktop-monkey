@@ -681,7 +681,13 @@ func TestDefequePondUneCrotte(t *testing.T) {
 	if v.Etat() != Defeque {
 		t.Fatalf("etat %v, attendu defeque", v.Etat())
 	}
+	// la crotte tombe derriere lui (cote oppose a son regard), pas sous ses pieds
 	fx, fy := v.X+v.largeur/2, v.Y+v.hauteur
+	if v.direction == "gauche" {
+		fx += v.largeur * 0.8
+	} else {
+		fx -= v.largeur * 0.8
+	}
 
 	// il pond a la fin de l'accroupissement
 	pondu := false

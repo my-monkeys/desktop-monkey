@@ -2,3 +2,4 @@ dist/
 captures/
 *.log
 .DS_Store
+outils/phrases-emma.json

@@ -9,7 +9,17 @@ Lit captures/<scene>/f###.png + rects.csv, ecrit docs/<scene>.gif.
 import os
 import sys
 
-from PIL import Image
+from PIL import Image, ImageDraw
+
+# silhouette d'un pointeur classique (pointe en 0,0), a peindre a la position
+# reelle du curseur (CopyFromScreen ne capture pas le curseur materiel)
+FLECHE = [(0, 0), (0, 22), (5, 17), (9, 25), (12, 23), (8, 16), (15, 16)]
+
+
+def dessiner_curseur(im, x, y):
+    d = ImageDraw.Draw(im)
+    pts = [(x + px, y + py) for px, py in FLECHE]
+    d.polygon(pts, fill=(255, 255, 255), outline=(20, 20, 20))
 
 
 def main():
@@ -25,8 +35,10 @@ def main():
             ligne = ligne.strip()
             if not ligne:
                 continue
-            n, l, t, r, b = (int(x) for x in ligne.split(","))
-            rects[n] = (l, t, r, b)
+            vals = [int(x) for x in ligne.split(",")]
+            n, l, t, r, b = vals[:5]
+            cur = (vals[5], vals[6]) if len(vals) >= 7 else None
+            rects[n] = (l, t, r, b, cur)
 
     frames = []
     for n in sorted(rects):
@@ -34,7 +46,7 @@ def main():
         if not os.path.exists(p):
             continue
         im = Image.open(p).convert("RGB")
-        l, t, r, b = rects[n]
+        l, t, r, b, cur = rects[n]
         cx = (l + r) // 2      # centre horizontal de la fenetre du singe
         cy = b - 42            # le singe est en bas de sa fenetre
         # le filigrane "Activate Windows" est en bas a droite de l'ecran : on
@@ -44,6 +56,11 @@ def main():
         x0 = max(0, min(im.width - cw, cx - cw // 2))
         y0 = max(0, min(im.height - ch, cy - ch // 2))
         crop = im.crop((x0, y0, x0 + cw, y0 + ch))
+        # curseur : CopyFromScreen ne le capture pas, on le peint a sa place
+        if cur is not None:
+            px, py = cur[0] - x0, cur[1] - y0
+            if -20 <= px <= cw and -20 <= py <= ch:
+                dessiner_curseur(crop, px, py)
         if ech != 1.0:
             crop = crop.resize((int(cw * ech), int(ch * ech)), Image.LANCZOS)
         frames.append(crop)
@@ -51,11 +68,18 @@ def main():
     if not frames:
         raise SystemExit("aucune image")
 
-    # palette adaptative commune, sans dither : le degrade du fond d'ecran
-    # reste propre (le dither le faisait gresiller). Moins de couleurs = plus
-    # leger, le bleu du fond s'en accommode.
-    couleurs = int(os.environ.get("COULEURS", "160"))
-    pal = frames[len(frames) // 2].quantize(colors=couleurs, method=Image.MEDIANCUT)
+    # palette adaptative commune, sans dither. Piege : le fond bleu occupe
+    # presque toute l'image, donc une palette naive n'a plus de couleur pour le
+    # petit singe brun (il virait au gris-bleu). On sur-pondere donc le singe
+    # (au centre du cadrage) en l'agrandissant a cote d'une image de reference.
+    mid = frames[len(frames) // 2]
+    w, h = mid.size
+    mono = mid.crop((w // 2 - 60, h // 2 - 50, w // 2 + 60, h // 2 + 55)).resize((w, h), Image.NEAREST)
+    base = Image.new("RGB", (w, h * 2))
+    base.paste(mid, (0, 0))
+    base.paste(mono, (0, h))
+    couleurs = int(os.environ.get("COULEURS", "256"))
+    pal = base.quantize(colors=couleurs, method=Image.MEDIANCUT)
     frames = [fr.quantize(palette=pal, dither=Image.NONE) for fr in frames]
 
     os.makedirs("docs", exist_ok=True)
