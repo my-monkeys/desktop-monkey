@@ -198,7 +198,9 @@ func (s *scene) majTraversance(c *calque.Calque, img *image.RGBA, fenX, fenY int
 	cx, cy := souris.Position()
 	c.Traversant(!opaqueAutour(img, cx-fenX, cy-fenY, 2))
 	for _, cr := range s.crottes {
-		cr.cal.Traversant(!s.crotteSousCurseur(cr, cx, cy))
+		// une crotte portee laisse passer le clic : on peut ainsi frapper le
+		// singe a travers elle (il la lache alors)
+		cr.cal.Traversant(cr.porte || !s.crotteSousCurseur(cr, cx, cy))
 	}
 }
 
