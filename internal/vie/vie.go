@@ -440,10 +440,10 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 
 	case Defeque:
 		if v.depuis >= v.duree {
-			// la crotte tombe derriere lui, pas sous ses pieds : il regarde
-			// d'un cote, elle sort de l'autre. Sans ce decalage elle le
-			// recouvrirait, et un clic dessus l'atteindrait lui.
-			recul := v.largeur * 0.8
+			// la crotte tombe juste derriere lui, pas sous ses pieds : il
+			// regarde d'un cote, elle sort de l'autre. Le decalage la sort de
+			// sous le sprite tout en la gardant collee a son dos.
+			recul := v.largeur * 0.5
 			v.pondX = v.X + v.largeur/2
 			if v.direction == "gauche" {
 				v.pondX += recul

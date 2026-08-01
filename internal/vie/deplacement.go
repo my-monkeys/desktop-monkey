@@ -112,11 +112,19 @@ func (v *Vie) faceAu(x, y float64) {
 	v.direction = siPositif(dy, "bas", "haut")
 }
 
-// dansLeCadre indique si un point est sur le sprite, avec une tolerance.
+// dansLeCadre indique si un point est sur le corps du singe, avec une
+// tolerance. On se limite aux pixels dessines (les marges vides de la cellule
+// sont exclues) : cliquer a cote de lui ne l'atteint pas, ce qui laisse la
+// place a une crotte collee a son dos sans qu'un clic dessus le blesse.
 func (v *Vie) dansLeCadre(x, y float64) bool {
 	const marge = 6
-	return x >= v.X-marge && x <= v.X+v.largeur+marge &&
-		y >= v.Y-marge && y <= v.Y+v.hauteur+marge
+	gauche, droite, haut, bas := 0.0, 0.0, 0.0, 0.0
+	if a, _ := v.Animation(); a != nil {
+		gauche, droite = float64(a.VideAGauche), float64(a.VideADroite)
+		haut, bas = float64(a.VideEnHaut), float64(a.VideEnBas)
+	}
+	return x >= v.X+gauche-marge && x <= v.X+v.largeur-droite+marge &&
+		y >= v.Y+haut-marge && y <= v.Y+v.hauteur-bas+marge
 }
 
 func clamp(x, lo, hi float64) float64 {

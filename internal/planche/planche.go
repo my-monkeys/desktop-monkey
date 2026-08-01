@@ -57,6 +57,11 @@ type Animation struct {
 	// VideEnBas est son pendant sous le personnage. Il sert a poser le corps
 	// exactement sur la barre des taches, et non le bas de sa cellule.
 	VideEnBas int
+
+	// VideAGauche et VideADroite sont les colonnes transparentes de part et
+	// d'autre du personnage. Elles servent a cerner son corps reel dans la
+	// cellule : un clic ne l'atteint que sur ses pixels, pas sur la marge vide.
+	VideAGauche, VideADroite int
 }
 
 // Duree renvoie la duree totale d'un cycle, en millisecondes.
@@ -170,12 +175,20 @@ func Charger(fsys fs.FS, chemin string, facteur ...float64) (*Planche, error) {
 		if len(anim.Images) > 0 {
 			anim.VideEnHaut = finH
 			anim.VideEnBas = finH
+			anim.VideAGauche = finL
+			anim.VideADroite = finL
 			for _, img := range anim.Images {
 				if v := videEnHaut(img); v < anim.VideEnHaut {
 					anim.VideEnHaut = v
 				}
 				if v := videEnBas(img); v < anim.VideEnBas {
 					anim.VideEnBas = v
+				}
+				if v := videAGauche(img); v < anim.VideAGauche {
+					anim.VideAGauche = v
+				}
+				if v := videADroite(img); v < anim.VideADroite {
+					anim.VideADroite = v
 				}
 			}
 			p.animations[nom] = anim
@@ -212,6 +225,32 @@ func videEnBas(img *image.RGBA) int {
 		}
 	}
 	return b.Dy()
+}
+
+// videAGauche compte les colonnes entierement transparentes a gauche.
+func videAGauche(img *image.RGBA) int {
+	b := img.Bounds()
+	for x := 0; x < b.Dx(); x++ {
+		for y := 0; y < b.Dy(); y++ {
+			if img.Pix[img.PixOffset(x, y)+3] != 0 {
+				return x
+			}
+		}
+	}
+	return b.Dx()
+}
+
+// videADroite compte les colonnes entierement transparentes a droite.
+func videADroite(img *image.RGBA) int {
+	b := img.Bounds()
+	for x := b.Dx() - 1; x >= 0; x-- {
+		for y := 0; y < b.Dy(); y++ {
+			if img.Pix[img.PixOffset(x, y)+3] != 0 {
+				return b.Dx() - 1 - x
+			}
+		}
+	}
+	return b.Dx()
 }
 
 func versRGBA(src image.Image) *image.RGBA {

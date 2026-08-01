@@ -75,7 +75,8 @@ $plein = New-Object System.Drawing.Size($scr.Width, $scr.Height)
 $lignes = @()
 # position courante de la souris (pour un deplacement fluide vers les cibles)
 $sx = [int]($scr.Width / 2); $sy = [int]($scr.Height / 2)
-$refroid = 0   # cooldown apres explosion d'une crotte
+$explose = $false   # scene pond : une crotte a deja ete crevee
+$fin = -1           # images restantes avant l'arret (apres l'explosion)
 
 for ($f = 0; $f -lt $total; $f++) {
     $t = $f / $Fps
@@ -103,20 +104,22 @@ for ($f = 0; $f -lt $total; $f++) {
             }
         }
         'pond' {
-            # des qu'une crotte est la, la souris va la crever : une seule a la
-            # fois, et on voit l'explosion
-            $c = TrouverClasse 'CrotteDeBureauClasse'
-            if ($refroid -gt 0) { $refroid-- }
-            if ($c -ne [IntPtr]::Zero -and $refroid -eq 0) {
-                $cr = Rect $c
-                $tx = [int](($cr.Left + $cr.Right) / 2); $ty = [int](($cr.Top + $cr.Bottom) / 2)
-                $sx = [int]($sx + ($tx - $sx) * 0.5); $sy = [int]($sy + ($ty - $sy) * 0.5)
-                [void][Nat]::SetCursorPos($sx, $sy)
-                if ([Math]::Abs($sx - $tx) -lt 12 -and [Math]::Abs($sy - $ty) -lt 12) {
-                    [Nat]::mouse_event([Nat]::LDOWN, 0, 0, 0, [IntPtr]::Zero)
-                    Start-Sleep -Milliseconds 40
-                    [Nat]::mouse_event([Nat]::LUP, 0, 0, 0, [IntPtr]::Zero)
-                    $refroid = [int]($Fps * 0.6)
+            # on attend la premiere crotte, la souris va la crever, on montre
+            # l'explosion, puis on arrete : une seule crotte a l'ecran
+            if (-not $explose) {
+                $c = TrouverClasse 'CrotteDeBureauClasse'
+                if ($c -ne [IntPtr]::Zero) {
+                    $cr = Rect $c
+                    $tx = [int](($cr.Left + $cr.Right) / 2); $ty = [int](($cr.Top + $cr.Bottom) / 2)
+                    $sx = [int]($sx + ($tx - $sx) * 0.45); $sy = [int]($sy + ($ty - $sy) * 0.45)
+                    [void][Nat]::SetCursorPos($sx, $sy)
+                    if ([Math]::Abs($sx - $tx) -lt 10 -and [Math]::Abs($sy - $ty) -lt 10) {
+                        [Nat]::mouse_event([Nat]::LDOWN, 0, 0, 0, [IntPtr]::Zero)
+                        Start-Sleep -Milliseconds 40
+                        [Nat]::mouse_event([Nat]::LUP, 0, 0, 0, [IntPtr]::Zero)
+                        $explose = $true
+                        $fin = [int]($Fps * 0.9)  # on filme encore l'explosion, puis stop
+                    }
                 }
             }
         }
@@ -141,6 +144,8 @@ for ($f = 0; $f -lt $total; $f++) {
         if ($g) { $g.Dispose() }
         if ($bmp) { $bmp.Dispose() }
     }
+    # scene pond : on coupe peu apres l'explosion, pour ne montrer qu'une crotte
+    if ($fin -ge 0) { $fin--; if ($fin -lt 0) { break } }
     Start-Sleep -Milliseconds $dt
 }
 $lignes | Set-Content (Join-Path $Sortie 'rects.csv')
