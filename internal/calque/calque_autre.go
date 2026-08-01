@@ -21,5 +21,6 @@ func Ouvrir(nom string, larg, haut int) (*Calque, error) {
 
 func (c *Calque) Afficher(img *image.RGBA, x, y int) error { return nil }
 func (c *Calque) Traversant(oui bool)                      {}
+func (c *Calque) PasserDevant()                            {}
 func (c *Calque) TraiterMessages() bool                    { return false }
 func (c *Calque) Fermer()                                  {}

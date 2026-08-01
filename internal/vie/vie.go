@@ -440,19 +440,28 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 
 	case Defeque:
 		if v.depuis >= v.duree {
-			// la crotte tombe juste derriere lui, pas sous ses pieds : il
-			// regarde d'un cote, elle sort de l'autre. Le decalage la sort de
-			// sous le sprite tout en la gardant collee a son dos.
-			recul := v.largeur * 0.5
+			// la crotte tombe juste derriere lui, sous son corps (le singe
+			// passe devant, cf calque.PasserDevant) ; puis il fait un pas en
+			// avant pour la reveler.
+			recul := v.largeur * 0.3
+			pas := v.largeur
 			v.pondX = v.X + v.largeur/2
+			cible := v.X + v.largeur/2
 			if v.direction == "gauche" {
-				v.pondX += recul
+				v.pondX += recul // il regarde a gauche : la crotte sort a droite
+				cible -= pas     // et il s'ecarte vers la gauche
 			} else {
 				v.pondX -= recul
+				cible += pas
 			}
 			v.pondY = v.Y + v.hauteur
 			v.aPondu = true
-			v.passerA(Repos)
+
+			// un simple pas de cote (on remplace la cible aleatoire de Promenade)
+			m := v.r.MargeBord
+			v.passerA(Promenade)
+			v.cibleX = clamp(cible, m+v.largeur/2, v.ecranL-v.largeur/2-m)
+			v.cibleY = v.Y + v.hauteur/2
 			v.Evenement = "crotte"
 		}
 

@@ -41,6 +41,7 @@ var (
 	procGetDC            = user32.NewProc("GetDC")
 	procReleaseDC        = user32.NewProc("ReleaseDC")
 	procUpdateLayered    = user32.NewProc("UpdateLayeredWindow")
+	procSetWindowPos     = user32.NewProc("SetWindowPos")
 
 	procCreateCompatibleDC = gdi32.NewProc("CreateCompatibleDC")
 	procCreateDIBSection   = gdi32.NewProc("CreateDIBSection")
@@ -279,6 +280,19 @@ func (c *Calque) Afficher(img *image.RGBA, x, y int) error {
 // Traversant n'a rien a faire sous Windows : une fenetre en couche teste deja
 // les clics au pixel pres (ils traversent la ou l'image est transparente).
 func (c *Calque) Traversant(oui bool) {}
+
+// PasserDevant ramene la fenetre au sommet des fenetres toujours-visibles, donc
+// au-dessus des crottes (creees apres elle) : le singe reste devant ce qu'il
+// vient de pondre, la crotte semble sortir de derriere lui.
+func (c *Calque) PasserDevant() {
+	const (
+		swpNoSize     = 0x0001
+		swpNoMove     = 0x0002
+		swpNoActivate = 0x0010
+	)
+	hwndTopmost := ^uintptr(0) // (HWND)-1
+	procSetWindowPos.Call(c.hwnd, hwndTopmost, 0, 0, 0, 0, swpNoMove|swpNoSize|swpNoActivate)
+}
 
 // TraiterMessages vide la file de messages de la fenetre. A appeler a chaque
 // tour de boucle : sans cela Windows considere l'application comme figee.

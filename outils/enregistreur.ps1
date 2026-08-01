@@ -76,6 +76,7 @@ $lignes = @()
 # position courante de la souris (pour un deplacement fluide vers les cibles)
 $sx = [int]($scr.Width / 2); $sy = [int]($scr.Height / 2)
 $explose = $false   # scene pond : une crotte a deja ete crevee
+$vue = 0            # images depuis l'apparition de la crotte (le temps qu'il s'ecarte)
 $fin = -1           # images restantes avant l'arret (apres l'explosion)
 
 for ($f = 0; $f -lt $total; $f++) {
@@ -108,7 +109,8 @@ for ($f = 0; $f -lt $total; $f++) {
             # l'explosion, puis on arrete : une seule crotte a l'ecran
             if (-not $explose) {
                 $c = TrouverClasse 'CrotteDeBureauClasse'
-                if ($c -ne [IntPtr]::Zero) {
+                if ($c -ne [IntPtr]::Zero) { $vue++ } # on laisse d'abord le singe s'ecarter
+                if ($c -ne [IntPtr]::Zero -and $vue -gt [int]($Fps * 0.9)) {
                     $cr = Rect $c
                     $tx = [int](($cr.Left + $cr.Right) / 2); $ty = [int](($cr.Top + $cr.Bottom) / 2)
                     $sx = [int]($sx + ($tx - $sx) * 0.45); $sy = [int]($sy + ($ty - $sy) * 0.45)

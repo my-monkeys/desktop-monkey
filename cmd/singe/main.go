@@ -176,6 +176,11 @@ func lancer(r Reglages) error {
 			return err
 		}
 		s.afficherCrottes()
+		// le singe repasse devant les crottes (creees apres sa fenetre) : ce
+		// qu'il vient de pondre semble sortir de derriere lui
+		if len(s.crottes) > 0 {
+			c.PasserDevant()
+		}
 		s.majTraversance(c, image, x, y)
 	}
 	return nil

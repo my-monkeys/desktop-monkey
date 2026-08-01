@@ -83,6 +83,13 @@ void calque_traversant(void* winp, int oui) {
     }
 }
 
+void calque_devant(void* winp) {
+    @autoreleasepool {
+        NSWindow* win = (__bridge NSWindow*)winp;
+        [win orderFrontRegardless]; // au-dessus des crottes de meme niveau
+    }
+}
+
 int calque_pump(void) {
     @autoreleasepool {
         NSEvent* e;

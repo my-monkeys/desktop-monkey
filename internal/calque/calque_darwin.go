@@ -60,6 +60,9 @@ func (c *Calque) Afficher(img *image.RGBA, x, y int) error {
 	return nil
 }
 
+// PasserDevant ramene la fenetre du singe devant les crottes (creees apres).
+func (c *Calque) PasserDevant() { C.calque_devant(c.win) }
+
 // Traversant regle si la fenetre laisse passer les clics. On la rend
 // capturante uniquement quand le curseur est sur un pixel dessine, pour
 // absorber le clic sur le sprite sans bloquer le bureau ailleurs. Windows le

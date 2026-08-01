@@ -684,9 +684,9 @@ func TestDefequePondUneCrotte(t *testing.T) {
 	// la crotte tombe derriere lui (cote oppose a son regard), pas sous ses pieds
 	fx, fy := v.X+v.largeur/2, v.Y+v.hauteur
 	if v.direction == "gauche" {
-		fx += v.largeur * 0.5
+		fx += v.largeur * 0.3
 	} else {
-		fx -= v.largeur * 0.5
+		fx -= v.largeur * 0.3
 	}
 
 	// il pond a la fin de l'accroupissement

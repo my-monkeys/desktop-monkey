@@ -54,7 +54,7 @@ case "$SCENE" in
   chasse) KV='"chance_ami":1,"chance_chasse":1,"chance_vol":0' ;;
   degats) KV='"chance_ami":0,"coeurs":3' ;;
   grimpe) KV='"chance_ami":0,"chance_grimpe":1,"secondes_avant_vie_seule":1' ;;
-  pond)   KV='"chance_ami":0,"chance_crotte":0.4,"secondes_avant_vie_seule":1' ;;
+  pond)   KV='"chance_ami":0,"chance_crotte":0.75,"secondes_avant_vie_seule":1' ;;
   *) echo "scene inconnue: $SCENE"; exit 1 ;;
 esac
 CONFIG="{\"planche\":\"assets/singe2.json\",\"chance_repas\":0,\"chance_jeu\":0,\"chance_grimpe\":0,\"chance_crotte\":0,\"parle\":false,$KV}"

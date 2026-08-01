@@ -21,6 +21,10 @@ void calque_afficher(void* win, unsigned char* pix, int w, int h,
 // pour absorber le clic sur le sprite sans bloquer le bureau ailleurs.
 void calque_traversant(void* win, int oui);
 
+// Ramene la fenetre au premier plan parmi celles de son niveau (le singe
+// devant les crottes).
+void calque_devant(void* win);
+
 // Vide la file d'evenements de l'application. Renvoie toujours 1.
 int calque_pump(void);
 
