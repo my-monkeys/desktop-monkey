@@ -55,6 +55,8 @@ case "$SCENE" in
   degats) KV='"chance_ami":0,"coeurs":3' ;;
   grimpe) KV='"chance_ami":0,"chance_grimpe":1,"secondes_avant_vie_seule":1' ;;
   pond)   KV='"chance_ami":0,"chance_crotte":0.75,"secondes_avant_vie_seule":1' ;;
+  jetbord)   KV='"chance_ami":1,"chance_crotte":0.25,"chance_jet_crotte":2.0,"jet_mode":0,"secondes_avant_vie_seule":2' ;;
+  jetsouris) KV='"chance_ami":1,"chance_crotte":0.25,"chance_jet_crotte":2.0,"jet_mode":1,"secondes_avant_vie_seule":2' ;;
   *) echo "scene inconnue: $SCENE"; exit 1 ;;
 esac
 CONFIG="{\"planche\":\"assets/singe2.json\",\"chance_repas\":0,\"chance_jeu\":0,\"chance_grimpe\":0,\"chance_crotte\":0,\"parle\":false,$KV}"

@@ -243,6 +243,14 @@ type scene struct {
 	crottes           []*crotte
 	boutonCrotteAvant bool
 	fenetresOK        bool // true quand on peut ouvrir des fenetres (pas en capture)
+	hautEcran         int  // hauteur de l'ecran (pour viser les bords)
+
+	// corvee : le singe va parfois se debarrasser d'une vieille crotte
+	corCrotte   *crotte
+	corPhase    int
+	corMode     int
+	corTimer    float64
+	corCooldown float64
 }
 
 func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
@@ -269,10 +277,11 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 	reg.CacheApresClic = r.CacheApresClic
 
 	s := &scene{
-		r:      r,
-		v:      vie.Nouvelle(p, reg, larg, haut, bas),
-		ecranL: larg,
-		alea:   rand.New(rand.NewSource(time.Now().UnixNano())),
+		r:         r,
+		v:         vie.Nouvelle(p, reg, larg, haut, bas),
+		ecranL:    larg,
+		hautEcran: haut,
+		alea:      rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 
 	if s.b, err = bulle.Nouvelle(r.EchelleBulle * facteurAffichage); err != nil {
@@ -336,6 +345,7 @@ func (s *scene) avancer(dt float64) {
 		s.pondre(x, y)
 	}
 	s.gererCrottes(dt, cx, cy, bouton)
+	s.gererCorvee(dt, cx, cy)
 
 	// enchainement de la mort : agonie, coeur, disparition
 	if s.v.Etat() == vie.Mort && !s.mortTraitee && s.v.AnimationMorteFinie() {

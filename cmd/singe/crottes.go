@@ -27,15 +27,28 @@ const (
 	crApparait = iota
 	crRepos
 	crExplose
+	crVole // le singe l'a lancee : elle file (vers la souris, ou hors ecran)
 	crFinie
 )
 
+// modes de lancer
+const (
+	versBord   = iota // jetee hors de l'ecran, coupee au bord
+	versSouris        // lancee sur le curseur, elle explose a l'arrivee
+)
+
 type crotte struct {
-	solX, solY int // point de sol sur le bureau (base de la crotte)
-	fenX, fenY int // coin haut gauche de sa fenetre
+	solX, solY int     // point de sol sur le bureau (base de la crotte)
+	fenX, fenY int     // coin haut gauche de sa fenetre (rendu)
+	fx, fy     float64 // meme coin, en flottant (mouvement fluide en vol/porte)
 	phase      int
 	ms         float64 // avancement dans l'animation de la phase
+	age        float64 // secondes depuis qu'elle est posee
 	cal        *calque.Calque
+
+	porte  bool    // le singe la tient
+	vx, vy float64 // vitesse en vol (px/s)
+	mode   int     // versBord ou versSouris
 }
 
 // chargerCrottes prepare la planche des crottes ; son absence desactive
@@ -72,6 +85,7 @@ func (s *scene) pondre(x, y float64) {
 		phase: crApparait,
 		cal:   cal,
 	}
+	c.fx, c.fy = float64(c.fenX), float64(c.fenY)
 	s.crottes = append(s.crottes, c)
 }
 
@@ -109,11 +123,13 @@ func (s *scene) gererCrottes(dt float64, curseurX, curseurY int, bouton bool) {
 	frontDescendant := bouton && !s.boutonCrotteAvant
 	s.boutonCrotteAvant = bouton
 
-	// le clic la plus recente (au-dessus) explose en priorite
+	// le clic la plus recente (au-dessus) explose en priorite ; une crotte
+	// portee ou lancee n'est pas cliquable
 	if frontDescendant {
 		for i := len(s.crottes) - 1; i >= 0; i-- {
 			c := s.crottes[i]
-			if (c.phase == crApparait || c.phase == crRepos) && s.crotteSousCurseur(c, curseurX, curseurY) {
+			if (c.phase == crApparait || c.phase == crRepos) && !c.porte &&
+				s.crotteSousCurseur(c, curseurX, curseurY) {
 				c.phase, c.ms = crExplose, 0
 				break
 			}
@@ -123,11 +139,16 @@ func (s *scene) gererCrottes(dt float64, curseurX, curseurY int, bouton bool) {
 	reste := s.crottes[:0]
 	for _, c := range s.crottes {
 		c.ms += dt * 1000
+		if c.phase == crRepos && !c.porte {
+			c.age += dt
+		}
 		switch c.phase {
 		case crApparait:
 			if a := s.pc.Obtenir("apparait", ""); a.Finie(int(c.ms)) {
 				c.phase, c.ms = crRepos, 0
 			}
+		case crVole:
+			s.volerCrotte(c, dt, curseurX, curseurY)
 		case crExplose:
 			if a := s.pc.Obtenir("explose", ""); a.Finie(int(c.ms)) {
 				c.phase = crFinie
@@ -140,6 +161,28 @@ func (s *scene) gererCrottes(dt float64, curseurX, curseurY int, bouton bool) {
 		reste = append(reste, c)
 	}
 	s.crottes = reste
+}
+
+// volerCrotte fait avancer une crotte lancee : vers la souris (elle explose a
+// l'arrivee), ou hors de l'ecran par un bord (Windows rogne la fenetre au bord,
+// elle semble se faire couper en sortant).
+func (s *scene) volerCrotte(c *crotte, dt float64, curseurX, curseurY int) {
+	c.fx += c.vx * dt
+	c.fy += c.vy * dt
+	c.fenX, c.fenY = int(c.fx), int(c.fy)
+
+	if c.mode == versSouris {
+		cx := c.fx + float64(s.pc.Largeur)/2
+		cy := c.fy + float64(s.crotteSol)
+		if math.Hypot(cx-float64(curseurX), cy-float64(curseurY)) < 20 {
+			c.phase, c.ms = crExplose, 0
+		}
+		return
+	}
+	// versBord : disparait une fois entierement sortie d'un cote
+	if c.fx <= -float64(s.pc.Largeur) || c.fx >= float64(s.ecranL) {
+		c.phase = crFinie
+	}
 }
 
 // crotteSousCurseur indique si le curseur touche un pixel opaque de la crotte.

@@ -125,6 +125,14 @@ for ($f = 0; $f -lt $total; $f++) {
                 }
             }
         }
+        'jetsouris' {
+            # curseur bien en vue : il pourra lui jeter une crotte dessus
+            [void][Nat]::SetCursorPos([int]($scr.Width * 0.5), [int]($scr.Height * 0.4))
+        }
+        'jetbord' {
+            # curseur au centre : il traine la, y pond, puis porte au bord
+            [void][Nat]::SetCursorPos([int]($scr.Width * 0.5), [int]($scr.Height * 0.5))
+        }
         default { }
     }
 

@@ -29,6 +29,7 @@ const (
 	Fuite                 // frais ressuscite, il fuit une souris trop proche
 	Grimpe                // il escalade un bord de l'ecran
 	Joue                  // il sautille sur place
+	Corvee                // il va chercher une crotte pour s'en debarrasser (pilote par la scene)
 	Defeque               // il s'accroupit et pond une crotte
 	Repas                 // il mange
 	Sieste                // il dort, apres une longue inactivite
@@ -91,6 +92,12 @@ type Vie struct {
 	direction string
 
 	cibleX, cibleY float64
+
+	// etat Corvee : cible imposee par la scene (aller chercher/porter une
+	// crotte), et minuterie du geste de lancer
+	dirX, dirY float64
+	arrive     bool
+	viseMS     float64
 
 	animMS       float64
 	animCourante string
@@ -440,6 +447,9 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 
 	case Joue:
 		v.sautiller(dt)
+
+	case Corvee:
+		v.corvee(dt)
 
 	case Defeque:
 		// il pond a mi-accroupissement, la crotte tombe derriere lui (sous son
