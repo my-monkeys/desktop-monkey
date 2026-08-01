@@ -77,6 +77,14 @@ codesign --force --timestamp --sign "$ID" "$DMG"
 rm -rf "$STAGE"
 
 echo "== 6. notarisation =="
+# Identifiants App Store Connect : variables d'env, sinon valeurs locales par
+# defaut (cles dans ~/.appstoreconnect/, hors de tout depot). L'Issuer ID n'est
+# jamais dans le repo : il vit dans ~/.appstoreconnect/issuer_id.txt.
+DEFKEY="$HOME/.appstoreconnect/private_keys/AuthKey_4SD3G5C575.p8"
+[ -z "${ASC_KEY:-}" ] && [ -f "$DEFKEY" ] && ASC_KEY="$DEFKEY"
+[ -z "${ASC_KEY_ID:-}" ] && ASC_KEY_ID="4SD3G5C575"
+[ -z "${ASC_ISSUER_ID:-}" ] && [ -f "$HOME/.appstoreconnect/issuer_id.txt" ] \
+  && ASC_ISSUER_ID="$(cat "$HOME/.appstoreconnect/issuer_id.txt")"
 if [ -n "${ASC_KEY:-}" ] && [ -n "${ASC_KEY_ID:-}" ] && [ -n "${ASC_ISSUER_ID:-}" ]; then
   xcrun notarytool submit "$DMG" \
     --key "$ASC_KEY" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" --wait
