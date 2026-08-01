@@ -3,6 +3,7 @@ package main
 import (
 	"image"
 	"log"
+	"math"
 
 	"github.com/my-monkeys/desktop-monkey/internal/calque"
 	"github.com/my-monkeys/desktop-monkey/internal/planche"
@@ -40,7 +41,7 @@ type crotte struct {
 // chargerCrottes prepare la planche des crottes ; son absence desactive
 // simplement la mecanique.
 func (s *scene) chargerCrottes() {
-	p, err := planche.Charger(ressources.Fichiers, "assets/crotte.json")
+	p, err := planche.Charger(ressources.Fichiers, "assets/crotte.json", facteurAffichage)
 	if err != nil {
 		log.Printf("crottes indisponibles : %v", err)
 		return
@@ -57,6 +58,7 @@ func (s *scene) pondre(x, y float64) {
 	if s.pc == nil || !s.fenetresOK || len(s.crottes) >= crotteMax {
 		return
 	}
+	x = s.ecarterCrotte(x)
 	cal, err := calque.Ouvrir(nomCrotte, s.pc.Largeur, s.pc.Hauteur)
 	if err != nil {
 		log.Printf("fenetre de crotte : %v", err)
@@ -71,6 +73,34 @@ func (s *scene) pondre(x, y float64) {
 		cal:   cal,
 	}
 	s.crottes = append(s.crottes, c)
+}
+
+// ecarterCrotte decale l'abscisse d'une nouvelle crotte pour qu'elle ne se
+// pose pas sur une crotte deja la : le singe defeque souvent au meme endroit
+// s'il ne bouge pas, et les tas se superposaient. On s'ecarte de part et
+// d'autre, par pas d'une largeur de tas, jusqu'a trouver un creneau libre.
+func (s *scene) ecarterCrotte(x float64) float64 {
+	ecart := float64(s.pc.Largeur)
+	libre := func(cx float64) bool {
+		for _, c := range s.crottes {
+			if math.Abs(float64(c.solX)-cx) < ecart {
+				return false
+			}
+		}
+		return true
+	}
+	if libre(x) {
+		return x
+	}
+	for d := ecart; d <= float64(s.ecranL); d += ecart {
+		if cand := x + d; cand <= float64(s.ecranL) && libre(cand) {
+			return cand
+		}
+		if cand := x - d; cand >= 0 && libre(cand) {
+			return cand
+		}
+	}
+	return x
 }
 
 // gererCrottes fait vivre les crottes : avancement des animations, clic qui

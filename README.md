@@ -29,11 +29,11 @@ speech bubble along the way.
 
 | | |
 |:---:|:---:|
-| <img src="docs/attaque.png" width="400"><br>**Hunts the arrow** and attacks it with bananas — every hit knocks it back | <img src="docs/vol-curseur.png" width="400"><br>**Steals the cursor** and runs away with it, until you fight back |
-| <img src="docs/coeurs.png" width="400"><br>**Takes your clicks**: three hearts, a damage flash, and loud complaints | <img src="docs/grimpe.png" width="400"><br>**Climbs the screen edges**, catches his breath at the top, lets go |
-| <img src="docs/chute-coeur.png" width="400"><br>**Botches his landings** — the fall costs a heart, and he won't climb on his last one | <img src="docs/saut.png" width="400"><br>**Bounces around** in real parabolas, rebounding off the screen edges |
-| <img src="docs/cadavre-taskbar.png" width="400"><br>**Dies for real**: the body falls and lies on the taskbar | <img src="docs/hero.png" width="400"><br>**Welcomes you back** the moment your mouse comes back to life |
-| <img src="docs/poop.png" width="400"><br>**Leaves a poop** on your desktop now and then — it sits there and steams, until you click it to make it burst | |
+| <img src="docs/attaque.gif" width="400"><br>**Hunts the arrow** and attacks it with bananas — every hit knocks it back | <img src="docs/vol-curseur.gif" width="400"><br>**Steals the cursor** and runs away with it, until you fight back |
+| <img src="docs/coeurs.gif" width="400"><br>**Takes your clicks**: three hearts, a damage flash, and loud complaints | <img src="docs/grimpe.gif" width="400"><br>**Climbs the screen edges**, catches his breath at the top, lets go |
+| <img src="docs/chute-coeur.gif" width="400"><br>**Botches his landings** — the fall costs a heart, and he won't climb on his last one | <img src="docs/saut.gif" width="400"><br>**Bounces around** in real parabolas, rebounding off the screen edges |
+| <img src="docs/cadavre-taskbar.gif" width="400"><br>**Dies for real**: the body falls and lies on the taskbar | <img src="docs/hero.gif" width="400"><br>**Welcomes you back** the moment your mouse comes back to life |
+| <img src="docs/poop.gif" width="400"><br>**Leaves a poop** on your desktop now and then — it sits there and steams, until you click it to make it burst | |
 
 The rest is yours to discover: the nap when you ignore him, the startled
 wake-up, time-of-day small talk, the post-resurrection jitters…
@@ -58,13 +58,22 @@ double-click it. A monkey icon appears in the notification area — right-click
 it for a small menu: **Launch at startup** (toggle), **Open settings**
 (opens `config.json`), and **Quit**.
 
-**macOS:** download `monkey-mac` from the Releases, then in a terminal
-`chmod +x monkey-mac && ./monkey-mac`. To stop him: `pkill monkey-mac`. No
-Accessibility permission is needed — he reads and moves the cursor through
-CoreGraphics. (The binary is unsigned, so on first launch macOS may ask you to
-allow it in System Settings → Privacy & Security.) *The menu-bar icon and
-"launch at login" toggle are coming to macOS; for now use the config file
-below.*
+**macOS** — via [Homebrew](https://brew.sh):
+
+```bash
+brew install --cask my-monkeys/tap/desktop-monkey
+```
+
+Then launch **Desktop Monkey** from Spotlight or Applications. A monkey icon
+appears in the menu bar with the same small menu: **Launch at startup**
+(toggles a login item), **Open settings** (opens `config.json`), and **Quit**.
+No Accessibility permission is needed — he reads and moves the cursor through
+CoreGraphics. The app is signed and notarized by Apple, so it opens without a
+warning.
+
+Prefer a bare binary? Download `monkey-mac` from the
+[Releases](https://github.com/my-monkeys/desktop-monkey/releases), then
+`chmod +x monkey-mac && ./monkey-mac` (stop him with `pkill monkey-mac`).
 
 He otherwise has no window — he *lives* on the desktop, that's the whole point.
 

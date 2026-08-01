@@ -191,6 +191,10 @@ func Nouvelle(nomApp, exe, config string, icone *image.RGBA) error {
 	return nil
 }
 
+// QuitDemande n'est pas utilise sous Windows : le menu Quitter poste WM_QUIT,
+// que la boucle principale detecte via TraiterMessages.
+func QuitDemande() bool { return false }
+
 // Fermer retire l'icone de la zone de notification.
 func Fermer() {
 	procShellNotifyIconW.Call(nimDelete, uintptr(unsafe.Pointer(&gNID)))
@@ -226,10 +230,10 @@ func afficherMenu(hwnd uintptr) {
 	if auDemarrage() {
 		drapeauDem |= mfChecked
 	}
-	appendItem(menu, drapeauDem, idDemarrage, "Lancer au demarrage")
-	appendItem(menu, mfString, idReglages, "Ouvrir les reglages...")
+	appendItem(menu, drapeauDem, idDemarrage, "Launch at startup")
+	appendItem(menu, mfString, idReglages, "Open settings...")
 	procAppendMenuW.Call(menu, mfSeparator, 0, 0)
-	appendItem(menu, mfString, idQuitter, "Quitter")
+	appendItem(menu, mfString, idQuitter, "Quit")
 
 	// requis pour que le menu se referme correctement en cliquant ailleurs
 	procSetForegroundWin.Call(hwnd)

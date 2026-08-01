@@ -46,9 +46,12 @@ const (
 	imagesParSeconde = 60
 
 	// affichage des points de vie apres un coup
-	echelleCoeur       = 2
 	dureeAfficheCoeurs = 2.8
 )
+
+// echelleCoeur suit le facteur d'affichage pour que les coeurs restent a la
+// meme taille relative que le singe (deux fois plus grands sur macOS).
+var echelleCoeur = 2 * facteurAffichage
 
 func main() {
 	log.SetFlags(log.Ltime)
@@ -163,7 +166,7 @@ func lancer(r Reglages) error {
 	defer horloge.Stop()
 
 	for range horloge.C {
-		if !c.TraiterMessages() {
+		if !c.TraiterMessages() || tray.QuitDemande() {
 			log.Printf("fermeture demandee")
 			return nil
 		}
@@ -238,7 +241,7 @@ type scene struct {
 }
 
 func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
-	p, err := planche.Charger(ressources.Fichiers, r.Planche)
+	p, err := planche.Charger(ressources.Fichiers, r.Planche, facteurAffichage)
 	if err != nil {
 		return nil, err
 	}
@@ -267,13 +270,13 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 		alea:   rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 
-	if s.b, err = bulle.Nouvelle(r.EchelleBulle); err != nil {
+	if s.b, err = bulle.Nouvelle(r.EchelleBulle * facteurAffichage); err != nil {
 		return nil, err
 	}
 
 	// L'explosion de coeur et les phrases sont optionnelles : leur absence ne
 	// doit pas empecher l'application de demarrer.
-	if pc, err := planche.Charger(ressources.Fichiers, "assets/coeur.json"); err == nil {
+	if pc, err := planche.Charger(ressources.Fichiers, "assets/coeur.json", facteurAffichage); err == nil {
 		s.coeur = pc.Obtenir("explose", "")
 	} else {
 		log.Printf("explosion de coeur indisponible : %v", err)
@@ -492,7 +495,10 @@ func iconeSinge(s *scene) *image.RGBA {
 	if src == nil {
 		return nil
 	}
-	sb := src.Bounds()
+	// on recadre sur la partie dessinee : le sprite laisse une large marge
+	// transparente dans sa cellule, qui ferait paraitre le singe minuscule une
+	// fois reduit a la taille de la barre des menus.
+	sb := zoneDessinee(src)
 	sw, sh := sb.Dx(), sb.Dy()
 	if sw == 0 || sh == 0 {
 		return nil
@@ -514,6 +520,37 @@ func iconeSinge(s *scene) *image.RGBA {
 		}
 	}
 	return dst
+}
+
+// zoneDessinee renvoie le plus petit rectangle englobant les pixels non
+// transparents d'une image ; a defaut, ses bornes completes.
+func zoneDessinee(img *image.RGBA) image.Rectangle {
+	b := img.Bounds()
+	minX, minY := b.Max.X, b.Max.Y
+	maxX, maxY := b.Min.X, b.Min.Y
+	for y := b.Min.Y; y < b.Max.Y; y++ {
+		for x := b.Min.X; x < b.Max.X; x++ {
+			if img.Pix[img.PixOffset(x, y)+3] == 0 {
+				continue
+			}
+			if x < minX {
+				minX = x
+			}
+			if x >= maxX {
+				maxX = x + 1
+			}
+			if y < minY {
+				minY = y
+			}
+			if y >= maxY {
+				maxY = y + 1
+			}
+		}
+	}
+	if minX >= maxX || minY >= maxY {
+		return b
+	}
+	return image.Rect(minX, minY, maxX, maxY)
 }
 
 // ouvrirJournal redirige les messages vers un fichier a cote de la config :

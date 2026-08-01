@@ -104,8 +104,12 @@ type Planche struct {
 }
 
 // Charger lit un descripteur et son image depuis un systeme de fichiers
-// (typiquement embarque dans le binaire via go:embed).
-func Charger(fsys fs.FS, chemin string) (*Planche, error) {
+// (typiquement embarque dans le binaire via go:embed). Un facteur optionnel
+// multiplie l'echelle d'affichage : il sert a agrandir uniformement les sprites
+// sur les ecrans a forte densite (voir facteurAffichage cote application). Le
+// redimensionnement reste fait en une seule passe depuis l'image d'origine,
+// donc sans perte de nettete.
+func Charger(fsys fs.FS, chemin string, facteur ...float64) (*Planche, error) {
 	brut, err := fs.ReadFile(fsys, chemin)
 	if err != nil {
 		return nil, fmt.Errorf("descripteur %s : %w", chemin, err)
@@ -117,6 +121,9 @@ func Charger(fsys fs.FS, chemin string) (*Planche, error) {
 	}
 	if d.Echelle == 0 {
 		d.Echelle = 1
+	}
+	if len(facteur) > 0 && facteur[0] > 0 {
+		d.Echelle *= facteur[0]
 	}
 
 	octets, err := fs.ReadFile(fsys, path.Join(path.Dir(chemin), d.Image))
