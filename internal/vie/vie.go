@@ -135,6 +135,7 @@ type Vie struct {
 
 	crainte float64 // temps de peur restant apres une resurrection
 
+	aMange       bool    // il a mange depuis sa derniere crotte : il peut pondre
 	aPondu       bool    // une crotte vient d'etre pondue, en attente de recolte
 	crotteLachee bool    // la crotte de l'accroupissement en cours est deja tombee
 	pondX, pondY float64 // ou elle est tombee (point de sol)
@@ -484,6 +485,9 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 
 	case Repos, Repas:
 		if v.depuis >= v.duree {
+			if v.etat == Repas {
+				v.aMange = true // il a mange : il a maintenant de quoi pondre
+			}
 			v.choisirSuite()
 		}
 	}
@@ -541,8 +545,10 @@ func (v *Vie) choisirSuite() {
 		return
 	}
 
-	// besoin pressant : il s'accroupit et pond. L'appelant recolte la crotte.
-	if v.r.ChanceCrotte > 0 && v.alea.Float64() < v.r.ChanceCrotte {
+	// besoin pressant : il s'accroupit et pond. Mais il faut d'abord avoir
+	// mange — pas de crotte sortie de nulle part. L'appelant recolte la crotte.
+	if v.aMange && v.r.ChanceCrotte > 0 && v.alea.Float64() < v.r.ChanceCrotte {
+		v.aMange = false // ce qu'il avait dans le ventre est evacue
 		v.passerA(Defeque)
 		return
 	}

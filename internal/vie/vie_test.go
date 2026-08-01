@@ -673,6 +673,7 @@ func TestDefequePondUneCrotte(t *testing.T) {
 	r.ChanceAmi, r.ChanceRepas, r.ChanceJeu, r.ChanceGrimpe = 0, 0, 0, 0
 	r.DureeRepos = [2]float64{0.1, 0.1}
 	v := nouvelleVie(t, r)
+	v.aMange = true // precondition : il faut avoir mange pour pondre
 
 	// curseur fige loin : il finit son repos et va se soulager
 	for i := 0; i < 60*5 && v.Etat() != Defeque; i++ {
@@ -715,5 +716,34 @@ func TestDefequePondUneCrotte(t *testing.T) {
 	}
 	if !sorti {
 		t.Fatal("il devrait s'ecarter apres avoir pondu")
+	}
+}
+
+// Sans avoir mange, il ne pond pas, meme avec ChanceCrotte au maximum.
+func TestPasDeCrotteSansRepas(t *testing.T) {
+	r := ReglagesParDefaut()
+	r.ChanceCrotte = 1
+	r.ChanceAmi, r.ChanceRepas, r.ChanceJeu, r.ChanceGrimpe = 0, 0, 0, 0
+	r.DureeRepos = [2]float64{0.1, 0.1}
+	v := nouvelleVie(t, r)
+
+	for i := 0; i < 60*4; i++ {
+		v.Avancer(dt, 5, 5, false)
+		if v.Etat() == Defeque {
+			t.Fatal("il pond alors qu'il n'a jamais mange")
+		}
+	}
+
+	// une fois nourri, il finit par se soulager
+	v.aMange = true
+	pondu := false
+	for i := 0; i < 60*4 && !pondu; i++ {
+		v.Avancer(dt, 5, 5, false)
+		if v.Etat() == Defeque {
+			pondu = true
+		}
+	}
+	if !pondu {
+		t.Fatal("apres avoir mange, il devrait pouvoir pondre")
 	}
 }
