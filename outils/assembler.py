@@ -40,19 +40,31 @@ def main():
             cur = (vals[5], vals[6]) if len(vals) >= 7 else None
             rects[n] = (l, t, r, b, cur)
 
+    # camera fixe (FIXE="cx,cy") pour les scenes ou l'action bouge trop pour un
+    # suivi ; sinon on suit le singe. DEBUT/FIN bornent la plage d'images.
+    fixe = None
+    if os.environ.get("FIXE"):
+        fixe = tuple(int(v) for v in os.environ["FIXE"].split(","))
+    n0 = int(os.environ.get("DEBUT", "0"))
+    n1 = int(os.environ.get("FIN", "100000"))
+
     frames = []
     for n in sorted(rects):
+        if n < n0 or n > n1:
+            continue
         p = f"{dossier}/f{n:03d}.png"
         if not os.path.exists(p):
             continue
         im = Image.open(p).convert("RGB")
         l, t, r, b, cur = rects[n]
-        cx = (l + r) // 2      # centre horizontal de la fenetre du singe
-        cy = b - 42            # le singe est en bas de sa fenetre
-        # le filigrane "Activate Windows" est en bas a droite de l'ecran : on
-        # saute les images ou le singe y traine, pour ne pas le montrer
-        if cx > 900 and cy > 520:
-            continue
+        if fixe is not None:
+            cx, cy = fixe
+        else:
+            cx = (l + r) // 2      # centre horizontal de la fenetre du singe
+            cy = b - 42            # le singe est en bas de sa fenetre
+            # filigrane "Activate Windows" en bas a droite : on saute ces images
+            if cx > 900 and cy > 520:
+                continue
         x0 = max(0, min(im.width - cw, cx - cw // 2))
         y0 = max(0, min(im.height - ch, cy - ch // 2))
         crop = im.crop((x0, y0, x0 + cw, y0 + ch))

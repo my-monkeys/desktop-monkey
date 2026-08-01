@@ -1,0 +1,137 @@
+<title>Placer la crotte portée</title>
+<style>
+  :root{
+    --bg:#1b1f2a; --panel:#232836; --line:#333a4c; --ink:#e7e9ef; --dim:#9aa1b4;
+    --accent:#b5793f; --accent-ink:#f0c79a; --grid1:#2a2f3d; --grid2:#242938;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#eceef3; --panel:#f7f8fb; --line:#d7dbe6; --ink:#1c2230; --dim:#5b6478;
+            --accent:#9a5f2c; --accent-ink:#7a4a1f; --grid1:#e2e5ee; --grid2:#eaedf4; }
+  }
+  :root[data-theme="dark"]{ --bg:#1b1f2a;--panel:#232836;--line:#333a4c;--ink:#e7e9ef;--dim:#9aa1b4;--accent:#b5793f;--accent-ink:#f0c79a;--grid1:#2a2f3d;--grid2:#242938; }
+  :root[data-theme="light"]{ --bg:#eceef3;--panel:#f7f8fb;--line:#d7dbe6;--ink:#1c2230;--dim:#5b6478;--accent:#9a5f2c;--accent-ink:#7a4a1f;--grid1:#e2e5ee;--grid2:#eaedf4; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+       display:flex;flex-wrap:wrap;gap:20px;padding:20px;min-height:100vh;align-items:flex-start}
+  h1{font-size:15px;font-weight:600;margin:0 0 2px}
+  .sub{color:var(--dim);font-size:12.5px;margin:0 0 14px;max-width:46ch;line-height:1.5}
+  #scene{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;
+         background:conic-gradient(var(--grid1) 25%,var(--grid2) 0 50%,var(--grid1) 0 75%,var(--grid2) 0) 0 0/24px 24px;
+         touch-action:none;cursor:grab}
+  #scene.drag{cursor:grabbing}
+  #scene img{position:absolute;image-rendering:pixelated;user-select:none;-webkit-user-drag:none;top:0;left:0}
+  #crotte{cursor:grab}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+         width:290px;display:flex;flex-direction:column;gap:14px}
+  .read{display:flex;gap:10px}
+  .cell{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .cell .k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+  .cell .v{font:600 22px ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums;color:var(--accent-ink)}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:500 12.5px inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);
+         border-radius:7px;padding:7px 11px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  label.tog{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim);cursor:pointer}
+  .zoom{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim)}
+  input[type=range]{flex:1;accent-color:var(--accent)}
+  pre{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+      font:500 12.5px ui-monospace,Menlo,monospace;color:var(--accent-ink);white-space:pre-wrap}
+  .hint{font-size:11.5px;color:var(--dim);line-height:1.5}
+  kbd{font:inherit;background:var(--bg);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;font-size:11px}
+</style>
+
+<div style="flex:1;min-width:320px">
+  <h1>Placer la crotte dans ses mains</h1>
+  <p class="sub">Fais glisser la crotte pour la poser où tu veux sur le singe pendant qu'il la porte. Les flèches la déplacent au pixel près (<kbd>Maj</kbd> = 5&nbsp;px). Copie-moi ensuite les deux valeurs.</p>
+  <div id="scene"></div>
+</div>
+
+<div class="panel">
+  <div class="read">
+    <div class="cell"><div class="k">décalage X</div><div class="v" id="dx">0</div></div>
+    <div class="cell"><div class="k">décalage Y</div><div class="v" id="dy">0</div></div>
+  </div>
+  <label class="tog"><input type="checkbox" id="devant" checked> crotte devant le singe</label>
+  <div class="zoom">zoom <input type="range" id="z" min="3" max="10" value="6"><span id="zv">6×</span></div>
+  <pre id="out">crottePorteeDX = 0.0
+crottePorteeDY = 0.0</pre>
+  <div class="row">
+    <button id="copy">Copier</button>
+    <button id="reset">Réinitialiser</button>
+  </div>
+  <p class="hint">Le point de référence est la base du tas, alignée par défaut sur ses mains. Repère bleu = mains du singe.</p>
+</div>
+
+<script>
+const META={"SL": 96, "SH": 64, "handsx": 48.0, "handsy": 22.4, "CL": 44, "CH": 56, "basex": 22.0, "basey": 49};
+const SINGE="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABACAYAAADlNHIOAAAB00lEQVR4nO3asUrDQBzH8Tt1cikoji462U1wEXHrM/gIFUcRxEcQS3EUDwRnn8FNJINCN4uDLo6i4OImEc4e5o4m1Yq9f5LvZzmSXiGB/y/55xKlAAAAAAAAAAAAAAAAAAAAAKAKtCqPtIrnNhX7AOpOl6Xyj7c27Eb/6b1w8srirB13L65LcY4kIDJdlcrPY5Ke6HMlAZHNKOH6QeVnKtpqr69624dHO/78zbaSjATUKAFhH69/82dX+a9Xxtt/sH/iVf7coOLDeVKRgBokIB12rTZJL5XcnUwKCahwArw+PvNkqoL96U+S4BLkrvHh/un5JTu+3V16v7vtRrP1p3vQfyEBkU2iCvIqPM1JiC66d4Q6Zx07frw8Fs5z3ZK0J2MSUIMuqLDS+mOu8bi+f1Tlh/OlPRmTgMjErwXleX64tePC8poqEnZN0pCAyEqbgO7pjR33tlVhEsI1IWmJIAGRlTYBZtDPf/f1X5V+f+5XuEtGpvJF9P8OCYisdAkwOe8FHFfp7gnaJEZk5TskoMYJ0Nn3AkNWR2uBBEQm4R6gs5Wf9/4g5Nb/R30hpxIlGgmITEIChiYhFH4P1Gi2VBWQgMhE9sYD6ZjHPO7/oiABKq5PKjeBw/IlEvwAAAAASUVORK5CYII=";
+const CROTTE="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAA4CAYAAACGwxqMAAABi0lEQVR4nO2XMU7DQBBFZ1duqE1DAQ2lKwrOwS0QDcoREEeItkGpuEJOwAEoqLaEIhQ0UKdcNGYNlklEPDsDHjFPslzEnv35/jNrAxiGYfwJ4eY64QHaCMyiPSjDw38n9CIQNGRYhUj1BEGXvVRhlXM4mGjQN4e9ZPEgkGHRpoPM5cWVm7RgKbEigqVHWSVVmNtZMaQd9pLF1aBuS1Yr2gAAmdHj6q84pDc37Tns6jQ/O4TT4wO4f3yB2RISp2gxh1F0x2z5zOb0r8zhOYrvx2QyglHUwN2O85N9FtF8Gd4ilBvPLRabDY8+cbVmWaZdqrxCndrHDQDN0d5WoU3+rW1AhNiEdME5j52zP7nY9P4MXrt4eCWJrjgi8HGGdu5ONsMxO4oiO6Gb8jukNM9sU2IXdyND8/mSJttVQFytv11L3Uwc9T0Bub17GrselDafo24Mm7I6tulidn2MaHKGSydCJOZ5VIa5dqxYUKeiLjbc1cbcW4KjTgguFmJN93kHz3ut1CeUYRgG6OIdXUnCe5JjMnYAAAAASUVORK5CYII=";
+const PAD=40;                    // marge autour du singe, en px sprite
+let Z=6, dx=0, dy=0;
+
+const scene=document.getElementById('scene');
+const mk=new Image(); mk.src=SINGE; mk.id='singe';
+const cr=new Image(); cr.src=CROTTE; cr.id='crotte';
+const dot=document.createElement('div'); dot.id='mains';
+dot.style.cssText='position:absolute;width:0;height:0;';
+scene.append(mk,cr,dot);
+
+function layout(){
+  const W=(META.SL+PAD*2), H=(META.SH+PAD*2);
+  scene.style.width=W*Z+'px'; scene.style.height=H*Z+'px';
+  mk.style.width=META.SL*Z+'px'; mk.style.height=META.SH*Z+'px';
+  mk.style.left=PAD*Z+'px'; mk.style.top=PAD*Z+'px';
+  cr.style.width=META.CL*Z+'px'; cr.style.height=META.CH*Z+'px';
+  // mains en coordonnees scene (px sprite)
+  const hx=PAD+META.handsx, hy=PAD+META.handsy;
+  // coin de la crotte : sa base (basex,basey) alignee sur mains+decalage
+  const cx=hx+dx-META.basex, cy=hy+dy-META.basey;
+  cr.style.left=cx*Z+'px'; cr.style.top=cy*Z+'px';
+  cr.style.zIndex=document.getElementById('devant').checked?3:1;
+  mk.style.zIndex=2;
+  // repere mains
+  const r=6;
+  dot.style.left=(hx*Z-r)+'px'; dot.style.top=(hy*Z-r)+'px';
+  dot.style.width=dot.style.height=(2*r)+'px';
+  dot.style.border='2px solid #4aa3ff'; dot.style.borderRadius='50%';
+  dot.style.zIndex=4; dot.style.pointerEvents='none'; dot.style.opacity=.9;
+  document.getElementById('dx').textContent=Math.round(dx);
+  document.getElementById('dy').textContent=Math.round(dy);
+  document.getElementById('out').textContent=
+    'crottePorteeDX = '+dx.toFixed(1)+'\ncrottePorteeDY = '+dy.toFixed(1);
+}
+layout();
+
+// glisser
+let drag=null;
+scene.addEventListener('pointerdown',e=>{
+  drag={x:e.clientX,y:e.clientY,dx,dy}; scene.classList.add('drag');
+  scene.setPointerCapture(e.pointerId);
+});
+scene.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  dx=drag.dx+(e.clientX-drag.x)/Z; dy=drag.dy+(e.clientY-drag.y)/Z; layout();
+});
+scene.addEventListener('pointerup',e=>{drag=null;scene.classList.remove('drag');});
+
+// clavier
+addEventListener('keydown',e=>{
+  const s=e.shiftKey?5:1; let h=false;
+  if(e.key==='ArrowLeft'){dx-=s;h=true;} if(e.key==='ArrowRight'){dx+=s;h=true;}
+  if(e.key==='ArrowUp'){dy-=s;h=true;} if(e.key==='ArrowDown'){dy+=s;h=true;}
+  if(h){e.preventDefault();layout();}
+});
+
+document.getElementById('z').addEventListener('input',e=>{
+  Z=+e.target.value; document.getElementById('zv').textContent=Z+'×'; layout();
+});
+document.getElementById('devant').addEventListener('change',layout);
+document.getElementById('reset').addEventListener('click',()=>{dx=0;dy=0;layout();});
+document.getElementById('copy').addEventListener('click',()=>{
+  navigator.clipboard.writeText(document.getElementById('out').textContent);
+  const b=document.getElementById('copy'); b.textContent='Copié ✓';
+  setTimeout(()=>b.textContent='Copier',1200);
+});
+</script>

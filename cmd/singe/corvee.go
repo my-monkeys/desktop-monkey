@@ -14,6 +14,7 @@ import (
 // phases de la corvee
 const (
 	corVaChercher = iota // il marche vers la crotte
+	corApproche          // il se rapproche du curseur avant de lancer
 	corPorteBord         // il la porte jusqu'au bord
 	corVise              // il fait le geste de lancer
 )
@@ -21,6 +22,12 @@ const (
 const (
 	ageJetCrotte = 4.0 // secondes avant qu'une crotte devienne bonne a jeter
 	cooldownJet  = 9.0 // secondes de repos entre deux corvees
+	gardeSouris  = 170 // il s'approche a cette distance du curseur avant de tirer
+
+	// decalage de la crotte portee par rapport aux mains du singe (regle avec
+	// outils/placer-crotte.html)
+	crottePorteeDX = -0.1
+	crottePorteeDY = 7.8
 )
 
 // gererCorvee fait avancer la besogne en cours, ou en declenche une.
@@ -42,6 +49,12 @@ func (s *scene) gererCorvee(dt float64, cx, cy int) {
 		s.finirCorvee()
 		return
 	}
+	// il a ete sorti de la corvee malgre lui (frappe, ou mort) : il lache le tas
+	if !s.v.EnCorvee() {
+		s.lacherCrotte(c)
+		s.finirCorvee()
+		return
+	}
 
 	switch s.corPhase {
 	case corVaChercher:
@@ -53,9 +66,15 @@ func (s *scene) gererCorvee(dt float64, cx, cy int) {
 				s.v.EnvoyerVers(s.bordVise(c), cyy)
 				s.corPhase = corPorteBord
 			} else {
-				s.v.Viser(float64(cx))
-				s.corTimer, s.corPhase = 0.35, corVise
+				ax, ay := s.approcheSouris(cx, cy)
+				s.v.EnvoyerVers(ax, ay)
+				s.corPhase = corApproche
 			}
+		}
+	case corApproche:
+		if s.v.Arrive() {
+			s.v.Viser(float64(cx))
+			s.corTimer, s.corPhase = 0.35, corVise
 		}
 	case corPorteBord:
 		if s.v.Arrive() {
@@ -75,10 +94,37 @@ func (s *scene) gererCorvee(dt float64, cx, cy int) {
 	// pendant tout le transport, la crotte suit les mains du singe
 	if c.porte {
 		hx, hy := s.v.PositionMain()
-		c.fx = hx - float64(s.pc.Largeur)/2
-		c.fy = hy - float64(s.crotteSol)
+		c.fx = hx - float64(s.pc.Largeur)/2 + crottePorteeDX
+		c.fy = hy - float64(s.crotteSol) + crottePorteeDY
 		c.fenX, c.fenY = int(c.fx), int(c.fy)
 	}
+}
+
+// approcheSouris renvoie un point d'ou lancer : un peu avant le curseur, pour
+// que le singe s'en rapproche au lieu de tirer de loin.
+func (s *scene) approcheSouris(cx, cy int) (float64, float64) {
+	mx, my := s.v.Centre()
+	dx, dy := float64(cx)-mx, float64(cy)-my
+	d := math.Hypot(dx, dy)
+	if d <= gardeSouris {
+		return mx, my
+	}
+	k := (d - gardeSouris) / d
+	return mx + dx*k, my + dy*k
+}
+
+// lacherCrotte repose la crotte au sol, la ou est le singe : il l'a laissee
+// tomber (coup recu, ou mort).
+func (s *scene) lacherCrotte(c *crotte) {
+	cx, cy := s.v.Centre()
+	_, haut := s.v.Taille()
+	c.porte = false
+	c.phase, c.ms, c.age = crRepos, 0, 0
+	c.solX = int(cx)
+	c.solY = int(cy + haut/2) // a ses pieds
+	c.fenX = c.solX - s.pc.Largeur/2
+	c.fenY = c.solY - s.crotteSol
+	c.fx, c.fy = float64(c.fenX), float64(c.fenY)
 }
 
 // peutEtreLancerCorvee demarre une besogne s'il est desoeuvre, qu'une crotte
