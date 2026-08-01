@@ -13,24 +13,45 @@ package souris
 #cgo LDFLAGS: -framework CoreGraphics
 #include <CoreGraphics/CoreGraphics.h>
 
+// Boite englobante de tous les ecrans : origine (ox,oy) en haut a gauche de
+// l'union, dans le repere global de CoreGraphics. Le singe vit dans cet espace
+// unifie, donc il peut passer d'un ecran a l'autre et suivre le curseur ou
+// qu'il soit — au lieu d'etre coince sur l'ecran principal.
+static void souris_union(int* ox, int* oy, int* w, int* h) {
+    uint32_t n = 0;
+    CGGetActiveDisplayList(0, NULL, &n);
+    if (n == 0) { *ox = *oy = 0; *w = *h = 0; return; }
+    if (n > 16) n = 16;
+    CGDirectDisplayID ids[16];
+    CGGetActiveDisplayList(n, ids, &n);
+    CGRect u = CGDisplayBounds(ids[0]);
+    for (uint32_t i = 1; i < n; i++) u = CGRectUnion(u, CGDisplayBounds(ids[i]));
+    *ox = (int)u.origin.x;
+    *oy = (int)u.origin.y;
+    *w  = (int)u.size.width;
+    *h  = (int)u.size.height;
+}
 static void souris_pos(int* x, int* y) {
+    int ox, oy, w, h;
+    souris_union(&ox, &oy, &w, &h);
     CGEventRef e = CGEventCreate(NULL);
     CGPoint p = CGEventGetLocation(e);
     CFRelease(e);
-    *x = (int)p.x;
-    *y = (int)p.y;
+    *x = (int)p.x - ox;
+    *y = (int)p.y - oy;
 }
 static int souris_bouton(void) {
     return CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState,
                                     kCGMouseButtonLeft) ? 1 : 0;
 }
 static void souris_taille(int* w, int* h) {
-    CGRect b = CGDisplayBounds(CGMainDisplayID());
-    *w = (int)b.size.width;
-    *h = (int)b.size.height;
+    int ox, oy;
+    souris_union(&ox, &oy, w, h);
 }
 static void souris_placer(int x, int y) {
-    CGWarpMouseCursorPosition(CGPointMake(x, y));
+    int ox, oy, w, h;
+    souris_union(&ox, &oy, &w, &h);
+    CGWarpMouseCursorPosition(CGPointMake(x + ox, y + oy));
     // sans cela, un court delai ignore les mouvements physiques apres un warp
     CGAssociateMouseAndMouseCursorPosition(true);
 }

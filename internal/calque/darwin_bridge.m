@@ -71,8 +71,25 @@ void calque_afficher(void* winp, unsigned char* pix, int w, int h,
         CGDataProviderRelease(prov);
         CFRelease(data);
 
-        // x, y sont en haut-gauche ; Cocoa place l'origine en bas-gauche.
-        [win setFrameOrigin:NSMakePoint(x, screenH - y - h)];
+        // x, y sont dans l'espace unifie de tous les ecrans (origine en haut a
+        // gauche de l'union). On repasse en repere Cocoa : origine en bas a
+        // gauche de l'ecran principal, y vers le haut. Ainsi le singe s'affiche
+        // correctement sur n'importe quel ecran, pas seulement le principal.
+        int ox = 0, oy = 0;
+        uint32_t n = 0;
+        CGGetActiveDisplayList(0, NULL, &n);
+        if (n > 16) n = 16;
+        if (n > 0) {
+            CGDirectDisplayID ids[16];
+            CGGetActiveDisplayList(n, ids, &n);
+            CGRect u = CGDisplayBounds(ids[0]);
+            for (uint32_t i = 1; i < n; i++) u = CGRectUnion(u, CGDisplayBounds(ids[i]));
+            ox = (int)u.origin.x;
+            oy = (int)u.origin.y;
+        }
+        int mainH = (int)CGDisplayBounds(CGMainDisplayID()).size.height;
+        (void)screenH;
+        [win setFrameOrigin:NSMakePoint(ox + x, mainH - (oy + y) - h)];
     }
 }
 
@@ -111,7 +128,15 @@ void calque_fermer(void* winp) {
 }
 
 void calque_ecran(int* w, int* h) {
-    CGRect b = CGDisplayBounds(CGMainDisplayID());
-    *w = (int)b.size.width;
-    *h = (int)b.size.height;
+    // taille de l'union de tous les ecrans (le monde du singe)
+    uint32_t n = 0;
+    CGGetActiveDisplayList(0, NULL, &n);
+    if (n == 0) { *w = *h = 0; return; }
+    if (n > 16) n = 16;
+    CGDirectDisplayID ids[16];
+    CGGetActiveDisplayList(n, ids, &n);
+    CGRect u = CGDisplayBounds(ids[0]);
+    for (uint32_t i = 1; i < n; i++) u = CGRectUnion(u, CGDisplayBounds(ids[i]));
+    *w = (int)u.size.width;
+    *h = (int)u.size.height;
 }
