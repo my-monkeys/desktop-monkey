@@ -21,6 +21,7 @@ type Reglages struct {
 	ChanceRepas  float64 // probabilite de manger plutot que de flaner
 	ChanceJeu    float64 // probabilite de sautiller plutot que de flaner
 	ChanceGrimpe float64 // probabilite d'aller escalader un bord de l'ecran
+	ChanceCrotte float64 // probabilite de s'accroupir et pondre une crotte
 
 	// La chasse : au lieu de suivre gentiment, il poursuit le curseur et
 	// l'attaque quand il le rattrape.
@@ -61,6 +62,7 @@ func ReglagesParDefaut() Reglages {
 		ChanceRepas:    0.18,
 		ChanceJeu:      0.10,
 		ChanceGrimpe:   0.12,
+		ChanceCrotte:   0.07,
 		ChanceChasse:   0.35,
 		VitesseChasse:  1.7,
 		PorteeAttaque:  46,

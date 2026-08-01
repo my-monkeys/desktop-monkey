@@ -63,6 +63,8 @@ const (
 	pmRemove         = 0x0001
 	wmQuit           = 0x0012
 
+	errClasseExiste = 1410 // ERROR_CLASS_ALREADY_EXISTS
+
 	biRGB        = 0
 	dibRGBColors = 0
 	acSrcOver    = 0x00
@@ -142,8 +144,13 @@ func Ouvrir(nom string, larg, haut int) (*Calque, error) {
 		Instance:  instance,
 		ClassName: classe,
 	}
+	// Plusieurs fenetres peuvent partager la meme classe (une par crotte, par
+	// exemple) : reenregistrer une classe deja connue echoue avec
+	// ERROR_CLASS_ALREADY_EXISTS, ce qui est ici sans consequence.
 	if ret, _, err := procRegisterClassExW.Call(uintptr(unsafe.Pointer(&wc))); ret == 0 {
-		return nil, fmt.Errorf("RegisterClassExW : %w", err)
+		if errno, ok := err.(syscall.Errno); !ok || errno != errClasseExiste {
+			return nil, fmt.Errorf("RegisterClassExW : %w", err)
+		}
 	}
 
 	// WS_EX_TRANSPARENT est volontairement absent. Sans lui, Windows teste les
@@ -268,6 +275,10 @@ func (c *Calque) Afficher(img *image.RGBA, x, y int) error {
 	}
 	return nil
 }
+
+// Traversant n'a rien a faire sous Windows : une fenetre en couche teste deja
+// les clics au pixel pres (ils traversent la ou l'image est transparente).
+func (c *Calque) Traversant(oui bool) {}
 
 // TraiterMessages vide la file de messages de la fenetre. A appeler a chaque
 // tour de boucle : sans cela Windows considere l'application comme figee.

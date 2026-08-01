@@ -666,3 +666,39 @@ func TestNeGrimpePasAvecUnSeulCoeur(t *testing.T) {
 		}
 	}
 }
+
+func TestDefequePondUneCrotte(t *testing.T) {
+	r := ReglagesParDefaut()
+	r.ChanceCrotte = 1
+	r.ChanceAmi, r.ChanceRepas, r.ChanceJeu, r.ChanceGrimpe = 0, 0, 0, 0
+	r.DureeRepos = [2]float64{0.1, 0.1}
+	v := nouvelleVie(t, r)
+
+	// curseur fige loin : il finit son repos et va se soulager
+	for i := 0; i < 60*5 && v.Etat() != Defeque; i++ {
+		v.Avancer(dt, 5, 5, false)
+	}
+	if v.Etat() != Defeque {
+		t.Fatalf("etat %v, attendu defeque", v.Etat())
+	}
+	fx, fy := v.X+v.largeur/2, v.Y+v.hauteur
+
+	// il pond a la fin de l'accroupissement
+	pondu := false
+	for i := 0; i < 60*3; i++ {
+		v.Avancer(dt, 5, 5, false)
+		if x, y, ok := v.PrendreCrotte(); ok {
+			if math.Abs(x-fx) > 2 || math.Abs(y-fy) > 2 {
+				t.Fatalf("crotte pondue en (%.0f,%.0f), attendu ~(%.0f,%.0f)", x, y, fx, fy)
+			}
+			pondu = true
+			break
+		}
+	}
+	if !pondu {
+		t.Fatal("aucune crotte pondue apres l'accroupissement")
+	}
+	if v.Etat() == Defeque {
+		t.Fatal("il devrait avoir repris sa vie apres avoir pondu")
+	}
+}

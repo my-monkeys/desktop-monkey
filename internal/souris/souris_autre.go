@@ -1,11 +1,10 @@
-//go:build !windows
+//go:build !windows && !darwin
 
 package souris
 
 // Repli pour les plateformes ou la lecture globale de la souris n'est pas
-// encore implementee. L'application ne s'y lance de toute facon pas encore
-// (voir internal/calque) ; ces fonctions existent pour que le projet compile
-// et que le portage macOS n'ait qu'a les remplir.
+// implementee (Linux, etc.). Windows et macOS ont leur propre fichier ;
+// l'affichage bureau n'y est de toute facon pas disponible (voir calque).
 
 // Position renvoie les coordonnees du curseur en pixels ecran.
 func Position() (int, int) { return 0, 0 }

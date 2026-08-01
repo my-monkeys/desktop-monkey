@@ -22,10 +22,10 @@ construire_windows() {
 }
 
 construire_mac() {
-    # cgo est obligatoire sur macOS (Metal), donc compilation sur un Mac
-    # uniquement, pour l'architecture courante.
+    # cgo est obligatoire sur macOS (Cocoa/CoreGraphics), donc compilation sur
+    # un Mac uniquement, pour l'architecture courante.
     echo "→ macOS ($(go env GOARCH))"
-    go build -ldflags "$LDFLAGS_COMMUNS" -o dist/singe-mac ./cmd/singe
+    CGO_ENABLED=1 go build -ldflags "$LDFLAGS_COMMUNS" -o dist/singe-mac ./cmd/singe
     ls -lh dist/singe-mac | awk '{print "   dist/singe-mac  " $5}'
 }
 

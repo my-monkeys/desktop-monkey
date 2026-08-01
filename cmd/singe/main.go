@@ -143,6 +143,10 @@ func lancer(r Reglages) error {
 	defer c.Fermer()
 	log.Printf("fenetre ouverte (%dx%d)", sceneLarg, sceneHaut)
 
+	// les crottes vivent dans leurs propres fenetres : on ne les ouvre qu'ici
+	s.fenetresOK = true
+	defer s.fermerCrottes()
+
 	image := image.NewRGBA(image.Rect(0, 0, sceneLarg, sceneHaut))
 	intervalle := time.Second / imagesParSeconde
 	dt := intervalle.Seconds()
@@ -159,8 +163,40 @@ func lancer(r Reglages) error {
 		if err := c.Afficher(image, x, y); err != nil {
 			return err
 		}
+		s.afficherCrottes()
+		s.majTraversance(c, image, x, y)
 	}
 	return nil
+}
+
+// majTraversance rend chaque fenetre capturante uniquement quand le curseur est
+// sur un de ses pixels dessines : le clic sur le sprite est alors absorbe, le
+// reste du bureau reste cliquable. Sans effet sous Windows, qui teste deja les
+// clics au pixel pres.
+func (s *scene) majTraversance(c *calque.Calque, img *image.RGBA, fenX, fenY int) {
+	cx, cy := souris.Position()
+	c.Traversant(!opaqueAutour(img, cx-fenX, cy-fenY, 2))
+	for _, cr := range s.crottes {
+		cr.cal.Traversant(!s.crotteSousCurseur(cr, cx, cy))
+	}
+}
+
+// opaqueAutour indique si un pixel dessine se trouve dans un petit rayon autour
+// de (x, y), ce qui donne une tolerance sans exiger de viser au pixel pres.
+func opaqueAutour(img *image.RGBA, x, y, r int) bool {
+	b := img.Bounds()
+	for dy := -r; dy <= r; dy++ {
+		for dx := -r; dx <= r; dx++ {
+			px, py := x+dx, y+dy
+			if px < 0 || py < 0 || px >= b.Dx() || py >= b.Dy() {
+				continue
+			}
+			if img.Pix[img.PixOffset(px, py)+3] > 40 {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // scene tient tout ce qui est affiche et sait se dessiner.
@@ -184,6 +220,12 @@ type scene struct {
 	teinte      *image.RGBA // sprite rougi pendant le flash de degats
 	ecranL      int
 	alea        *rand.Rand
+
+	pc                *planche.Planche // planche des crottes (optionnelle)
+	crotteSol         int              // ordonnee de la base du tas dans sa cellule
+	crottes           []*crotte
+	boutonCrotteAvant bool
+	fenetresOK        bool // true quand on peut ouvrir des fenetres (pas en capture)
 }
 
 func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
@@ -204,6 +246,7 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 	reg.ChanceVol = r.ChanceVol
 	reg.ChanceGrimpe = r.ChanceGrimpe
 	reg.ChanceJeu = r.ChanceJeu
+	reg.ChanceCrotte = r.ChanceCrotte
 	reg.Coeurs = r.Coeurs
 	reg.Resurrection = r.Resurrection
 	reg.CacheApresClic = r.CacheApresClic
@@ -233,6 +276,8 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 		log.Printf("phrases indisponibles : %v", err)
 	}
 
+	s.chargerCrottes()
+
 	s.programmerParole()
 	s.parler("bonjour")
 	return s, nil
@@ -258,7 +303,8 @@ func (s *scene) programmerParole() {
 
 func (s *scene) avancer(dt float64) {
 	cx, cy := souris.Position()
-	s.v.Avancer(dt, float64(cx), float64(cy), souris.BoutonGauche())
+	bouton := souris.BoutonGauche()
+	s.v.Avancer(dt, float64(cx), float64(cy), bouton)
 
 	// le singe tient le curseur : c'est lui qui decide ou il va ; et ses
 	// coups de patte repoussent la fleche
@@ -267,6 +313,12 @@ func (s *scene) avancer(dt float64) {
 	} else if x, y, ok := s.v.PrendrePoussee(); ok {
 		souris.Placer(int(x), int(y))
 	}
+
+	// crottes : depose quand le singe vient de pondre, puis vie et clics
+	if x, y, ok := s.v.PrendreCrotte(); ok {
+		s.pondre(x, y)
+	}
+	s.gererCrottes(dt, cx, cy, bouton)
 
 	// enchainement de la mort : agonie, coeur, disparition
 	if s.v.Etat() == vie.Mort && !s.mortTraitee && s.v.AnimationMorteFinie() {

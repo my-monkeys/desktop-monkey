@@ -24,6 +24,7 @@ type Reglages struct {
 	ChanceVol      float64    `json:"chance_vol"`
 	ChanceGrimpe   float64    `json:"chance_grimpe"`
 	ChanceJeu      float64    `json:"chance_jeu"`
+	ChanceCrotte   float64    `json:"chance_crotte"`
 	Coeurs         int        `json:"coeurs"`
 	Resurrection   float64    `json:"secondes_avant_resurrection"`
 	CacheApresClic float64    `json:"cache_apres_clic"`
@@ -47,6 +48,7 @@ func reglagesParDefaut() Reglages {
 		ChanceVol:      0.35,
 		ChanceGrimpe:   0.12,
 		ChanceJeu:      0.10,
+		ChanceCrotte:   0.07,
 		Coeurs:         3,
 		Resurrection:   0,
 		CacheApresClic: 0,

@@ -29,6 +29,7 @@ const (
 	Fuite                 // frais ressuscite, il fuit une souris trop proche
 	Grimpe                // il escalade un bord de l'ecran
 	Joue                  // il sautille sur place
+	Defeque               // il s'accroupit et pond une crotte
 	Repas                 // il mange
 	Sieste                // il dort, apres une longue inactivite
 	Touche                // il encaisse un coup
@@ -55,6 +56,8 @@ func (e Etat) String() string {
 		return "grimpe"
 	case Joue:
 		return "joue"
+	case Defeque:
+		return "defeque"
 	case Repas:
 		return "repas"
 	case Sieste:
@@ -124,6 +127,9 @@ type Vie struct {
 	secousses              float64
 
 	crainte float64 // temps de peur restant apres une resurrection
+
+	aPondu       bool    // une crotte vient d'etre pondue, en attente de recolte
+	pondX, pondY float64 // ou elle est tombee (point de sol)
 
 	coeursRestants int
 	depuisCoup     float64 // depuis le dernier coup recu (affichage des coeurs)
@@ -264,6 +270,12 @@ func (v *Vie) passerA(e Etat) {
 		if v.alea.Float64() < 0.5 {
 			v.jeuDir = -1
 		}
+	case Defeque:
+		// il s'accroupit dos a l'ecran ; faute d'animation dediee, il se met en
+		// repos vers le haut, le temps de pondre
+		v.duree = 1.3
+		v.animCourante = choisir(v.p, "defeque", "repos")
+		v.direction = "haut"
 	case Repas:
 		v.duree = v.entre(v.r.DureeRepas)
 		v.animCourante = choisir(v.p, "mange", "repos")
@@ -426,6 +438,16 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 	case Joue:
 		v.sautiller(dt)
 
+	case Defeque:
+		if v.depuis >= v.duree {
+			// la crotte tombe a ses pieds, il reprend sa vie
+			v.aPondu = true
+			v.pondX = v.X + v.largeur/2
+			v.pondY = v.Y + v.hauteur
+			v.passerA(Repos)
+			v.Evenement = "crotte"
+		}
+
 	case Repos, Repas:
 		if v.depuis >= v.duree {
 			v.choisirSuite()
@@ -485,6 +507,12 @@ func (v *Vie) choisirSuite() {
 		return
 	}
 
+	// besoin pressant : il s'accroupit et pond. L'appelant recolte la crotte.
+	if v.r.ChanceCrotte > 0 && v.alea.Float64() < v.r.ChanceCrotte {
+		v.passerA(Defeque)
+		return
+	}
+
 	if v.etat == Repos {
 		v.passerA(Promenade)
 	} else {
@@ -508,4 +536,14 @@ func (v *Vie) PrendreEvenement() string {
 	e := v.Evenement
 	v.Evenement = ""
 	return e
+}
+
+// PrendreCrotte signale qu'une crotte vient d'etre pondue et ou (point de sol).
+// Renvoie false s'il n'y a rien a recolter. A appeler a chaque pas.
+func (v *Vie) PrendreCrotte() (x, y float64, ok bool) {
+	if !v.aPondu {
+		return 0, 0, false
+	}
+	v.aPondu = false
+	return v.pondX, v.pondY, true
 }

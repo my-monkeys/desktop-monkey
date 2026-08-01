@@ -33,6 +33,7 @@ speech bubble along the way.
 | <img src="docs/coeurs.png" width="400"><br>**Takes your clicks**: three hearts, a damage flash, and loud complaints | <img src="docs/grimpe.png" width="400"><br>**Climbs the screen edges**, catches his breath at the top, lets go |
 | <img src="docs/chute-coeur.png" width="400"><br>**Botches his landings** — the fall costs a heart, and he won't climb on his last one | <img src="docs/saut.png" width="400"><br>**Bounces around** in real parabolas, rebounding off the screen edges |
 | <img src="docs/cadavre-taskbar.png" width="400"><br>**Dies for real**: the body falls and lies on the taskbar | <img src="docs/hero.png" width="400"><br>**Welcomes you back** the moment your mouse comes back to life |
+| <img src="docs/poop.png" width="400"><br>**Leaves a poop** on your desktop now and then — it sits there and steams, until you click it to make it burst | |
 
 The rest is yours to discover: the nap when you ignore him, the startled
 wake-up, time-of-day small talk, the post-resurrection jitters…
@@ -49,12 +50,20 @@ A lost heart comes back on its own after 45 seconds of peace.
 
 ## Install
 
-1. Download `monkey.exe` from the
-   [Releases](https://github.com/my-monkeys/desktop-monkey/releases).
-2. Double-click it. That's all.
+He lives on the desktop on both **Windows** and **macOS**.
 
-To stop him: `Stop-Process -Name monkey` in PowerShell (he has no window and
-no tray icon — he *lives* on the desktop, that's the whole point).
+**Windows:** download `monkey.exe` from the
+[Releases](https://github.com/my-monkeys/desktop-monkey/releases) and
+double-click it. To stop him: `Stop-Process -Name monkey` in PowerShell.
+
+**macOS:** download `monkey-mac` from the Releases, then in a terminal
+`chmod +x monkey-mac && ./monkey-mac`. To stop him: `pkill monkey-mac`. No
+Accessibility permission is needed — he reads and moves the cursor through
+CoreGraphics. (The binary is unsigned, so on first launch macOS may ask you to
+allow it in System Settings → Privacy & Security.)
+
+He has no window and no tray/dock icon — he *lives* on the desktop, that's the
+whole point.
 
 ### Start automatically with Windows
 
@@ -96,6 +105,9 @@ On first launch, a configuration file is created at
   stealing the cursor (default `0.35`).
 - `chance_grimpe`: probability of going to climb a screen edge
   (default `0.12`).
+- `chance_crotte`: probability of squatting and leaving a poop on the desktop
+  (default `0.07`, up to 6 at once — click a poop to make it burst; `0`
+  disables it).
 - `cache_apres_clic`: at `0` (default) the dead body falls onto the taskbar;
   set a positive value and he disappears for that many seconds, then comes
   back somewhere else.
@@ -152,11 +164,17 @@ store-bought sprite packs into a single sheet and writes the descriptor.
 ```
 
 The Windows executable builds from any machine — no cgo. All resources
-(images, lines) are embedded in the binary.
+(images, lines) are embedded in the binary. The macOS binary uses cgo
+(Cocoa/CoreGraphics), so it must be built **on a Mac**.
 
-Desktop rendering is currently implemented for Windows only
-(`internal/calque`). The rest of the program is platform-independent: a
-macOS port comes down to a transparent `NSWindow` and reading the cursor.
+Desktop rendering works on **Windows** (a layered window driven by
+`UpdateLayeredWindow`) and **macOS** (a transparent floating `NSWindow` whose
+contents are painted on a `CALayer`), each in its own file under
+`internal/calque`. Everything else — behavior, sprites, bubbles, poops, mouse
+reading — is platform-independent. One nuance: per-pixel click-through
+(clicking the monkey without reaching the desktop behind) is native on
+Windows; on macOS it is emulated by making the window capture clicks only when
+the cursor is over a drawn pixel.
 
 > **Note** — the source code is written in French (identifiers, comments,
 > package names). It's a French monkey. 🥖
