@@ -725,6 +725,8 @@ func TestPasDeCrotteSansRepas(t *testing.T) {
 	r.ChanceCrotte = 1
 	r.ChanceAmi, r.ChanceRepas, r.ChanceJeu, r.ChanceGrimpe = 0, 0, 0, 0
 	r.DureeRepos = [2]float64{0.1, 0.1}
+	// promenades courtes : une longue marche retarderait la prochaine decision
+	r.DureePromenade = [2]float64{0.2, 0.3}
 	v := nouvelleVie(t, r)
 
 	for i := 0; i < 60*4; i++ {
@@ -737,7 +739,7 @@ func TestPasDeCrotteSansRepas(t *testing.T) {
 	// une fois nourri, il finit par se soulager
 	v.aMange = true
 	pondu := false
-	for i := 0; i < 60*4 && !pondu; i++ {
+	for i := 0; i < 60*8 && !pondu; i++ {
 		v.Avancer(dt, 5, 5, false)
 		if v.Etat() == Defeque {
 			pondu = true

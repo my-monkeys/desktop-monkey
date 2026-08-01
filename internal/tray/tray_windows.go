@@ -11,6 +11,7 @@ package tray
 
 import (
 	"image"
+	"sync"
 	"syscall"
 	"unsafe"
 )
@@ -75,6 +76,7 @@ const (
 	mfString    = 0x0000
 	mfSeparator = 0x0800
 	mfChecked   = 0x0008
+	mfGrayed    = 0x0001
 
 	tpmRightButton = 0x0002
 	tpmReturnCmd   = 0x0100
@@ -144,7 +146,19 @@ var (
 	gConfig  string
 	gAppName string
 	gIcone   uintptr
+
+	gJaugesMu sync.Mutex
+	gJauges   []string // lignes d'humeur affichees en tete du menu
 )
+
+// MajJauges remplace les lignes d'humeur montrees dans le menu (ex.
+// "Energy ▰▰▰▰▱"). Le menu etant reconstruit a chaque ouverture, la prochaine
+// ouverture les refletera.
+func MajJauges(lignes []string) {
+	gJaugesMu.Lock()
+	gJauges = append(gJauges[:0], lignes...)
+	gJaugesMu.Unlock()
+}
 
 // Nouvelle installe l'icone et son menu. exe est le chemin de l'executable (pour
 // le lancement au demarrage), config le chemin du fichier de reglages a ouvrir,
@@ -225,6 +239,17 @@ func afficherMenu(hwnd uintptr) {
 		return
 	}
 	defer procDestroyMenu.Call(menu)
+
+	// les humeurs du singe, en tete, non cliquables
+	gJaugesMu.Lock()
+	jauges := append([]string(nil), gJauges...)
+	gJaugesMu.Unlock()
+	if len(jauges) > 0 {
+		for _, l := range jauges {
+			appendItem(menu, mfString|mfGrayed, 0, l)
+		}
+		procAppendMenuW.Call(menu, mfSeparator, 0, 0)
+	}
 
 	drapeauDem := uintptr(mfString)
 	if auDemarrage() {

@@ -165,6 +165,7 @@ func lancer(r Reglages) error {
 	horloge := time.NewTicker(intervalle)
 	defer horloge.Stop()
 
+	depuisJauges := 0.0
 	for range horloge.C {
 		if !c.TraiterMessages() || tray.QuitDemande() {
 			log.Printf("fermeture demandee")
@@ -177,17 +178,59 @@ func lancer(r Reglages) error {
 		}
 		s.afficherCrottes()
 		// le singe repasse devant les crottes (creees apres sa fenetre) : ce
-		// qu'il vient de pondre semble sortir de derriere lui...
+		// qu'il vient de pondre semble sortir de derriere lui
 		if len(s.crottes) > 0 {
 			c.PasserDevant()
-			// ...sauf celle qu'il porte, qui doit se voir dans ses mains
-			if s.corCrotte != nil && s.corCrotte.porte {
-				s.corCrotte.cal.PasserDevant()
-			}
 		}
 		s.majTraversance(c, image, x, y)
+
+		// humeurs dans le menu du tray, rafraichies deux fois par seconde
+		if depuisJauges += dt; depuisJauges >= 0.5 {
+			depuisJauges = 0
+			tray.MajJauges(lignesJauges(s.v.Jauges(), enFrancais(r.Langue)))
+		}
 	}
 	return nil
+}
+
+// lignesJauges rend chaque humeur en une ligne de menu : nom localise et barre
+// de cinq segments, ex. "Energie   ▰▰▰▰▱".
+func lignesJauges(js []vie.Jauge, francais bool) []string {
+	noms := map[string]string{
+		"energie": "Energy", "ennui": "Boredom",
+		"bonheur": "Happiness", "peur": "Fear",
+	}
+	if francais {
+		noms = map[string]string{
+			"energie": "Énergie", "ennui": "Ennui",
+			"bonheur": "Bonheur", "peur": "Peur",
+		}
+	}
+	lignes := make([]string, 0, len(js))
+	for _, j := range js {
+		nom := noms[j.Nom]
+		if nom == "" {
+			nom = j.Nom
+		}
+		pleins := int(j.Valeur*5 + 0.5)
+		if pleins > 5 {
+			pleins = 5
+		}
+		barre := ""
+		for i := 0; i < 5; i++ {
+			if i < pleins {
+				barre += "▰"
+			} else {
+				barre += "▱"
+			}
+		}
+		// nom cale a gauche sur 10 colonnes, pour aligner les barres
+		for len([]rune(nom)) < 10 {
+			nom += " "
+		}
+		lignes = append(lignes, nom+barre)
+	}
+	return lignes
 }
 
 // majTraversance rend chaque fenetre capturante uniquement quand le curseur est
@@ -241,6 +284,7 @@ type scene struct {
 
 	mortTraitee bool
 	teinte      *image.RGBA // sprite rougi pendant le flash de degats
+	zzzT        float64     // secondes depuis le debut de la sieste (les Z)
 	ecranL      int
 	alea        *rand.Rand
 
@@ -257,6 +301,7 @@ type scene struct {
 	corMode     int
 	corTimer    float64
 	corCooldown float64
+	videCrotte  *image.RGBA // image transparente qui masque la fenetre portee
 }
 
 func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
@@ -346,6 +391,13 @@ func (s *scene) avancer(dt float64) {
 		souris.Placer(int(x), int(y))
 	}
 
+	// l'horloge des Z de la sieste
+	if s.v.Etat() == vie.Sieste {
+		s.zzzT += dt
+	} else {
+		s.zzzT = 0
+	}
+
 	// crottes : depose quand le singe vient de pondre, puis vie et clics
 	if x, y, ok := s.v.PrendreCrotte(); ok {
 		s.pondre(x, y)
@@ -414,6 +466,24 @@ func (s *scene) composer(dst *image.RGBA) (int, int) {
 			}
 			poser(dst, img, sx, sy)
 		}
+	}
+
+	// la crotte qu'il porte est dessinee dans la scene, juste apres lui : elle
+	// se voit dans ses mains, et coeurs comme bulle restent au-dessus d'elle
+	if c := s.corCrotte; c != nil && c.porte && s.pc != nil {
+		if img := s.crotteImage(c); img != nil {
+			mx, my := s.v.PositionMain()
+			px := int(mx+crottePorteeDX*facteurAffichage) - fenX - s.pc.Largeur/2
+			py := int(my+crottePorteeDY*facteurAffichage) - fenY - s.crotteSol
+			poser(dst, img, px, py)
+		}
+	}
+
+	// pendant la sieste, des Z s'envolent au-dessus du dormeur
+	if s.v.Etat() == vie.Sieste && s.v.Visible() {
+		zx := sx + int(spriteL)/2
+		zy := sy + int(s.v.HautDuCorps()-s.v.Y)
+		dessinerZzz(dst, zx, zy, s.zzzT, facteurAffichage)
 	}
 
 	if s.coeurActif && s.coeur != nil {
@@ -497,10 +567,16 @@ func (s *scene) teinter(src *image.RGBA) *image.RGBA {
 // defaut, francais si le systeme de l'utilisateur l'est (ou si la config le
 // force avec "fr" / "en").
 func recueilPhrases(reglage string) string {
-	if reglage == "fr" || (reglage != "en" && langue.Francais()) {
+	if enFrancais(reglage) {
 		return "assets/phrases.fr.json"
 	}
 	return "assets/phrases.en.json"
+}
+
+// enFrancais applique la meme regle que le choix des phrases : la config peut
+// forcer, sinon on suit la langue du systeme.
+func enFrancais(reglage string) bool {
+	return reglage == "fr" || (reglage != "en" && langue.Francais())
 }
 
 func poser(dst, src *image.RGBA, x, y int) {

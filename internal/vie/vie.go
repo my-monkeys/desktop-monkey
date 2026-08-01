@@ -135,6 +135,15 @@ type Vie struct {
 
 	crainte float64 // temps de peur restant apres une resurrection
 
+	// jauges d'humeur (voir jauges.go) et detection du guili
+	energie, ennui float64
+	bonheur, peur  float64
+	guiliInv       int     // inversions de direction accumulees
+	guiliAmp       float64 // amplitude du va-et-vient en cours
+	guiliTemps     float64 // age de la fenetre d'accumulation
+	guiliCool      float64 // repos entre deux fous rires
+	guiliDroite    bool    // direction du dernier mouvement
+
 	aMange       bool    // il a mange depuis sa derniere crotte : il peut pondre
 	aPondu       bool    // une crotte vient d'etre pondue, en attente de recolte
 	crotteLachee bool    // la crotte de l'accroupissement en cours est deja tombee
@@ -176,6 +185,10 @@ func Nouvelle(p *planche.Planche, r Reglages, ecranL, ecranH, basEcran int) *Vie
 		direction:      "bas",
 		coeursRestants: r.Coeurs,
 		depuisCoup:     1e9,
+		energie:        energieDepart,
+		ennui:          ennuiDepart,
+		bonheur:        bonheurDepart,
+		peur:           peurDepart,
 	}
 	v.X = v.ecranL/2 - v.largeur/2
 	v.Y = v.ecranH/2 - v.hauteur/2
@@ -311,6 +324,15 @@ func (v *Vie) passerA(e Etat) {
 	if e != Cadavre {
 		v.animFigee = false
 	}
+	// sans animation de sommeil dediee, la sieste emprunte la pose allongee de
+	// l'agonie (derniere image, figee) : il dort couche, pas assis
+	if e == Sieste && !v.p.Action("dort") && v.p.Action("meurt") {
+		v.animCourante = "meurt"
+		if v.direction != "gauche" && v.direction != "droite" {
+			v.direction = "droite" // la pose n'existe qu'en profil
+		}
+		v.animFigee = true
+	}
 }
 
 // choisir renvoie la premiere action que la planche connait.
@@ -376,6 +398,11 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 	} else {
 		v.dernierMvt += dt
 	}
+
+	// humeurs : derive lente, et chatouilles si on secoue la souris pres de lui
+	v.majJauges(dt, bougeSeul)
+	v.detecterGuili(dt, curseurX-v.curseurX, curseurX, curseurY, bougeSeul)
+
 	v.curseurX, v.curseurY = curseurX, curseurY
 
 	v.regenerer()
@@ -487,6 +514,7 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 		if v.depuis >= v.duree {
 			if v.etat == Repas {
 				v.aMange = true // il a mange : il a maintenant de quoi pondre
+				v.jaugesRepas() // et ca requinque
 			}
 			v.choisirSuite()
 		}
@@ -504,10 +532,12 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 	}
 }
 
-// choisirSuite decide de la prochaine activite.
+// choisirSuite decide de la prochaine activite. Les chances de base (reglages)
+// sont ponderees par les jauges d'humeur (voir jauges.go) : un singe qui
+// s'ennuie fait des betises, un singe epuise se repose.
 func (v *Vie) choisirSuite() {
-	// endormissement apres une longue absence de l'utilisateur
-	if v.r.AvantSieste > 0 && v.dernierMvt >= v.r.AvantSieste {
+	// endormissement apres une longue absence de l'utilisateur, ou d'epuisement
+	if (v.r.AvantSieste > 0 && v.dernierMvt >= v.r.AvantSieste) || v.energie < 0.15 {
 		v.passerA(Sieste)
 		v.Evenement = "sieste"
 		return
@@ -515,8 +545,9 @@ func (v *Vie) choisirSuite() {
 
 	// le curseur est son meilleur ami : tant qu'il vit, le rejoindre passe
 	// avant tout le reste, ou qu'il soit — sauf s'il a encore peur de lui
-	if v.crainte <= 0 && v.dernierMvt < v.r.SeuilVieSeule && v.alea.Float64() < v.r.ChanceAmi {
-		if v.alea.Float64() < v.r.ChanceChasse {
+	if v.crainte <= 0 && v.dernierMvt < v.r.SeuilVieSeule &&
+		v.alea.Float64() < pondere(v.r.ChanceAmi, v.facteurAmi()) {
+		if v.alea.Float64() < pondere(v.r.ChanceChasse, v.facteurEnnui()) {
 			v.passerA(Chasse)
 			v.Evenement = "chasse"
 		} else {
@@ -525,13 +556,14 @@ func (v *Vie) choisirSuite() {
 		return
 	}
 
-	if v.p.Action("mange") && v.alea.Float64() < v.r.ChanceRepas {
+	// un singe qui manque d'energie pense davantage a manger
+	if v.p.Action("mange") && v.alea.Float64() < pondere(v.r.ChanceRepas, 1.8-v.energie) {
 		v.passerA(Repas)
 		v.Evenement = "repas"
 		return
 	}
 
-	if v.p.Action("saute") && v.alea.Float64() < v.r.ChanceJeu {
+	if v.p.Action("saute") && v.alea.Float64() < pondere(v.r.ChanceJeu, v.facteurActif()) {
 		v.passerA(Joue)
 		v.Evenement = "joue"
 		return
@@ -539,7 +571,8 @@ func (v *Vie) choisirSuite() {
 
 	// l'escalade se termine par une chute qui coute un coeur : avec un seul,
 	// l'instinct de survie l'emporte
-	if v.p.Action("grimpe") && v.coeursRestants > 1 && v.alea.Float64() < v.r.ChanceGrimpe {
+	if v.p.Action("grimpe") && v.coeursRestants > 1 &&
+		v.alea.Float64() < pondere(v.r.ChanceGrimpe, v.facteurActif()) {
 		v.passerA(Grimpe)
 		v.Evenement = "grimpe"
 		return

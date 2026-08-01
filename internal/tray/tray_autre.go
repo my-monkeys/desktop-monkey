@@ -15,3 +15,6 @@ func Fermer() {}
 
 // QuitDemande indique si l'utilisateur a demande a quitter via le menu.
 func QuitDemande() bool { return false }
+
+// MajJauges met a jour les lignes d'humeur du menu (sans effet ici).
+func MajJauges(lignes []string) {}

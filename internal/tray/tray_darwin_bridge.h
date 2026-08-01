@@ -12,6 +12,9 @@ void tray_init(const char *nomApp, const char *exe, const char *config,
 // Renvoie 1 si l'utilisateur a choisi Quitter dans le menu.
 int tray_quit_requested(void);
 
+// Remplace les lignes d'humeur (jointes par \n) montrees en tete du menu.
+void tray_maj_jauges(const char *lignes);
+
 // Retire l'icone de la barre des menus.
 void tray_fermer(void);
 

@@ -1,10 +1,48 @@
 {
+  "abandon": [
+    "Pfff, it's not even moving…",
+    "Okay, I'm bored.",
+    "This is lame, back to my life.",
+    "Not even fun 😤",
+    "I give up… for now.",
+    "Let's say I won.",
+    "Your mouse is broken."
+  ],
+  "aie_chute": [
+    "Ouch, that landing…",
+    "I hurt myself!",
+    "Landing is not my strong suit.",
+    "Doesn't count, I slipped!",
+    "The ground cheated.",
+    "Ow… but it was worth it."
+  ],
+  "attaque": [
+    "Gotcha!",
+    "Take that!",
+    "Rawr!",
+    "I've got you!",
+    "Bam! Right in the whiskers!"
+  ],
   "bonjour": [
     "Hey there 🐒",
     "I'm back!",
     "Guess who!",
     "Hello, human!",
     "Ready for today?"
+  ],
+  "chasse": [
+    "I'm gonna catch you!",
+    "Come back here!",
+    "You can't escape me!",
+    "The hunt is on 🐒",
+    "Here mousey mousey…",
+    "That arrow has been mocking me for too long"
+  ],
+  "corvee": [
+    "Fine, I'll deal with it…",
+    "Who cleans up here? Me.",
+    "Ew. To work.",
+    "If you want something done…"
   ],
   "crotte": [
     "Oops… 💩",
@@ -13,111 +51,6 @@
     "A little gift for you",
     "Clean up after me, will you?",
     "Sorry 🙈"
-  ],
-  "hasard": [
-    "Remember to drink water 💧",
-    "Almost there, keep going!",
-    "Don't forget to take a break",
-    "I'm proud of you",
-    "You're crushing it",
-    "Did you know I can climb curtains?",
-    "Anything interesting going on here?",
-    "I saw a banana fly by, brb",
-    "Stretch a little, it feels great",
-    "Your screen is very comfy",
-    "I'm supervising your work. Good work.",
-    "Nice cursor. Would be a shame if someone… took it."
-  ],
-  "matin": [
-    "Sleep well? ☀️",
-    "Have a great day!",
-    "Coffee? ☕",
-    "What a beautiful morning",
-    "Let's get this day going!",
-    "Breakfast is a monkey's favorite meal"
-  ],
-  "soir": [
-    "Good evening 🌙",
-    "You did great today",
-    "Time to wind down",
-    "Movie night?",
-    "The day flew by, right?"
-  ],
-  "nuit": [
-    "It's late… bedtime 😴",
-    "Go to sleep, human",
-    "Tomorrow is another day",
-    "Even monkeys sleep at this hour",
-    "I yawn just looking at you"
-  ],
-  "repas": [
-    "Yum 🍌",
-    "I was feeling peckish",
-    "Did YOU eat?",
-    "One does not refuse a banana",
-    "It's snack time somewhere in the world"
-  ],
-  "sieste": [
-    "Just a little nap… 😴",
-    "Wake me up when you're back…",
-    "Five minutes, tops…"
-  ],
-  "reveil": [
-    "Oh, you're back!",
-    "I dozed off…",
-    "You woke me up 🐒",
-    "Finally! I was bored",
-    "I dreamt of giant bananas"
-  ],
-  "joue": [
-    "Wheee!",
-    "Boing boing boing!",
-    "Look how high I can jump!",
-    "Olympic shape 🐒",
-    "Nobody jumps better than me"
-  ],
-  "grimpe": [
-    "Training for Everest",
-    "You can see everything from up here!",
-    "Climbing champion 🐒",
-    "To the top!",
-    "Nothing can stop me"
-  ],
-  "tombe": [
-    "Geronimooo!",
-    "Whoops…",
-    "It's slippery!",
-    "Everything is fiiine!",
-    "I meant to do that."
-  ],
-  "vole": [
-    "It's mine now!",
-    "I'm borrowing this!",
-    "Catch me if you can!",
-    "The cursor is my hostage!",
-    "Heh heh heh…"
-  ],
-  "lache": [
-    "Here, take it back.",
-    "Okay okay, you can have it…",
-    "Phew, it wriggles too much.",
-    "It was just a loan!",
-    "Your cursor is boring anyway."
-  ],
-  "ranime": [
-    "I'm alive!",
-    "Where am I?",
-    "The power of love 💕",
-    "I saw a giant glowing banana…",
-    "Never again.",
-    "You shook my fleas off!"
-  ],
-  "retrouvailles": [
-    "You're back!!",
-    "My friend has returned!",
-    "Wait for me, I'm coming!",
-    "Finally! Where are we going?",
-    "I missed you!"
   ],
   "delaisse": [
     "Fine… let me know.",
@@ -134,37 +67,124 @@
     "Mercy, I have a family!",
     "You're never touching me again!"
   ],
-  "aie_chute": [
-    "Ouch, that landing…",
-    "I hurt myself!",
-    "Landing is not my strong suit.",
-    "Doesn't count, I slipped!",
-    "The ground cheated.",
-    "Ow… but it was worth it."
+  "grimpe": [
+    "Training for Everest",
+    "You can see everything from up here!",
+    "Climbing champion 🐒",
+    "To the top!",
+    "Nothing can stop me"
   ],
-  "chasse": [
-    "I'm gonna catch you!",
-    "Come back here!",
-    "You can't escape me!",
-    "The hunt is on 🐒",
-    "Here mousey mousey…",
-    "That arrow has been mocking me for too long"
+  "guili": [
+    "Hehe, stop it!! 🐒",
+    "That tickles!!",
+    "Hihihi!",
+    "Again! No… yes!"
   ],
-  "attaque": [
-    "Gotcha!",
-    "Take that!",
-    "Rawr!",
-    "I've got you!",
-    "Bam! Right in the whiskers!"
+  "hasard": [
+    "Remember to drink water 💧",
+    "Almost there, keep going!",
+    "Don't forget to take a break",
+    "I'm proud of you",
+    "You're crushing it",
+    "Did you know I can climb curtains?",
+    "Anything interesting going on here?",
+    "I saw a banana fly by, brb",
+    "Stretch a little, it feels great",
+    "Your screen is very comfy",
+    "I'm supervising your work. Good work.",
+    "Nice cursor. Would be a shame if someone… took it."
   ],
-  "abandon": [
-    "Pfff, it's not even moving…",
-    "Okay, I'm bored.",
-    "This is lame, back to my life.",
-    "Not even fun 😤",
-    "I give up… for now.",
-    "Let's say I won.",
-    "Your mouse is broken."
+  "joue": [
+    "Wheee!",
+    "Boing boing boing!",
+    "Look how high I can jump!",
+    "Olympic shape 🐒",
+    "Nobody jumps better than me"
+  ],
+  "lache": [
+    "Here, take it back.",
+    "Okay okay, you can have it…",
+    "Phew, it wriggles too much.",
+    "It was just a loan!",
+    "Your cursor is boring anyway."
+  ],
+  "matin": [
+    "Sleep well? ☀️",
+    "Have a great day!",
+    "Coffee? ☕",
+    "What a beautiful morning",
+    "Let's get this day going!",
+    "Breakfast is a monkey's favorite meal"
+  ],
+  "mort": [
+    "Ouch!",
+    "Oh…",
+    "You got me 💔",
+    "Farewell, cruel world…",
+    "I'm dying… for real this time.",
+    "Tell the banana I loved her…"
+  ],
+  "nuit": [
+    "It's late… bedtime 😴",
+    "Go to sleep, human",
+    "Tomorrow is another day",
+    "Even monkeys sleep at this hour",
+    "I yawn just looking at you"
+  ],
+  "ranime": [
+    "I'm alive!",
+    "Where am I?",
+    "The power of love 💕",
+    "I saw a giant glowing banana…",
+    "Never again.",
+    "You shook my fleas off!"
+  ],
+  "repas": [
+    "Yum 🍌",
+    "I was feeling peckish",
+    "Did YOU eat?",
+    "One does not refuse a banana",
+    "It's snack time somewhere in the world"
+  ],
+  "retour": [
+    "I'm back 🐒",
+    "Did you miss me?",
+    "Hello again!",
+    "Clean slate, let's go",
+    "Monkeys have nine lives too"
+  ],
+  "retrouvailles": [
+    "You're back!!",
+    "My friend has returned!",
+    "Wait for me, I'm coming!",
+    "Finally! Where are we going?",
+    "I missed you!"
+  ],
+  "reveil": [
+    "Oh, you're back!",
+    "I dozed off…",
+    "You woke me up 🐒",
+    "Finally! I was bored",
+    "I dreamt of giant bananas"
+  ],
+  "sieste": [
+    "Just a little nap… 😴",
+    "Wake me up when you're back…",
+    "Five minutes, tops…"
+  ],
+  "soir": [
+    "Good evening 🌙",
+    "You did great today",
+    "Time to wind down",
+    "Movie night?",
+    "The day flew by, right?"
+  ],
+  "tombe": [
+    "Geronimooo!",
+    "Whoops…",
+    "It's slippery!",
+    "Everything is fiiine!",
+    "I meant to do that."
   ],
   "touche": [
     "Ouch!",
@@ -178,19 +198,11 @@
     "You'll regret this 😤",
     "Not the face!"
   ],
-  "mort": [
-    "Ouch!",
-    "Oh…",
-    "You got me 💔",
-    "Farewell, cruel world…",
-    "I'm dying… for real this time.",
-    "Tell the banana I loved her…"
-  ],
-  "retour": [
-    "I'm back 🐒",
-    "Did you miss me?",
-    "Hello again!",
-    "Clean slate, let's go",
-    "Monkeys have nine lives too"
+  "vole": [
+    "It's mine now!",
+    "I'm borrowing this!",
+    "Catch me if you can!",
+    "The cursor is my hostage!",
+    "Heh heh heh…"
   ]
 }

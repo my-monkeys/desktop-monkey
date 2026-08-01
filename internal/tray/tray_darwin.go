@@ -16,6 +16,7 @@ import "C"
 
 import (
 	"image"
+	"strings"
 	"unsafe"
 )
 
@@ -44,6 +45,14 @@ func Nouvelle(nomApp, exe, config string, icone *image.RGBA) error {
 // QuitDemande indique si l'utilisateur a choisi Quitter dans le menu. La boucle
 // principale l'interroge a chaque image pour s'arreter proprement.
 func QuitDemande() bool { return C.tray_quit_requested() != 0 }
+
+// MajJauges remplace les lignes d'humeur montrees en tete du menu (elles
+// apparaissent a sa prochaine ouverture).
+func MajJauges(lignes []string) {
+	c := C.CString(strings.Join(lignes, "\n"))
+	defer C.free(unsafe.Pointer(c))
+	C.tray_maj_jauges(c)
+}
 
 // Fermer retire l'icone de la barre des menus.
 func Fermer() { C.tray_fermer() }

@@ -91,11 +91,12 @@ func (s *scene) gererCorvee(dt float64, cx, cy int) {
 		}
 	}
 
-	// pendant tout le transport, la crotte suit les mains du singe
+	// pendant tout le transport, la crotte suit les mains du singe (elle est
+	// dessinee dans la scene, voir composer ; fx/fy servent au lacher/lancer)
 	if c.porte {
 		hx, hy := s.v.PositionMain()
-		c.fx = hx - float64(s.pc.Largeur)/2 + crottePorteeDX
-		c.fy = hy - float64(s.crotteSol) + crottePorteeDY
+		c.fx = hx - float64(s.pc.Largeur)/2 + crottePorteeDX*facteurAffichage
+		c.fy = hy - float64(s.crotteSol) + crottePorteeDY*facteurAffichage
 		c.fenX, c.fenY = int(c.fx), int(c.fy)
 	}
 }
@@ -137,7 +138,16 @@ func (s *scene) peutEtreLancerCorvee(dt float64, cx, cy int) {
 		return
 	}
 	c := s.crotteAJeter()
-	if c == nil || s.alea.Float64() > s.r.ChanceJetCrotte*dt {
+	if c == nil {
+		return
+	}
+	// un singe qui s'ennuie s'occupe plus volontiers de ses crottes (une
+	// chance >= 1 reste forcee, pour les demos et les tests)
+	chance := s.r.ChanceJetCrotte
+	if chance < 1 {
+		chance *= s.v.FacteurEnnui()
+	}
+	if s.alea.Float64() > chance*dt {
 		return
 	}
 	s.corCrotte, s.corPhase = c, corVaChercher
@@ -146,6 +156,7 @@ func (s *scene) peutEtreLancerCorvee(dt float64, cx, cy int) {
 	if s.r.JetMode == versSouris || (s.r.JetMode < 0 && s.alea.Float64() < 0.5) {
 		s.corMode = versSouris
 	}
+	s.parler("corvee")
 	s.v.EnvoyerVers(float64(c.solX), float64(c.solY)-float64(s.pc.Hauteur)*0.25)
 }
 

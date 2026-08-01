@@ -16,6 +16,8 @@ static int gQuit = 0;
 @property(copy) NSString *label;
 @property(copy) NSString *exe;
 @property(copy) NSString *config;
+@property(copy) NSString *jauges;      // lignes d'humeur, jointes par \n
+@property(assign) NSInteger nbJauges;  // items d'humeur presents en tete du menu
 @end
 
 static SingeTray *gTray = nil;
@@ -59,9 +61,29 @@ static SingeTray *gTray = nil;
     gQuit = 1;
 }
 
-// met a jour la coche du "lancer au demarrage" chaque fois que le menu s'ouvre
+// rafraichit le menu chaque fois qu'il s'ouvre : les jauges d'humeur en tete
+// (items desactives, reconstruits a chaque ouverture) et la coche du demarrage.
 - (void)menuNeedsUpdate:(NSMenu *)menu {
-    NSMenuItem *dem = [menu itemAtIndex:0];
+    // retire les anciennes lignes d'humeur (et leur separateur)
+    for (NSInteger i = 0; i < self.nbJauges; i++) {
+        [menu removeItemAtIndex:0];
+    }
+    self.nbJauges = 0;
+
+    NSArray *lignes = self.jauges.length ? [self.jauges componentsSeparatedByString:@"\n"] : @[];
+    NSInteger pos = 0;
+    for (NSString *l in lignes) {
+        if (l.length == 0) continue;
+        NSMenuItem *it = [[NSMenuItem alloc] initWithTitle:l action:nil keyEquivalent:@""];
+        [it setEnabled:NO];
+        [menu insertItem:it atIndex:pos++];
+    }
+    if (pos > 0) {
+        [menu insertItem:[NSMenuItem separatorItem] atIndex:pos++];
+    }
+    self.nbJauges = pos;
+
+    NSMenuItem *dem = [menu itemAtIndex:self.nbJauges];
     [dem setState:([self auDemarrage] ? NSControlStateValueOn : NSControlStateValueOff)];
 }
 
@@ -91,6 +113,8 @@ void tray_init(const char *nomApp, const char *exe, const char *config,
         gTray.label = [NSString stringWithUTF8String:nomApp];
         gTray.exe = [NSString stringWithUTF8String:exe];
         gTray.config = [NSString stringWithUTF8String:config];
+        gTray.jauges = @"";
+        gTray.nbJauges = 0;
 
         gTray.item = [[NSStatusBar systemStatusBar]
             statusItemWithLength:NSVariableStatusItemLength];
@@ -124,6 +148,16 @@ void tray_init(const char *nomApp, const char *exe, const char *config,
 }
 
 int tray_quit_requested(void) { return gQuit; }
+
+// tray_maj_jauges recoit les lignes d'humeur (jointes par \n). Elles seront
+// posees en tete du menu a sa prochaine ouverture (menuNeedsUpdate).
+void tray_maj_jauges(const char *lignes) {
+    @autoreleasepool {
+        if (gTray != nil) {
+            gTray.jauges = [NSString stringWithUTF8String:(lignes ? lignes : "")];
+        }
+    }
+}
 
 void tray_fermer(void) {
     @autoreleasepool {

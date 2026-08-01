@@ -26,6 +26,7 @@ func (v *Vie) Coup() bool {
 	if v.etat == Mort || v.etat == Cadavre || v.etat == Cache {
 		return false
 	}
+	v.jaugesCoup() // le coup le rend malheureux et craintif
 	if v.perdreCoeur() {
 		return true
 	}

@@ -225,13 +225,23 @@ func (s *scene) crotteImage(c *crotte) *image.RGBA {
 }
 
 // afficherCrottes peint chaque crotte dans sa fenetre. A appeler dans la boucle
-// principale, apres l'affichage du singe.
+// principale, apres l'affichage du singe. Une crotte portee est dessinee dans
+// la scene du singe (voir composer) : sa fenetre affiche du transparent, pour
+// que la bulle et les coeurs restent au-dessus d'elle.
 func (s *scene) afficherCrottes() {
 	for _, c := range s.crottes {
-		if img := s.crotteImage(c); img != nil {
-			if err := c.cal.Afficher(img, c.fenX, c.fenY); err != nil {
-				log.Printf("affichage crotte : %v", err)
+		img := s.crotteImage(c)
+		if img == nil {
+			continue
+		}
+		if c.porte {
+			if s.videCrotte == nil {
+				s.videCrotte = image.NewRGBA(image.Rect(0, 0, s.pc.Largeur, s.pc.Hauteur))
 			}
+			img = s.videCrotte
+		}
+		if err := c.cal.Afficher(img, c.fenX, c.fenY); err != nil {
+			log.Printf("affichage crotte : %v", err)
 		}
 	}
 }
