@@ -704,7 +704,16 @@ func TestDefequePondUneCrotte(t *testing.T) {
 	if !pondu {
 		t.Fatal("aucune crotte pondue apres l'accroupissement")
 	}
-	if v.Etat() == Defeque {
-		t.Fatal("il devrait avoir repris sa vie apres avoir pondu")
+	// il pond a mi-accroupissement, marque une pause, puis s'ecarte
+	sorti := false
+	for i := 0; i < 60*3; i++ {
+		v.Avancer(dt, 5, 5, false)
+		if v.Etat() != Defeque {
+			sorti = true
+			break
+		}
+	}
+	if !sorti {
+		t.Fatal("il devrait s'ecarter apres avoir pondu")
 	}
 }

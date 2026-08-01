@@ -129,6 +129,7 @@ type Vie struct {
 	crainte float64 // temps de peur restant apres une resurrection
 
 	aPondu       bool    // une crotte vient d'etre pondue, en attente de recolte
+	crotteLachee bool    // la crotte de l'accroupissement en cours est deja tombee
 	pondX, pondY float64 // ou elle est tombee (point de sol)
 
 	coeursRestants int
@@ -272,8 +273,10 @@ func (v *Vie) passerA(e Etat) {
 		}
 	case Defeque:
 		// il s'accroupit dos a l'ecran ; faute d'animation dediee, il se met en
-		// repos vers le haut, le temps de pondre
-		v.duree = 1.3
+		// repos vers le haut. Il pond a mi-parcours, reste un instant, puis
+		// s'ecarte (voir le cas Defeque dans Avancer).
+		v.duree = 1.5
+		v.crotteLachee = false
 		v.animCourante = choisir(v.p, "defeque", "repos")
 		v.direction = "haut"
 	case Repas:
@@ -439,30 +442,34 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 		v.sautiller(dt)
 
 	case Defeque:
-		if v.depuis >= v.duree {
-			// la crotte tombe juste derriere lui, sous son corps (le singe
-			// passe devant, cf calque.PasserDevant) ; puis il fait un pas en
-			// avant pour la reveler.
+		// il pond a mi-accroupissement, la crotte tombe derriere lui (sous son
+		// corps ; le singe passe devant, cf calque.PasserDevant)...
+		if !v.crotteLachee && v.depuis >= 0.5 {
 			recul := v.largeur * 0.3
-			pas := v.largeur
 			v.pondX = v.X + v.largeur/2
-			cible := v.X + v.largeur/2
 			if v.direction == "gauche" {
 				v.pondX += recul // il regarde a gauche : la crotte sort a droite
-				cible -= pas     // et il s'ecarte vers la gauche
 			} else {
 				v.pondX -= recul
-				cible += pas
 			}
 			v.pondY = v.Y + v.hauteur
 			v.aPondu = true
-
-			// un simple pas de cote (on remplace la cible aleatoire de Promenade)
+			v.crotteLachee = true
+			v.Evenement = "crotte"
+		}
+		// ...il reste un instant, puis s'ecarte d'un pas pour la reveler
+		if v.depuis >= v.duree {
+			pas := v.largeur
+			cible := v.X + v.largeur/2
+			if v.direction == "gauche" {
+				cible -= pas
+			} else {
+				cible += pas
+			}
 			m := v.r.MargeBord
 			v.passerA(Promenade)
 			v.cibleX = clamp(cible, m+v.largeur/2, v.ecranL-v.largeur/2-m)
 			v.cibleY = v.Y + v.hauteur/2
-			v.Evenement = "crotte"
 		}
 
 	case Repos, Repas:

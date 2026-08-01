@@ -110,7 +110,7 @@ for ($f = 0; $f -lt $total; $f++) {
             if (-not $explose) {
                 $c = TrouverClasse 'CrotteDeBureauClasse'
                 if ($c -ne [IntPtr]::Zero) { $vue++ } # on laisse d'abord le singe s'ecarter
-                if ($c -ne [IntPtr]::Zero -and $vue -gt [int]($Fps * 0.9)) {
+                if ($c -ne [IntPtr]::Zero -and $vue -gt [int]($Fps * 1.7)) {
                     $cr = Rect $c
                     $tx = [int](($cr.Left + $cr.Right) / 2); $ty = [int](($cr.Top + $cr.Bottom) / 2)
                     $sx = [int]($sx + ($tx - $sx) * 0.45); $sy = [int]($sy + ($ty - $sy) * 0.45)
