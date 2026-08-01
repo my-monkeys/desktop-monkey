@@ -4,7 +4,7 @@
 
 **A tiny pixel-art monkey that lives on your desktop.**
 
-<img src="docs/marche.gif" width="440" alt="The monkey walking across the desktop, following the cursor">
+<img src="docs/suivre.gif" width="440" alt="The monkey walking across the desktop, following the cursor">
 
 *Free, open source, no account, no dependencies — Windows & macOS.*
 
@@ -21,7 +21,7 @@ complains; click him enough and he keels over (you can revive him).
 
 | | |
 |:---:|:---:|
-| <img src="docs/marche.gif" width="380"><br>**Follows your cursor** everywhere | <img src="docs/chasse.gif" width="380"><br>**Hunts it down** and whacks it with bananas |
+| <img src="docs/suivre.gif" width="380"><br>**Follows your cursor** everywhere | <img src="docs/chasse.gif" width="380"><br>**Hunts it down** and whacks it with bananas |
 | <img src="docs/degats.gif" width="380"><br>**Click him** — three hearts, then he keels over | <img src="docs/grimpe.gif" width="380"><br>**Climbs the screen edge**, then drops off |
 | <img src="docs/pond.gif" width="380"><br>**Leaves a steaming poop** — click it to pop it | |
 
