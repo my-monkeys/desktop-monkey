@@ -104,8 +104,10 @@ in the config file below.
 
 ## Customizing
 
-On first launch, a configuration file is created at
-`%APPDATA%\SingeDeBureau\config.json`:
+On first launch, a configuration file is created — at
+`%APPDATA%\SingeDeBureau\config.json` on Windows, and
+`~/Library/Application Support/SingeDeBureau/config.json` on macOS (or just
+pick **Open settings** from the tray/menu-bar menu):
 
 - `chance_ami`: probability of going to see a still-alive cursor at the end
   of an activity, whatever the distance (default `0.85`).
