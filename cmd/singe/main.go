@@ -207,7 +207,7 @@ func lancer(r Reglages) error {
 			return
 		}
 		if dialogue.Disponible() {
-			dialogue.Ouvrir(urlReglages, titreReglages, 700, 700)
+			dialogue.Ouvrir(urlReglages, titreReglages, 700, 734)
 		}
 	}
 

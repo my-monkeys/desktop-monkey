@@ -161,6 +161,17 @@ func bandeDe(p *planche.Planche, action string, boite image.Rectangle) bande {
 	}
 }
 
+// iconeAppBase64 renvoie l'icone de l'application (le singe sur son fond bleu
+// nuit), celle du Finder et de l'Explorateur : la fenetre de reglages porte la
+// meme signature.
+func iconeAppBase64() string {
+	brut, err := ressourceBase64("assets/icone.png")
+	if err != nil {
+		return ""
+	}
+	return "data:image/png;base64," + brut
+}
+
 // coeurBase64 renvoie l'image d'un coeur (plein ou vide) telle que le singe la
 // porte au-dessus de la tete.
 func coeurBase64(plein bool) string { return versPngBase64(coeurs.Icone(plein, 4)) }

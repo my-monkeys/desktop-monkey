@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
-"""Fabrique l'icone macOS (AppIcon.iconset) a partir du sprite du singe.
+"""Fabrique l'icone de l'application a partir du sprite du singe.
 
     python3 outils/icone.py <sortie.iconset>
 
 Le singe (pixel art) est agrandi au plus proche voisin pour rester net, puis
 pose au centre d'un fond bleu nuit a coins arrondis facon macOS. iconutil
 transforme ensuite le dossier en .icns.
+
+Le script depose aussi, a cote :
+  - internal/ressources/assets/icone.png : embarquee dans le binaire, elle
+    signe la fenetre de reglages et sert de favicon ;
+  - dist/AppIcon.ico : de quoi refabriquer l'icone de l'executable Windows.
+    Les .syso deja commites suffisent au quotidien ; pour les regenerer :
+
+        go run github.com/akavel/rsrc@latest -ico dist/AppIcon.ico \
+            -arch amd64 -o cmd/singe/rsrc_windows_amd64.syso
+
+    (et de meme pour arm64). Le lieur Go ramasse le .syso tout seul.
 """
 import json
 import os
@@ -65,6 +76,15 @@ def main():
         d2 = taille * 2
         m.resize((d2, d2), Image.LANCZOS).save(
             os.path.join(dossier, f"icon_{taille}x{taille}@2x.png"))
+
+    # l'icone embarquee dans le binaire (fenetre de reglages, favicon)
+    m.resize((256, 256), Image.LANCZOS).save(os.path.join(ASSETS, "icone.png"))
+
+    # l'icone de l'executable Windows, toutes tailles dans un seul .ico
+    dist = os.path.join(RACINE, "dist")
+    os.makedirs(dist, exist_ok=True)
+    m.save(os.path.join(dist, "AppIcon.ico"), format="ICO",
+           sizes=[(s, s) for s in (16, 24, 32, 48, 64, 128, 256)])
     print(dossier)
 
 

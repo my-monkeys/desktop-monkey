@@ -42,6 +42,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .app{display:flex;flex-direction:column;height:100%}
 
+/* ── bandeau d'identite ───────────────────────────────────────────── */
+.enseigne{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;
+  background:var(--bar);border-bottom:3px solid var(--brd)}
+.enseigne img{width:22px;height:22px;display:block}
+.enseigne .titre{flex:1;font-size:9px;color:var(--txt)}
+.enseigne .ver{font-size:11px;color:var(--mut)}
+
 /* ── le diorama ───────────────────────────────────────────────────── */
 .diorama{
   position:relative;height:164px;flex:0 0 164px;overflow:hidden;
@@ -199,6 +206,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 </head>
 <body>
 <div class="app">
+  <div class="enseigne">
+    <img id="marque" alt="">
+    <span class="titre px">Desktop Monkey</span>
+    <span class="ver" id="ver"></span>
+  </div>
   <header class="diorama" id="diorama">
     <div class="ciel"></div>
     <div class="couche c3" id="c3"></div>
@@ -524,8 +536,7 @@ function blocChemin(){
   b.onclick = () => fetch('/dossier', {method:'POST'});
   c.appendChild(code); c.appendChild(b);
   d.appendChild(c);
-  const p = el('p', 'aide', M.divers.version + ' ' + D.version);
-  d.appendChild(p);
+  d.appendChild(el('p', 'aide', M.divers.fichierAide));
   return d;
 }
 
@@ -729,6 +740,8 @@ async function enregistrer(){
 construire();
 construireHumeurs();
 $('#astuce').textContent = M.divers.apercuAide;
+$('#marque').src = D.icone;
+$('#ver').textContent = M.divers.version + ' ' + D.version;
 $('#defaut').textContent = M.boutons.defaut;
 $('#annuler').textContent = M.boutons.annuler;
 $('#enregistrer').textContent = M.boutons.enregistrer;

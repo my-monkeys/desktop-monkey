@@ -130,6 +130,7 @@ func pageReglages(w http.ResponseWriter, req *http.Request) {
 			"plein": "data:image/png;base64," + coeurBase64(true),
 			"vide":  "data:image/png;base64," + coeurBase64(false),
 		},
+		"icone":   iconeAppBase64(),
 		"chemin":  filepath.Join(dossierConfig(), "config.json"),
 		"version": version,
 		"mots":    motsReglages(fr),
@@ -217,7 +218,7 @@ func servirHumeurs(w http.ResponseWriter, req *http.Request) {
 }
 
 func servirIcone(w http.ResponseWriter, req *http.Request) {
-	brut, err := base64.StdEncoding.DecodeString(coeurBase64(true))
+	brut, err := ressources.Fichiers.ReadFile("assets/icone.png")
 	if err != nil {
 		http.NotFound(w, req)
 		return

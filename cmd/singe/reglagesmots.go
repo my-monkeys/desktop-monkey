@@ -195,11 +195,13 @@ func motsReglages(fr bool) map[string]any {
 		},
 
 		"divers": map[string]string{
-			"propre":     t("Aucune modification", "No changes"),
-			"saleUn":     t("1 modification", "1 change"),
-			"saleN":      t("%d modifications", "%d changes"),
-			"redemarre":  t("Il redémarre pour appliquer…", "Restarting to apply…"),
-			"version":    t("version", "version"),
+			"propre":    t("Aucune modification", "No changes"),
+			"saleUn":    t("1 modification", "1 change"),
+			"saleN":     t("%d modifications", "%d changes"),
+			"redemarre": t("Il redémarre pour appliquer…", "Restarting to apply…"),
+			"version":   t("version", "version"),
+			"fichierAide": t("Tu peux l'ouvrir à la main : le singe le relit à chaque démarrage.",
+				"You can edit it by hand: he reads it again every time he starts."),
 			"apercuAide": t("Clique dessus pour l'embêter", "Click him to bother him"),
 			"vivant":     t("EN DIRECT", "LIVE"),
 		},
