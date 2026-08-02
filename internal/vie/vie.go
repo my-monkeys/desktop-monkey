@@ -142,7 +142,8 @@ type Vie struct {
 	guiliAmp       float64 // amplitude du va-et-vient en cours
 	guiliTemps     float64 // age de la fenetre d'accumulation
 	guiliCool      float64 // repos entre deux fous rires
-	guiliDroite    bool    // direction du dernier mouvement
+	guiliPvx       float64 // direction du dernier deplacement
+	guiliPvy       float64
 
 	aMange       bool    // il a mange depuis sa derniere crotte : il peut pondre
 	digestion    float64 // temps restant avant que le repas ne redescende
@@ -405,7 +406,7 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 
 	// humeurs : derive lente, et chatouilles si on secoue la souris pres de lui
 	v.majJauges(dt, bougeSeul)
-	v.detecterGuili(dt, curseurX-v.curseurX, curseurX, curseurY, bougeSeul)
+	v.detecterGuili(dt, curseurX-v.curseurX, curseurY-v.curseurY, curseurX, curseurY, bougeSeul)
 
 	v.curseurX, v.curseurY = curseurX, curseurY
 

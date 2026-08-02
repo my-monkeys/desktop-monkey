@@ -81,4 +81,20 @@ func TestGuiliRendHeureux(t *testing.T) {
 	if secouer(v2, cx2+500, cy2) {
 		t.Error("secouer loin de lui ne devrait pas le chatouiller")
 	}
+
+	// le secouage vertical chatouille aussi
+	v3 := nouvelleVie(t, r)
+	cx3, cy3 := v3.Centre()
+	vertical := false
+	for i := 0; i < 60; i++ {
+		y := cy3 + 20*math.Sin(float64(i)*0.8)
+		v3.Avancer(dt, cx3+30, y, false)
+		if v3.Evenement == "guili" {
+			vertical = true
+			break
+		}
+	}
+	if !vertical {
+		t.Error("secouer verticalement pres de lui devrait le chatouiller")
+	}
 }

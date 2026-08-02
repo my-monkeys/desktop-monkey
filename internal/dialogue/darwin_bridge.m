@@ -17,6 +17,26 @@ static NSMutableDictionary *gVal = nil;   // cle -> label de valeur (curseurs)
 static NSMutableDictionary *gPas = nil;   // cle -> pas (format d'affichage)
 static NSMutableDictionary *gOpts = nil;  // cle -> options d'un choix
 
+// l'apercu du singe, redimensionne en direct par le curseur qui lui est lie
+static NSImageView *gApercu = nil;
+static NSString *gApercuLie = nil;
+static CGFloat gApercuBaseL = 0, gApercuBaseH = 0;
+static NSRect gApercuZone;
+
+static void reframeApercu(double t) {
+    if (gApercu == nil) return;
+    // baseL/baseH sont en pixels physiques : on repasse en points a la densite
+    // de l'ecran ou vit la fenetre, pour que l'apercu fasse la taille reelle
+    CGFloat densite = gFen.screen != nil ? gFen.screen.backingScaleFactor
+                                         : [NSScreen mainScreen].backingScaleFactor;
+    if (densite <= 0) densite = 1;
+    CGFloat w = gApercuBaseL * t / densite, h = gApercuBaseH * t / densite;
+    gApercu.frame = NSMakeRect(
+        gApercuZone.origin.x + (gApercuZone.size.width - w) / 2,
+        gApercuZone.origin.y, // le sol reste fixe : il grandit vers le haut
+        w, h);
+}
+
 @interface DialogueSinge : NSObject <NSWindowDelegate>
 @end
 
@@ -34,6 +54,9 @@ static NSString *formatValeur(double v, double pas) {
     NSTextField *l = gVal[cle];
     if (l != nil) {
         l.stringValue = formatValeur(s.doubleValue, [gPas[cle] doubleValue]);
+    }
+    if (gApercuLie != nil && [cle isEqualToString:gApercuLie]) {
+        reframeApercu(s.doubleValue);
     }
 }
 
@@ -70,6 +93,8 @@ static NSString *formatValeur(double v, double pas) {
 - (void)windowWillClose:(NSNotification *)n {
     gFen = nil;
     gCtrl = gType = gVal = gPas = gOpts = nil;
+    gApercu = nil;
+    gApercuLie = nil;
 }
 
 @end
@@ -77,6 +102,13 @@ static NSString *formatValeur(double v, double pas) {
 // hauteur d'un champ dans la pile de son onglet
 static CGFloat hauteurChamp(NSDictionary *ch) {
     NSString *type = ch[@"type"];
+    if ([type isEqualToString:@"apercu"]) {
+        // le libelle, puis la place du singe a sa taille maximale (x2),
+        // baseH etant en pixels physiques
+        CGFloat densite = [NSScreen mainScreen].backingScaleFactor;
+        if (densite <= 0) densite = 1;
+        return 24 + [ch[@"baseH"] doubleValue] * 2 / densite;
+    }
     CGFloat base = 34; // une ligne : libelle + controle
     if ([type isEqualToString:@"curseur"] || [type isEqualToString:@"entier"]) {
         base = 52; // libelle + valeur, curseur en dessous
@@ -92,9 +124,31 @@ static CGFloat construireChamp(NSView *vue, NSDictionary *ch, CGFloat yTop) {
     CGFloat h = hauteurChamp(ch);
     CGFloat yHaut = H - yTop; // ordonnee Cocoa du sommet du champ
 
-    NSTextField *nom = [NSTextField labelWithString:ch[@"nom"]];
+    NSTextField *nom = [NSTextField labelWithString:(ch[@"nom"] ?: @"")];
     nom.frame = NSMakeRect(12, yHaut - 18, L - 70, 17);
     [vue addSubview:nom];
+
+    if ([type isEqualToString:@"apercu"]) {
+        nom.textColor = [NSColor secondaryLabelColor];
+        nom.font = [NSFont systemFontOfSize:11];
+        NSData *png = [[NSData alloc] initWithBase64EncodedString:ch[@"png"] options:0];
+        NSImage *img = png != nil ? [[NSImage alloc] initWithData:png] : nil;
+        if (img != nil) {
+            gApercuBaseL = [ch[@"baseL"] doubleValue];
+            gApercuBaseH = [ch[@"baseH"] doubleValue];
+            gApercuLie = ch[@"liee"];
+            gApercuZone = NSMakeRect(12, yHaut - h, L, h - 24);
+            gApercu = [[NSImageView alloc] initWithFrame:gApercuZone];
+            gApercu.image = img;
+            gApercu.imageScaling = NSImageScaleAxesIndependently;
+            gApercu.wantsLayer = YES;
+            gApercu.layer.magnificationFilter = @"nearest"; // pixel art net
+            [vue addSubview:gApercu];
+            NSSlider *lie = gCtrl[gApercuLie];
+            reframeApercu(lie != nil ? lie.doubleValue : 1.0);
+        }
+        return h;
+    }
 
     if ([type isEqualToString:@"curseur"] || [type isEqualToString:@"entier"]) {
         double pas = [ch[@"pas"] doubleValue];

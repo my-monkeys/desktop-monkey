@@ -40,7 +40,6 @@ var (
 	procDestroyIcon      = user32.NewProc("DestroyIcon")
 
 	procShellNotifyIconW = shell32.NewProc("Shell_NotifyIconW")
-	procShellExecuteW    = shell32.NewProc("ShellExecuteW")
 
 	procCreateDIBSection = gdi32.NewProc("CreateDIBSection")
 	procCreateBitmap     = gdi32.NewProc("CreateBitmap")
@@ -149,6 +148,8 @@ var (
 
 	gJaugesMu sync.Mutex
 	gJauges   []string // lignes d'humeur affichees en tete du menu
+
+	gReglages bool // "Open settings" vient d'etre choisi
 )
 
 // MajJauges remplace les lignes d'humeur montrees dans le menu (ex.
@@ -273,7 +274,8 @@ func afficherMenu(hwnd uintptr) {
 	case idDemarrage:
 		basculerDemarrage()
 	case idReglages:
-		ouvrirReglages()
+		// la boucle principale ouvre la fenetre native de reglages
+		gReglages = true
 	case idQuitter:
 		Fermer()
 		procPostQuitMessage.Call(0)
@@ -283,13 +285,6 @@ func afficherMenu(hwnd uintptr) {
 func appendItem(menu, flags, id uintptr, texte string) {
 	p, _ := syscall.UTF16PtrFromString(texte)
 	procAppendMenuW.Call(menu, flags, id, uintptr(unsafe.Pointer(p)))
-}
-
-func ouvrirReglages() {
-	verbe, _ := syscall.UTF16PtrFromString("open")
-	fichier, _ := syscall.UTF16PtrFromString(gConfig)
-	procShellExecuteW.Call(0,
-		uintptr(unsafe.Pointer(verbe)), uintptr(unsafe.Pointer(fichier)), 0, 0, 1)
 }
 
 // --- lancement au demarrage : cle HKCU ...\Run --------------------------------
@@ -389,6 +384,10 @@ func copyUTF16(dst []uint16, s string) {
 	}
 }
 
-// ReglagesDemande n'est pas utilise sous Windows : le menu ouvre directement la
-// page de reglages web (le dialogue natif n'y est pas encore implemente).
-func ReglagesDemande() bool { return false }
+// ReglagesDemande indique que "Open settings" vient d'etre choisi, et consomme
+// la demande : la boucle principale ouvre alors le dialogue natif.
+func ReglagesDemande() bool {
+	r := gReglages
+	gReglages = false
+	return r
+}

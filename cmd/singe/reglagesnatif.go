@@ -2,22 +2,28 @@ package main
 
 // Construction de la fenetre native de reglages (internal/dialogue) : la
 // description des onglets part d'ici, et l'enregistrement reecrit config.json
-// puis relance le singe. La ou le dialogue natif n'existe pas (Windows pour
-// l'instant), le menu ouvre la page web a la place.
+// puis relance le singe. La fenetre est native sur macOS (Cocoa) et Windows
+// (Win32) ; ailleurs, il reste le fichier de configuration.
 
 import (
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
+	"image/png"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/my-monkeys/desktop-monkey/internal/dialogue"
+	"github.com/my-monkeys/desktop-monkey/internal/planche"
+	"github.com/my-monkeys/desktop-monkey/internal/ressources"
 )
 
 type champNatif struct {
 	Type     string   `json:"type"`
 	Cle      string   `json:"cle"`
-	Nom      string   `json:"nom"`
+	Nom      string   `json:"nom,omitempty"`
 	Aide     string   `json:"aide,omitempty"`
 	Min      float64  `json:"min,omitempty"`
 	Max      float64  `json:"max,omitempty"`
@@ -27,6 +33,13 @@ type champNatif struct {
 	Libelles []string `json:"libelles,omitempty"`
 	Texte    string   `json:"texte,omitempty"`
 	Coche    bool     `json:"coche,omitempty"`
+
+	// type "apercu" : l'image du singe (PNG en base64), redimensionnee en
+	// direct par le curseur dont Liee donne la cle
+	Liee  string `json:"liee,omitempty"`
+	Png   string `json:"png,omitempty"`
+	BaseL int    `json:"baseL,omitempty"`
+	BaseH int    `json:"baseH,omitempty"`
 }
 
 type ongletNatif struct {
@@ -132,12 +145,47 @@ func ouvrirReglagesNatifs() {
 		},
 	}
 
+	// apercu du singe a la taille choisie, en bas de l'onglet Apparence : le
+	// curseur "taille" le redimensionne en direct
+	if ap, ok := apercuSinge(r.Planche); ok {
+		ap.Nom = nom("Aperçu (taille réelle)", "Preview (actual size)")
+		d.Onglets[0].Champs = append(d.Onglets[0].Champs, ap)
+	}
+
 	brut, err := json.Marshal(d)
 	if err != nil {
 		log.Printf("description des reglages : %v", err)
 		return
 	}
 	dialogue.Ouvrir(string(brut))
+}
+
+// apercuSinge prepare l'image de l'apercu : le singe au repos, a l'echelle de
+// sa planche (les pixels de base, ceux que multiplie le reglage de taille).
+func apercuSinge(chemin string) (champNatif, bool) {
+	p, err := planche.Charger(ressources.Fichiers, chemin, 1)
+	if err != nil {
+		return champNatif{}, false
+	}
+	img := p.Obtenir("repos", "droite").Image(0)
+	if img == nil {
+		return champNatif{}, false
+	}
+	var buf bytes.Buffer
+	if err := png.Encode(&buf, img); err != nil {
+		return champNatif{}, false
+	}
+	// BaseL/BaseH sont en pixels physiques par unite de taille : les memes que
+	// le rendu reel (facteur de plateforme compris). L'affichage divise par la
+	// densite de l'ecran ou vit la fenetre, pour une taille fidele partout.
+	return champNatif{
+		Type:  "apercu",
+		Cle:   "apercu_taille",
+		Liee:  "taille",
+		Png:   base64.StdEncoding.EncodeToString(buf.Bytes()),
+		BaseL: img.Bounds().Dx() * facteurAffichage,
+		BaseH: img.Bounds().Dy() * facteurAffichage,
+	}, true
 }
 
 // recolterReglagesNatifs applique un eventuel enregistrement du dialogue :
@@ -194,6 +242,29 @@ func recolterReglagesNatifs() {
 
 func valeurTexteOu(v, defaut string) string {
 	if v == "" {
+		return defaut
+	}
+	return v
+}
+
+// redemarrer relance le meme executable et s'efface : c'est ce qui applique
+// les nouveaux reglages, taille comprise.
+func redemarrer() {
+	exe, err := os.Executable()
+	if err != nil {
+		log.Printf("redemarrage impossible : %v", err)
+		return
+	}
+	cmd := exec.Command(exe, os.Args[1:]...)
+	if err := cmd.Start(); err != nil {
+		log.Printf("redemarrage : %v", err)
+		return
+	}
+	os.Exit(0)
+}
+
+func valeurOu(v, defaut float64) float64 {
+	if v <= 0 {
 		return defaut
 	}
 	return v

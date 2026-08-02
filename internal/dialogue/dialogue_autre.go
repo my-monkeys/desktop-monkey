@@ -1,7 +1,7 @@
-//go:build !darwin
+//go:build !darwin && !windows
 
-// Sur les autres plateformes, le dialogue natif n'est pas (encore) implemente :
-// l'appelant retombe sur la page de reglages web.
+// Sur les autres plateformes, le dialogue natif n'est pas implemente :
+// "Open settings" retombe sur le fichier de configuration.
 package dialogue
 
 // Ouvrir n'a pas d'effet ici.

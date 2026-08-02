@@ -111,16 +111,17 @@ func (v *Vie) jaugesRepas() {
 // --- guili : secouer la souris pres de lui le chatouille ----------------------
 
 const (
-	guiliRayon    = 110 // distance du centre en dessous de laquelle ca chatouille
-	guiliAmpMin   = 12  // amplitude minimale d'un aller-retour, en pixels
-	guiliFenetre  = 0.8 // secondes pour accumuler les inversions
+	guiliRayon    = 150 // distance du centre en dessous de laquelle ca chatouille
+	guiliAmpMin   = 10  // amplitude minimale d'un aller-retour, en pixels
+	guiliFenetre  = 1.1 // secondes pour accumuler les demi-tours
 	guiliCooldown = 3.0 // secondes entre deux fous rires
 )
 
-// detecterGuili compte les inversions de direction du curseur pres du singe.
-// dxg est le deplacement horizontal du curseur depuis l'image precedente ;
-// bouge vaut false si ce mouvement vient du singe lui-meme.
-func (v *Vie) detecterGuili(dt, dxg, curseurX, curseurY float64, bouge bool) {
+// detecterGuili compte les demi-tours du curseur pres du singe, dans n'importe
+// quelle direction (on secoue comme on veut : de gauche a droite, de haut en
+// bas, en diagonale). dxg/dyg est le deplacement du curseur depuis l'image
+// precedente ; bouge vaut false si ce mouvement vient du singe lui-meme.
+func (v *Vie) detecterGuili(dt, dxg, dyg, curseurX, curseurY float64, bouge bool) {
 	if v.guiliCool > 0 {
 		v.guiliCool -= dt
 	}
@@ -135,6 +136,7 @@ func (v *Vie) detecterGuili(dt, dxg, curseurX, curseurY float64, bouge bool) {
 	if !pres || !bouge {
 		if !pres {
 			v.guiliInv, v.guiliAmp, v.guiliTemps = 0, 0, 0
+			v.guiliPvx, v.guiliPvy = 0, 0
 		}
 		return
 	}
@@ -143,16 +145,18 @@ func (v *Vie) detecterGuili(dt, dxg, curseurX, curseurY float64, bouge bool) {
 	if v.guiliTemps > guiliFenetre {
 		v.guiliInv, v.guiliAmp, v.guiliTemps = 0, 0, 0
 	}
-	if math.Abs(dxg) < 2 {
+	d := math.Hypot(dxg, dyg)
+	if d < 2 {
 		return
 	}
-	versDroite := dxg > 0
-	if v.guiliAmp > 0 && versDroite != v.guiliDroite && v.guiliAmp >= guiliAmpMin {
+	// un demi-tour : le deplacement repart a l'oppose du precedent
+	if (v.guiliPvx != 0 || v.guiliPvy != 0) &&
+		dxg*v.guiliPvx+dyg*v.guiliPvy < 0 && v.guiliAmp >= guiliAmpMin {
 		v.guiliInv++
 		v.guiliAmp = 0
 	}
-	v.guiliDroite = versDroite
-	v.guiliAmp += math.Abs(dxg)
+	v.guiliPvx, v.guiliPvy = dxg, dyg
+	v.guiliAmp += d
 
 	if v.guiliInv >= 3 && v.guiliCool <= 0 {
 		v.guiliInv, v.guiliAmp, v.guiliTemps = 0, 0, 0
