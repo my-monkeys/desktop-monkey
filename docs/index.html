@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desktop Monkey — a tiny monkey for your desktop</title>
+<meta name="description" content="A pixel-art monkey that lives on your Windows or macOS desktop. He follows your cursor, throws bananas, poops, and loves you. Free, open source, one 6 MB file.">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://my-monkeys.github.io/desktop-monkey/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Desktop Monkey — a tiny monkey for your desktop">
+<meta property="og:description" content="He follows your cursor, throws bananas, poops, and loves you. Windows &amp; macOS, one 6 MB file, no account.">
+<meta property="og:image" content="assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/heart.png" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="bande">
+    <a class="marque" href="#haut">
+      <span class="sprite marque-singe" role="img" aria-label="Pixel-art monkey"></span>
+      <span class="pixel">DESKTOP MONKEY</span>
+    </a>
+    <nav class="menu">
+      <a href="#what">What he does</a>
+      <a href="#moods">Moods</a>
+      <a href="#settings">Settings</a>
+      <a href="#install" class="bouton-menu">Install him</a>
+    </nav>
+  </div>
+</header>
+
+<main id="haut">
+
+  <!-- ————————————————————————— hero ————————————————————————— -->
+  <section class="section hero">
+    <div>
+      <p class="eyebrow">FREE &middot; OPEN SOURCE &middot; 6 MB &middot; NO ACCOUNT</p>
+      <h1 class="titre-pixel">A tiny monkey for your desktop</h1>
+      <p class="chapeau">He follows your cursor, throws bananas, poops, and loves you. Windows &amp; macOS, one 6&nbsp;MB file, no dependencies, nothing to sign up for.</p>
+
+      <div class="cta">
+        <div class="carte cta-mac">
+          <div class="cta-tete">
+            <span class="pixel mini">MACOS</span>
+            <span class="copie-etat" data-copie-etat>Click the line to copy</span>
+          </div>
+          <button type="button" class="commande" data-copier aria-label="Copy the Homebrew install command">
+            <span class="invite">$</span> brew install --cask my-monkeys/tap/desktop-monkey
+          </button>
+          <p class="note">Signed &amp; notarized by Apple.</p>
+        </div>
+
+        <div class="carte cta-win">
+          <div class="pixel mini">WINDOWS</div>
+          <a class="bouton" href="https://github.com/my-monkeys/desktop-monkey/releases/latest/download/monkey.exe">Download monkey.exe</a>
+          <p class="note">No installer — double-click and he's alive.</p>
+        </div>
+      </div>
+
+      <p class="ligne-maj"><span class="point"></span> He auto-updates himself — install once, he keeps himself young.</p>
+    </div>
+
+    <figure class="fenetre-figure">
+      <div class="fenetre">
+        <div class="fenetre-tete">
+          <span class="feux"><i></i><i></i><i></i></span>
+          <span class="pixel mini">YOUR DESKTOP</span>
+          <span class="fenetre-note">he lives here now</span>
+        </div>
+        <img src="suivre.gif" width="285" height="218" alt="A pixel-art monkey walking across a desktop wallpaper, following the mouse cursor">
+      </div>
+      <figcaption>Your cursor is his best friend. He was not asked.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ——————————————————————— ce qu'il fait ——————————————————————— -->
+  <section class="section" id="what">
+    <p class="eyebrow">WHAT HE DOES</p>
+    <h2>He has a surprisingly full schedule.</h2>
+    <p class="intro">When the mouse sits still too long, he gets on with his own life — and none of it is your business.</p>
+
+    <div class="grille-cartes">
+      <figure class="carte carte-gif">
+        <div class="carte-tete"><span class="puce"></span><span class="pixel mini">FOLLOWS</span></div>
+        <img src="suivre.gif" width="285" height="218" loading="lazy" alt="The monkey trotting across the desktop behind the mouse cursor">
+        <figcaption><strong>Follows your cursor</strong> everywhere it goes. It's his best friend. It does not get a vote.</figcaption>
+      </figure>
+
+      <figure class="carte carte-gif">
+        <div class="carte-tete"><span class="puce"></span><span class="pixel mini">HUNTS</span></div>
+        <img src="chasse.gif" width="285" height="218" loading="lazy" alt="The monkey chasing the cursor and hitting it with a banana">
+        <figcaption><strong>Hunts it down</strong> and whacks it with a banana. Every hit actually knocks your cursor back across the screen.</figcaption>
+      </figure>
+
+      <figure class="carte carte-gif">
+        <div class="carte-tete"><span class="puce"></span><span class="pixel mini">DIES (TEMPORARILY)</span></div>
+        <img src="degats.gif" width="285" height="218" loading="lazy" alt="Three hearts above the monkey, a damage flash, then his body lying on the taskbar">
+        <figcaption><strong>Takes your clicks:</strong> three hearts, a damage flash, loud complaints. At zero he keels over and his body lands on your taskbar.</figcaption>
+      </figure>
+
+      <figure class="carte carte-gif">
+        <div class="carte-tete"><span class="puce"></span><span class="pixel mini">CLIMBS</span></div>
+        <img src="grimpe.gif" width="285" height="218" loading="lazy" alt="The monkey climbing up the edge of the screen and then dropping off">
+        <figcaption><strong>Climbs the screen edge</strong>, admires the view, then drops. The landing costs him a heart. He does it again anyway.</figcaption>
+      </figure>
+
+      <figure class="carte carte-gif">
+        <div class="carte-tete"><span class="puce"></span><span class="pixel mini">POOPS</span></div>
+        <img src="pond.gif" width="285" height="218" loading="lazy" alt="The monkey leaving a steaming pile behind him, then the pile popping when clicked">
+        <figcaption><strong>Eats, digests… then poops</strong> behind him. Steaming. On your wallpaper. Click it to pop it.</figcaption>
+      </figure>
+
+      <div class="carte carte-liste">
+        <p class="pixel mini accent">AND THAT'S NOT ALL</p>
+        <ul>
+          <li><span><strong>Steals your cursor</strong> and runs off with it. Shake the mouse to break free.</span></li>
+          <li><span><strong>Revive the dead</strong> by grabbing the body and shaking it. The power of love.</span></li>
+          <li><span><strong>Cleans up his own poops</strong> — flings them off-screen, or at your cursor.</span></li>
+          <li><span><strong>Tickle him:</strong> shake the mouse right next to him and he giggles.</span></li>
+          <li><span><strong>Naps for real</strong> — lies down, little Z's float up. Any mouse move startles him awake.</span></li>
+          <li><span><strong>Speaks English or French</strong>, auto-detected, in speech bubbles you can rewrite.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————————————————————————— humeurs ————————————————————————— -->
+  <section class="section duo" id="moods">
+    <div>
+      <p class="eyebrow">HE HAS MOODS</p>
+      <h2>Four gauges run his whole life.</h2>
+      <p class="intro">Energy, boredom, happiness and fear drift with how you treat him, and weight everything he decides to do. Peek at them any time in his tray menu.</p>
+      <ul class="liste-simple">
+        <li><strong>Bored monkey</strong> → mischief. You brought this on yourself.</li>
+        <li><strong>Scared monkey</strong> → keeps his distance and eyes you from the corner.</li>
+        <li><strong>Drained monkey</strong> → eats a banana, then naps like it's a career.</li>
+        <li><strong>Happy monkey</strong> → hangs around your cursor and says nice things.</li>
+      </ul>
+    </div>
+
+    <div class="cote-tray">
+      <p class="tray-legende"><span>tray menu</span><span class="sprite tray-singe" role="img" aria-label="Monkey tray icon"></span></p>
+      <div class="tray">
+        <p class="pixel mini tray-titre">HOW HE'S DOING</p>
+        <div class="jauges">
+          <p class="jauge"><span class="jauge-nom">Energy</span><span class="jauge-barre"><span class="on" data-jauge="energy-on"></span><span class="off" data-jauge="energy-off"></span></span></p>
+          <p class="jauge"><span class="jauge-nom">Boredom</span><span class="jauge-barre"><span class="on" data-jauge="boredom-on"></span><span class="off" data-jauge="boredom-off"></span></span></p>
+          <p class="jauge"><span class="jauge-nom">Happiness</span><span class="jauge-barre"><span class="on" data-jauge="happiness-on"></span><span class="off" data-jauge="happiness-off"></span></span></p>
+          <p class="jauge"><span class="jauge-nom">Fear</span><span class="jauge-barre"><span class="on" data-jauge="fear-on"></span><span class="off" data-jauge="fear-off"></span></span></p>
+        </div>
+        <div class="tray-menu">
+          <span>Launch at startup</span>
+          <span>Open settings…</span>
+          <span>Quit (he'll be sad)</span>
+        </div>
+        <p class="tray-quip">“<span data-quip>just hanging around</span>”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————————————————————————— réglages ————————————————————————— -->
+  <section class="section" id="settings">
+    <p class="eyebrow">MAKE HIM YOURS</p>
+    <h2>Tweak him until he's insufferable.</h2>
+    <p class="intro">Open settings from his tray menu. Drag anything below — this is the real window.</p>
+
+    <div class="fenetre reglages">
+      <div class="fenetre-tete">
+        <span class="feux"><i></i><i></i><i></i></span>
+        <span class="pixel mini">DESKTOP MONKEY — SETTINGS</span>
+      </div>
+
+      <div class="onglets" role="tablist" aria-label="Settings sections">
+        <button type="button" class="pixel" role="tab" aria-selected="true"  aria-controls="tab-appearance" id="btn-appearance" data-onglet="appearance">APPEARANCE</button>
+        <button type="button" class="pixel" role="tab" aria-selected="false" aria-controls="tab-life"       id="btn-life"       data-onglet="life">LIFE</button>
+        <button type="button" class="pixel" role="tab" aria-selected="false" aria-controls="tab-character"  id="btn-character"  data-onglet="character">CHARACTER</button>
+      </div>
+
+      <div class="panneaux">
+        <!-- apparence -->
+        <div class="panneau" id="tab-appearance" role="tabpanel" aria-labelledby="btn-appearance">
+          <div class="colonnes">
+            <div class="pile">
+              <div class="reglage">
+                <p class="reglage-tete"><label for="dm-size">Size</label><output for="dm-size" data-out="size">1.4×</output></p>
+                <input id="dm-size" type="range" min="0.5" max="3" step="0.1" value="1.4">
+                <p class="bornes"><span>0.5×</span><span>3×</span></p>
+              </div>
+              <div class="reglage">
+                <label for="dm-screen">Lives on</label>
+                <select id="dm-screen">
+                  <option>Screen 1 (primary)</option>
+                  <option>Screen 2</option>
+                  <option>Wherever the cursor is</option>
+                </select>
+              </div>
+              <div class="reglage">
+                <label for="dm-lang">Language</label>
+                <select id="dm-lang">
+                  <option>Auto (system)</option>
+                  <option>English</option>
+                  <option>Français</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <p class="etiquette">Live preview</p>
+              <div class="scene">
+                <span class="sprite apercu" data-apercu role="img" aria-label="Preview of the monkey at the selected size"></span>
+                <span class="sol"></span>
+              </div>
+              <p class="note">He walks at the speed you set on the Life tab.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- vie -->
+        <div class="panneau" id="tab-life" role="tabpanel" aria-labelledby="btn-life" hidden>
+          <div class="colonnes">
+            <div class="pile">
+              <div class="reglage">
+                <p class="reglage-tete"><label for="dm-speed">Speed</label><output for="dm-speed" data-out="speed">1.0×</output></p>
+                <input id="dm-speed" type="range" min="0.4" max="2.4" step="0.1" value="1">
+                <p class="bornes"><span>slug</span><span>caffeinated</span></p>
+              </div>
+              <div class="reglage">
+                <p class="etiquette-forte" id="lbl-hearts">Hearts</p>
+                <div class="coeurs" role="group" aria-labelledby="lbl-hearts">
+                  <button type="button" class="coeur" data-coeur="1" aria-label="1 heart"></button>
+                  <button type="button" class="coeur" data-coeur="2" aria-label="2 hearts"></button>
+                  <button type="button" class="coeur" data-coeur="3" aria-label="3 hearts"></button>
+                  <button type="button" class="coeur" data-coeur="4" aria-label="4 hearts"></button>
+                  <button type="button" class="coeur" data-coeur="5" aria-label="5 hearts"></button>
+                  <span class="note" data-coeurs-note>3 clicks to knock him out</span>
+                </div>
+              </div>
+            </div>
+            <div class="pile bascules">
+              <p class="bascule"><span>Naps when you're away</span>
+                <button type="button" class="interrupteur" data-bascule="naps" role="switch" aria-checked="true" aria-label="Naps when you're away"><i></i></button></p>
+              <p class="bascule"><span>Leaves poops</span>
+                <button type="button" class="interrupteur" data-bascule="poops" role="switch" aria-checked="true" aria-label="Leaves poops"><i></i></button></p>
+              <p class="bascule"><span>Climbs screen edges</span>
+                <button type="button" class="interrupteur" data-bascule="climb" role="switch" aria-checked="true" aria-label="Climbs screen edges"><i></i></button></p>
+              <p class="note">Turning off poops is allowed. He will find another way to express himself.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- caractère -->
+        <div class="panneau" id="tab-character" role="tabpanel" aria-labelledby="btn-character" hidden>
+          <div class="grille-traits">
+            <div class="reglage">
+              <p class="reglage-tete"><label for="dm-mis">Mischief</label><output for="dm-mis" data-out="mischief">72</output></p>
+              <input id="dm-mis" type="range" min="0" max="100" value="72">
+            </div>
+            <div class="reglage">
+              <p class="reglage-tete"><label for="dm-aff">Affection</label><output for="dm-aff" data-out="affection">80</output></p>
+              <input id="dm-aff" type="range" min="0" max="100" value="80">
+            </div>
+            <div class="reglage">
+              <p class="reglage-tete"><label for="dm-shy">Shyness</label><output for="dm-shy" data-out="shyness">28</output></p>
+              <input id="dm-shy" type="range" min="0" max="100" value="28">
+            </div>
+            <div class="reglage">
+              <p class="reglage-tete"><label for="dm-app">Appetite</label><output for="dm-app" data-out="appetite">66</output></p>
+              <input id="dm-app" type="range" min="0" max="100" value="66">
+            </div>
+          </div>
+          <p class="persona">
+            <span class="sprite persona-singe" role="img" aria-label="Monkey"></span>
+            <span>Right now he's <strong data-persona></strong></span>
+          </p>
+        </div>
+      </div>
+
+      <div class="fenetre-pied">
+        <span class="note" data-sauve-note>He restarts when you save. Takes about a second.</span>
+        <button type="button" class="bouton" data-sauver>Save &amp; restart him</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————————————————————————— installation ————————————————————————— -->
+  <section class="section" id="install">
+    <p class="eyebrow">INSTALL</p>
+    <h2>Ten seconds and he's yours.</h2>
+    <p class="intro">One binary, about 6&nbsp;MB. No account, no installer wizard, no telemetry, no window — he just lives on the desktop.</p>
+
+    <div class="grille-install">
+      <div class="carte">
+        <p class="pixel titre-carte">MACOS</p>
+        <button type="button" class="commande grande" data-copier aria-label="Copy the Homebrew install command">
+          <span class="invite">$</span> brew install --cask my-monkeys/tap/desktop-monkey
+        </button>
+        <p class="copie-etat haut" data-copie-etat>Click the line to copy</p>
+        <ul class="liste-simple petite">
+          <li>Signed &amp; notarized by Apple — it opens without a warning.</li>
+          <li>Launch <strong>Desktop Monkey</strong> from Spotlight. He shows up in your menu bar.</li>
+        </ul>
+      </div>
+
+      <div class="carte">
+        <p class="pixel titre-carte">WINDOWS</p>
+        <a class="bouton grand" href="https://github.com/my-monkeys/desktop-monkey/releases/latest/download/monkey.exe">Download monkey.exe</a>
+        <p class="note haut">~6 MB · Windows 10 &amp; 11</p>
+        <ul class="liste-simple petite">
+          <li>No installer — double-click and he's alive.</li>
+          <li>He appears in the notification area with the same little menu.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="banniere-maj">
+      <span class="point"></span>
+      <span>He auto-updates himself — install once, he keeps himself young.</span>
+      <a href="https://github.com/my-monkeys/desktop-monkey">Source on GitHub →</a>
+    </p>
+  </section>
+
+  <!-- ————————————————————————— faq ————————————————————————— -->
+  <section class="section faq">
+    <p class="eyebrow">FAQ</p>
+    <div class="grille-faq">
+      <div>
+        <h3>He died!</h3>
+        <p>Grab the body and shake it. The power of love. He comes back a bit jittery.</p>
+      </div>
+      <div>
+        <h3>He's too big.</h3>
+        <p>Tray menu → Open settings → Size. Anywhere from 0.5× to a deeply unreasonable 3×.</p>
+      </div>
+      <div>
+        <h3>Does he speak French?</h3>
+        <p>Oui. He follows your system language, and you can force it in the settings.</p>
+      </div>
+      <div>
+        <h3>How do I get rid of him?</h3>
+        <p>You monster. <code>brew uninstall --cask desktop-monkey</code>, or delete <code>monkey.exe</code>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pied">
+  <div class="pied-bande">
+    <div class="pied-marque">
+      <p class="marque"><span class="sprite marque-singe" role="img" aria-label="Pixel-art monkey"></span><span class="pixel">DESKTOP MONKEY</span></p>
+      <p>Built in Go, no game engine, source code in French 🥖. Free forever, MIT licensed.</p>
+    </div>
+    <nav class="pied-liens">
+      <a href="https://github.com/my-monkeys/desktop-monkey">GitHub repository</a>
+      <a href="https://github.com/my-monkeys/desktop-monkey/releases/latest">Latest release</a>
+      <a href="https://github.com/my-monkeys/desktop-monkey/blob/main/LICENSE">MIT license (code)</a>
+    </nav>
+    <p class="pied-credits">
+      Monkey sprites by <a href="https://tiki-ted.itch.io/pixel-art-monkey">tiki-ted</a>, heart explosion by
+      <a href="https://reactorcore.itch.io/explosion-spriteanim-sheet-minipack">Reactorcore</a>.
+      Sprites belong to their authors and aren't covered by the code's MIT license.
+    </p>
+  </div>
+</footer>
+
+<!-- le singe qui se promène en bas de page -->
+<div class="bulle" data-bulle aria-live="polite"></div>
+<button type="button" class="sprite promeneur" data-promeneur title="Poke him. See what happens."
+        aria-label="A pixel-art monkey walking along the bottom of the page. Click to poke him."></button>
+
+<script src="app.js"></script>
+</body>
+</html>
