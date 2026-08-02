@@ -116,3 +116,48 @@ func TestAttrapeIlSeCaleSousLeCurseur(t *testing.T) {
 		}
 	}
 }
+
+// Porte, il regarde du cote ou on l'emmene.
+func TestPorteIlRegardeVersOuOnLEmmene(t *testing.T) {
+	v := nouvelleVie(t, ReglagesParDefaut())
+	x, y := surLui(v)
+	for i := 0; i < pasPourSeuil; i++ {
+		v.Avancer(dt, x, y, true)
+	}
+
+	// on le tire vers la gauche, puis vers la droite
+	for _, cas := range []struct {
+		vers    float64
+		attendu string
+	}{{-300, "gauche"}, {300, "droite"}, {-300, "gauche"}} {
+		but := x + cas.vers
+		for i := 0; i < 20; i++ {
+			v.Avancer(dt, but, y, true)
+		}
+		if v.direction != cas.attendu {
+			t.Fatalf("emmene vers %s : direction %q, attendu %q",
+				cas.attendu, v.direction, cas.attendu)
+		}
+		x = but
+	}
+}
+
+// Un tremblement de main ne doit pas le faire loucher.
+func TestPorteLeTremblementNeLeFaitPasLoucher(t *testing.T) {
+	v := nouvelleVie(t, ReglagesParDefaut())
+	x, y := surLui(v)
+	for i := 0; i < pasPourSeuil; i++ {
+		v.Avancer(dt, x, y, true)
+	}
+	for i := 0; i < 40; i++ {
+		v.Avancer(dt, x-260, y, true) // il regarde a gauche, franchement
+	}
+	depart := v.direction
+
+	for i := 0; i < 60; i++ { // puis la main tremble de deux pixels
+		v.Avancer(dt, x-260+float64(i%2)*2, y, true)
+	}
+	if v.direction != depart {
+		t.Fatalf("le tremblement l'a fait passer de %q a %q", depart, v.direction)
+	}
+}

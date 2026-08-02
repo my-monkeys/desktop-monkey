@@ -112,6 +112,9 @@ type Vie struct {
 	// l'attrape (voir prise.go)
 	appuiSur    bool
 	appuiDepuis float64
+	// chemin parcouru depuis son dernier changement de regard, pendant qu'on
+	// le porte
+	deriveX, deriveY float64
 
 	vitesse  float64 // vitesse lissee, pour des departs et arrets progressifs
 	aAvance  bool    // un deplacement a eu lieu pendant ce pas de temps
