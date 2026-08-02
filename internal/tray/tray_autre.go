@@ -18,3 +18,6 @@ func QuitDemande() bool { return false }
 
 // MajJauges met a jour les lignes d'humeur du menu (sans effet ici).
 func MajJauges(lignes []string) {}
+
+// ReglagesDemande indique si "Open settings" a ete choisi (sans effet ici).
+func ReglagesDemande() bool { return false }

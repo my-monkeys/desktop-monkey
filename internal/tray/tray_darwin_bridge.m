@@ -10,6 +10,7 @@
 #import "tray_darwin_bridge.h"
 
 static int gQuit = 0;
+static int gReglages = 0;
 
 @interface SingeTray : NSObject <NSMenuDelegate>
 @property(strong) NSStatusItem *item;
@@ -54,12 +55,9 @@ static SingeTray *gTray = nil;
 }
 
 - (void)ouvrirReglages:(id)sender {
-    // la cible est l'URL de la page de reglages locale, ou a defaut le chemin
-    // du fichier de configuration
-    NSURL *u = [self.config hasPrefix:@"http"]
-                   ? [NSURL URLWithString:self.config]
-                   : [NSURL fileURLWithPath:self.config];
-    [[NSWorkspace sharedWorkspace] openURL:u];
+    // leve un drapeau : la boucle principale ouvre la fenetre native de
+    // reglages (internal/dialogue) depuis le fil principal
+    gReglages = 1;
 }
 
 - (void)quitter:(id)sender {
@@ -153,6 +151,14 @@ void tray_init(const char *nomApp, const char *exe, const char *config,
 }
 
 int tray_quit_requested(void) { return gQuit; }
+
+// tray_reglages_requested renvoie 1 si "Open settings" vient d'etre choisi, et
+// consomme la demande.
+int tray_reglages_requested(void) {
+    int r = gReglages;
+    gReglages = 0;
+    return r;
+}
 
 // tray_maj_jauges recoit les lignes d'humeur (jointes par \n). Elles seront
 // posees en tete du menu a sa prochaine ouverture (menuNeedsUpdate).

@@ -15,6 +15,9 @@ int tray_quit_requested(void);
 // Remplace les lignes d'humeur (jointes par \n) montrees en tete du menu.
 void tray_maj_jauges(const char *lignes);
 
+// Renvoie 1 si "Open settings" vient d'etre choisi (et consomme la demande).
+int tray_reglages_requested(void);
+
 // Retire l'icone de la barre des menus.
 void tray_fermer(void);
 

@@ -54,5 +54,9 @@ func MajJauges(lignes []string) {
 	C.tray_maj_jauges(c)
 }
 
+// ReglagesDemande indique que "Open settings" vient d'etre choisi, et consomme
+// la demande : la boucle principale ouvre alors le dialogue natif.
+func ReglagesDemande() bool { return C.tray_reglages_requested() != 0 }
+
 // Fermer retire l'icone de la barre des menus.
 func Fermer() { C.tray_fermer() }

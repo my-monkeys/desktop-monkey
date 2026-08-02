@@ -54,6 +54,10 @@ var (
 	sceneHaut = 300
 )
 
+// ouvrirReglagesAuLancement ouvre la fenetre de reglages des le demarrage
+// (drapeau -reglages, pour la mise au point).
+var ouvrirReglagesAuLancement bool
+
 // echelleAff est l'echelle d'affichage effective : le facteur de la plateforme
 // (x2 sur macOS, cf affichage_darwin.go) multiplie par le reglage "taille" de
 // l'utilisateur. Tout ce qui se dessine passe par elle.
@@ -82,11 +86,13 @@ func main() {
 	ouvrirJournal()
 
 	var planCLI, capture string
-	var sansConfig bool
+	var sansConfig, avecReglages bool
 	flag.StringVar(&planCLI, "planche", "", "descripteur de planche a utiliser")
 	flag.BoolVar(&sansConfig, "sans-config", false, "ignorer le config.json utilisateur")
 	flag.StringVar(&capture, "capture", "", "rendre une image dans ce fichier PNG et quitter (mise au point)")
+	flag.BoolVar(&avecReglages, "reglages", false, "ouvrir la fenetre de reglages au lancement")
 	flag.Parse()
+	ouvrirReglagesAuLancement = avecReglages
 
 	r := reglagesParDefaut()
 	if !sansConfig {
@@ -194,6 +200,10 @@ func lancer(r Reglages) error {
 	horloge := time.NewTicker(intervalle)
 	defer horloge.Stop()
 
+	if ouvrirReglagesAuLancement {
+		ouvrirReglagesNatifs()
+	}
+
 	depuisJauges := 0.0
 	for range horloge.C {
 		if !c.TraiterMessages() || tray.QuitDemande() {
@@ -218,6 +228,13 @@ func lancer(r Reglages) error {
 			depuisJauges = 0
 			tray.MajJauges(lignesJauges(s.v.Jauges(), enFrancais(r.Langue)))
 		}
+
+		// la fenetre native de reglages : ouverture a la demande du menu, et
+		// application (config + redemarrage) quand elle enregistre
+		if tray.ReglagesDemande() {
+			ouvrirReglagesNatifs()
+		}
+		recolterReglagesNatifs()
 	}
 	return nil
 }

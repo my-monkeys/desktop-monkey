@@ -388,3 +388,7 @@ func copyUTF16(dst []uint16, s string) {
 		dst[n] = 0
 	}
 }
+
+// ReglagesDemande n'est pas utilise sous Windows : le menu ouvre directement la
+// page de reglages web (le dialogue natif n'y est pas encore implemente).
+func ReglagesDemande() bool { return false }
