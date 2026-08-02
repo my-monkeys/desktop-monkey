@@ -176,10 +176,14 @@ func lancer(r Reglages) error {
 	s.fenetresOK = true
 	defer s.fermerCrottes()
 
-	// icone dans la zone de notification : menu de reglages, quitter, demarrage
+	// icone dans la zone de notification : menu de reglages, quitter, demarrage.
+	// "Open settings" ouvre la petite page locale ; a defaut, le fichier brut.
 	exe, _ := os.Executable()
-	cfg := filepath.Join(dossierConfig(), "config.json")
-	if err := tray.Nouvelle(nomApp, exe, cfg, iconeSinge(s)); err != nil {
+	reglages := demarrerReglagesUI()
+	if reglages == "" {
+		reglages = filepath.Join(dossierConfig(), "config.json")
+	}
+	if err := tray.Nouvelle(nomApp, exe, reglages, iconeSinge(s)); err != nil {
 		log.Printf("tray indisponible : %v", err)
 	}
 	defer tray.Fermer()

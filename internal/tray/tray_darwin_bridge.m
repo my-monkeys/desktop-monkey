@@ -54,7 +54,12 @@ static SingeTray *gTray = nil;
 }
 
 - (void)ouvrirReglages:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL fileURLWithPath:self.config]];
+    // la cible est l'URL de la page de reglages locale, ou a defaut le chemin
+    // du fichier de configuration
+    NSURL *u = [self.config hasPrefix:@"http"]
+                   ? [NSURL URLWithString:self.config]
+                   : [NSURL fileURLWithPath:self.config];
+    [[NSWorkspace sharedWorkspace] openURL:u];
 }
 
 - (void)quitter:(id)sender {

@@ -145,6 +145,7 @@ type Vie struct {
 	guiliDroite    bool    // direction du dernier mouvement
 
 	aMange       bool    // il a mange depuis sa derniere crotte : il peut pondre
+	digestion    float64 // temps restant avant que le repas ne redescende
 	aPondu       bool    // une crotte vient d'etre pondue, en attente de recolte
 	crotteLachee bool    // la crotte de l'accroupissement en cours est deja tombee
 	pondX, pondY float64 // ou elle est tombee (point de sol)
@@ -360,6 +361,9 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 	if v.crainte > 0 {
 		v.crainte -= dt
 	}
+	if v.digestion > 0 {
+		v.digestion -= dt
+	}
 	v.aAvance = false
 	x0, y0 := v.X, v.Y
 
@@ -514,6 +518,8 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 		if v.depuis >= v.duree {
 			if v.etat == Repas {
 				v.aMange = true // il a mange : il a maintenant de quoi pondre
+				// ... mais pas tout de suite, le temps de digerer
+				v.digestion = v.entre([2]float64{10, 40})
 				v.jaugesRepas() // et ca requinque
 			}
 			v.choisirSuite()
@@ -579,8 +585,9 @@ func (v *Vie) choisirSuite() {
 	}
 
 	// besoin pressant : il s'accroupit et pond. Mais il faut d'abord avoir
-	// mange — pas de crotte sortie de nulle part. L'appelant recolte la crotte.
-	if v.aMange && v.r.ChanceCrotte > 0 && v.alea.Float64() < v.r.ChanceCrotte {
+	// mange — pas de crotte sortie de nulle part — et avoir digere un moment.
+	// L'appelant recolte la crotte.
+	if v.aMange && v.digestion <= 0 && v.r.ChanceCrotte > 0 && v.alea.Float64() < v.r.ChanceCrotte {
 		v.aMange = false // ce qu'il avait dans le ventre est evacue
 		v.passerA(Defeque)
 		return
