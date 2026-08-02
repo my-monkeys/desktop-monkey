@@ -16,7 +16,7 @@ Your cursor is his **best friend**: he follows it around, and when the mouse
 sits still too long he gets on with his own life — wandering, climbing,
 napping, and leaving the odd surprise on your desktop. Click him and he
 complains; click him enough and he keels over (you can revive him). Hold the
-click instead and you can carry him around.
+click instead and you can pick him up and put him down anywhere.
 
 ## What he does
 
@@ -33,8 +33,9 @@ And that's not all:
   mischief, a scared one keeps his distance, a drained one eats and naps.
   Peek at them in his tray menu.
 - **Tickle him**: shake the mouse right next to him and he giggles.
-- **Pick him up**: press and hold on him and he dangles from your cursor;
-  let go up high and he drops. A quick click still just bonks him.
+- **Pick him up**: press and hold on him and he dangles from your cursor —
+  drop him wherever you like, he carries on from there. A quick click still
+  just bonks him.
 - **He cleans up** — old poops get picked up and flung off the screen… or
   thrown at your cursor. Hit him mid-carry and he drops everything.
 - **He digests**: no poop without a meal first, and never right after.

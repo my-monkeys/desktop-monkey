@@ -50,29 +50,30 @@ func TestAppuiMaintenuLeSouleve(t *testing.T) {
 	}
 }
 
-func TestLacheEnLAirIlRetombe(t *testing.T) {
+// On le repose ou on veut : il ne retombe pas, il reste ou on l'a laisse.
+func TestLacheEnLAirIlResteLa(t *testing.T) {
 	v := nouvelleVie(t, ReglagesParDefaut())
 	x, y := surLui(v)
 
 	for i := 0; i < pasPourSeuil; i++ {
 		v.Avancer(dt, x, y, true)
 	}
-	// on le monte tout en haut, puis on lache
-	v.Avancer(dt, x, 60, true)
-	v.Avancer(dt, x, 60, false)
-	if v.Etat() != Chute {
-		t.Fatalf("etat %v, attendu chute", v.Etat())
-	}
+	v.Avancer(dt, x, 60, true)  // on le monte tout en haut
+	v.Avancer(dt, x, 60, false) // et on lache
+	pose := v.Y
 
-	sol := v.solY()
-	for i := 0; i < 600 && v.Etat() == Chute; i++ {
+	if v.Etat() != Repos {
+		t.Fatalf("etat %v, attendu repos", v.Etat())
+	}
+	if pose >= v.solY()-1 {
+		t.Fatalf("il est deja au sol (%.0f) : le test ne prouve rien", pose)
+	}
+	// quelques instants plus tard il n'a toujours pas glisse vers le bas
+	for i := 0; i < 30; i++ {
 		v.Avancer(dt, x, 60, false)
 	}
-	if v.Etat() != Repos {
-		t.Fatalf("apres la chute : etat %v, attendu repos", v.Etat())
-	}
-	if v.Y != sol {
-		t.Fatalf("il a atterri a %.1f, le sol est a %.1f", v.Y, sol)
+	if v.Y > pose+1 {
+		t.Fatalf("il est descendu de %.0f px apres avoir ete repose", v.Y-pose)
 	}
 }
 
@@ -89,5 +90,29 @@ func TestAppuiAcoteNeFaitRien(t *testing.T) {
 	}
 	if restants, _ := v.Coeurs(); restants != 3 {
 		t.Fatalf("%d coeurs restants, attendu 3", restants)
+	}
+}
+
+// Attrape, il vient se caler sous le curseur : celui-ci doit tomber sur son
+// corps, quel que soit l'endroit ou on a appuye.
+func TestAttrapeIlSeCaleSousLeCurseur(t *testing.T) {
+	v := nouvelleVie(t, ReglagesParDefaut())
+	// on appuie sur son bord, pas en son milieu
+	x, y := v.X+8, v.Y+10
+	if !v.dansLeCadre(x, y) {
+		x, y = surLui(v)
+	}
+	for i := 0; i < pasPourSeuil; i++ {
+		v.Avancer(dt, x, y, true)
+	}
+	if v.Etat() != Porte {
+		t.Fatalf("etat %v, attendu porte", v.Etat())
+	}
+	for _, p := range [][2]float64{{600, 300}, {900, 700}, {300, 500}} {
+		v.Avancer(dt, p[0], p[1], true)
+		if !v.dansLeCadre(p[0], p[1]) {
+			t.Fatalf("curseur en %.0f,%.0f hors de son corps (singe en %.0f,%.0f)",
+				p[0], p[1], v.X, v.Y)
+		}
 	}
 }

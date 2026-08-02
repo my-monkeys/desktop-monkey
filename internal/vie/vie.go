@@ -35,7 +35,6 @@ const (
 	Sieste                // il dort, apres une longue inactivite
 	Touche                // il encaisse un coup
 	Porte                 // on le tient a la souris et il suit le curseur
-	Chute                 // lache en l'air, il retombe
 	Mort                  // il n'a plus de coeur : agonie puis explosion
 	Cadavre               // il git sur la barre des taches, et se laisse deplacer
 	Cache                 // absent de l'ecran pour un moment
@@ -111,9 +110,8 @@ type Vie struct {
 
 	// appui en cours sur le singe : court, c'est un coup ; maintenu, on
 	// l'attrape (voir prise.go)
-	appuiSur     bool
-	appuiDepuis  float64
-	hauteurLache float64 // hauteur de la derniere chute, pour doser la peur
+	appuiSur    bool
+	appuiDepuis float64
 
 	vitesse  float64 // vitesse lissee, pour des departs et arrets progressifs
 	aAvance  bool    // un deplacement a eu lieu pendant ce pas de temps
@@ -324,9 +322,6 @@ func (v *Vie) passerA(e Etat) {
 		// reprend celle du coup
 		v.duree = 0
 		v.animCourante = choisir(v.p, "touche", "repos")
-	case Chute:
-		v.duree = 0
-		v.animCourante = choisir(v.p, "tombe", "repos")
 	case Mort:
 		v.duree = 0
 		v.animCourante = choisir(v.p, "meurt", "repos")
@@ -472,9 +467,6 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 
 	case Touche:
 		v.encaisser(dt)
-
-	case Chute:
-		v.chuter(dt)
 
 	case Suivi:
 		v.suivre(dt, curseurX, curseurY)

@@ -121,12 +121,6 @@ func (v *Vie) jaugesPorte(dt float64) {
 	v.energie = clampJauge(v.energie - 0.02*dt)
 }
 
-// jaugesChute : lache de haut, il a eu tres peur.
-func (v *Vie) jaugesChute() {
-	v.peur = clampJauge(v.peur + 0.35)
-	v.bonheur = clampJauge(v.bonheur - 0.2)
-}
-
 // --- guili : secouer la souris pres de lui le chatouille ----------------------
 
 const (
