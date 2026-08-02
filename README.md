@@ -25,8 +25,21 @@ complains; click him enough and he keels over (you can revive him).
 | <img src="docs/degats.gif" width="380"><br>**Click him** — three hearts, then he keels over | <img src="docs/grimpe.gif" width="380"><br>**Climbs the screen edge**, then drops off |
 | <img src="docs/pond.gif" width="380"><br>**Leaves a steaming poop** — click it to pop it | |
 
+And that's not all:
+
+- **He has moods.** Four gauges — energy, boredom, happiness, fear — drift
+  with how you treat him and weight everything he does: a bored monkey does
+  mischief, a scared one keeps his distance, a drained one eats and naps.
+  Peek at them in his tray menu.
+- **Tickle him**: shake the mouse right next to him and he giggles.
+- **He cleans up** — old poops get picked up and flung off the screen… or
+  thrown at your cursor. Hit him mid-carry and he drops everything.
+- **He digests**: no poop without a meal first, and never right after.
+- **He naps for real** — lies down, little Z's floating up. Any mouse move
+  startles him awake.
+
 To bring a dead monkey back: **grab the body and shake it**. The rest is yours
-to discover — naps, small talk, stolen cursors…
+to discover — small talk, stolen cursors, post-resurrection jitters…
 
 ## Install
 
