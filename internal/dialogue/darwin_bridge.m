@@ -77,10 +77,12 @@ static NSString *formatValeur(double v, double pas) {
 // hauteur d'un champ dans la pile de son onglet
 static CGFloat hauteurChamp(NSDictionary *ch) {
     NSString *type = ch[@"type"];
+    CGFloat base = 34; // une ligne : libelle + controle
     if ([type isEqualToString:@"curseur"] || [type isEqualToString:@"entier"]) {
-        return [ch[@"aide"] length] > 0 ? 68 : 52;
+        base = 52; // libelle + valeur, curseur en dessous
     }
-    return 34;
+    if ([ch[@"aide"] length] > 0) base += 17;
+    return base;
 }
 
 // construit un champ dans vue, son haut a yTop du sommet ; renvoie sa hauteur
@@ -119,14 +121,6 @@ static CGFloat construireChamp(NSView *vue, NSDictionary *ch, CGFloat yTop) {
         gCtrl[cle] = s;
         gVal[cle] = lv;
         gPas[cle] = @(pas);
-
-        if ([ch[@"aide"] length] > 0) {
-            NSTextField *aide = [NSTextField labelWithString:ch[@"aide"]];
-            aide.frame = NSMakeRect(12, yHaut - 60, L, 14);
-            aide.font = [NSFont systemFontOfSize:11];
-            aide.textColor = [NSColor secondaryLabelColor];
-            [vue addSubview:aide];
-        }
     } else if ([type isEqualToString:@"choix"]) {
         NSPopUpButton *p = [[NSPopUpButton alloc]
             initWithFrame:NSMakeRect(12 + L - 170, yHaut - 24, 170, 25) pullsDown:NO];
@@ -143,6 +137,15 @@ static CGFloat construireChamp(NSView *vue, NSDictionary *ch, CGFloat yTop) {
         b.frame = NSMakeRect(12 + L - 24, yHaut - 21, 24, 20);
         [vue addSubview:b];
         gCtrl[cle] = b;
+    }
+
+    // la petite ligne d'explication, sous le champ, quel que soit son type
+    if ([ch[@"aide"] length] > 0) {
+        NSTextField *aide = [NSTextField labelWithString:ch[@"aide"]];
+        aide.frame = NSMakeRect(12, yHaut - h + 3, L, 14);
+        aide.font = [NSFont systemFontOfSize:11];
+        aide.textColor = [NSColor secondaryLabelColor];
+        [vue addSubview:aide];
     }
     return h;
 }

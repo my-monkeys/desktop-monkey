@@ -81,13 +81,13 @@ func pageReglages(w http.ResponseWriter, req *http.Request) {
 		Coeurs:  r.Coeurs,
 		Sieste:  r.AvantSieste,
 		Chances: []champ{
-			{"chance_ami", nom("Ami du curseur", "Cursor friend"), nom("envie d'aller le voir", "urge to go see it"), 0, 1, 0.05, r.ChanceAmi},
-			{"chance_chasse", nom("Chasse", "Hunting"), nom("poursuites qui tournent à l'attaque", "pursuits that turn into attacks"), 0, 1, 0.05, r.ChanceChasse},
-			{"chance_vol", nom("Vol du curseur", "Cursor theft"), nom("attaques qui finissent en rapt", "attacks that end in a snatch"), 0, 1, 0.05, r.ChanceVol},
-			{"chance_grimpe", nom("Escalade", "Climbing"), nom("envie de grimper aux bords", "urge to climb the edges"), 0, 1, 0.05, r.ChanceGrimpe},
-			{"chance_jeu", nom("Jeu", "Play"), nom("envie de sautiller", "urge to bounce around"), 0, 1, 0.05, r.ChanceJeu},
-			{"chance_crotte", nom("Crottes", "Poops"), nom("besoin pressant (après un repas)", "pressing need (after a meal)"), 0, 1, 0.05, r.ChanceCrotte},
-			{"chance_jet_crotte", nom("Jet de crottes", "Poop throwing"), nom("corvées de nettoyage", "cleanup chores"), 0, 2, 0.1, r.ChanceJetCrotte},
+			{"chance_ami", nom("Ami du curseur", "Cursor friend"), nom("à quel point il colle ton curseur et le suit partout", "how much he clings to your cursor and follows it around"), 0, 1, 0.05, r.ChanceAmi},
+			{"chance_chasse", nom("Chasse", "Hunting"), nom("le suivi tourne parfois à la poursuite, coups de banane inclus", "following sometimes turns into a chase, banana whacks included"), 0, 1, 0.05, r.ChanceChasse},
+			{"chance_vol", nom("Vol du curseur", "Cursor theft"), nom("il peut s'enfuir avec ta flèche — secoue la souris pour te libérer", "he may run off with your arrow — shake the mouse to break free"), 0, 1, 0.05, r.ChanceVol},
+			{"chance_grimpe", nom("Escalade", "Climbing"), nom("il grimpe aux bords de l'écran puis se laisse tomber (aïe)", "he climbs the screen edges then lets go (ouch)"), 0, 1, 0.05, r.ChanceGrimpe},
+			{"chance_jeu", nom("Jeu", "Play"), nom("des petits bonds partout, juste pour le plaisir", "little bounces around, just for fun"), 0, 1, 0.05, r.ChanceJeu},
+			{"chance_crotte", nom("Crottes", "Poops"), nom("après un repas, il faut bien que ça sorte…", "after a meal, it has to come out…"), 0, 1, 0.05, r.ChanceCrotte},
+			{"chance_jet_crotte", nom("Jet de crottes", "Poop throwing"), nom("il ramasse ses vieilles crottes et les jette — parfois sur toi", "he picks up old poops and throws them — sometimes at you"), 0, 2, 0.1, r.ChanceJetCrotte},
 		},
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -218,12 +218,14 @@ var gabaritReglages = template.Must(template.New("reglages").Parse(`<!doctype ht
       <output id="vtaille">{{printf "%.2f" .Taille}}</output>
       <input type="range" id="taille" name="taille" min="0.5" max="2" step="0.05" value="{{.Taille}}"
              oninput="vtaille.value=(+this.value).toFixed(2)">
+      <span class="aide">{{if .FR}}sa taille à l'écran — 1 = normale, 0.5 = mini, 2 = géant{{else}}his on-screen size — 1 = normal, 0.5 = tiny, 2 = giant{{end}}</span>
     </div>
     <div class="ligne">
       <label for="vitesse">{{if .FR}}Vitesse{{else}}Speed{{end}}</label>
       <output id="vvitesse">{{printf "%.1f" .Vitesse}}</output>
       <input type="range" id="vitesse" name="vitesse" min="0.5" max="6" step="0.1" value="{{.Vitesse}}"
              oninput="vvitesse.value=(+this.value).toFixed(1)">
+      <span class="aide">{{if .FR}}à quelle allure il se déplace sur le bureau{{else}}how fast he moves around the desktop{{end}}</span>
     </div>
     <div class="duo">
       <label for="langue">{{if .FR}}Langue{{else}}Language{{end}}</label>
@@ -250,6 +252,7 @@ var gabaritReglages = template.Must(template.New("reglages").Parse(`<!doctype ht
       <output id="vsieste">{{printf "%.0f" .Sieste}}</output>
       <input type="range" id="sieste" name="secondes_avant_sieste" min="10" max="600" step="5" value="{{.Sieste}}"
              oninput="vsieste.value=this.value">
+      <span class="aide">{{if .FR}}secondes sans bouger la souris avant qu'il s'endorme{{else}}seconds of mouse stillness before he falls asleep{{end}}</span>
     </div>
   </fieldset>
 
