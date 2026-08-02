@@ -27,7 +27,8 @@ type Reglages struct {
 	// l'attaque quand il le rattrape.
 	ChanceChasse  float64 // proportion des poursuites qui tournent a la chasse
 	VitesseChasse float64 // multiplicateur de vitesse pendant la chasse
-	PorteeAttaque float64 // distance a laquelle il donne ses coups
+	PorteeAttaque float64 // distance en deca de laquelle son jet bouscule aussi le curseur
+	EntreLancers  float64 // secondes entre deux bananes, pendant une chasse
 	AbandonChasse float64 // secondes de curseur immobile avant d'abandonner
 	DureeChasse   float64 // duree maximale d'une chasse
 	ChanceVol     float64 // probabilite de voler le curseur au bout d'une chasse
@@ -66,6 +67,7 @@ func ReglagesParDefaut() Reglages {
 		ChanceChasse:   0.35,
 		VitesseChasse:  1.7,
 		PorteeAttaque:  46,
+		EntreLancers:   1.1,
 		AbandonChasse:  5,
 		DureeChasse:    25,
 		ChanceVol:      0.35,

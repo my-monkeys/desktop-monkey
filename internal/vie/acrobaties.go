@@ -5,30 +5,34 @@ import "math"
 // Ce fichier contient les numeros du singe : la chasse au curseur, le vol de
 // la fleche, et l'escalade des bords de l'ecran.
 
-// chasser fait courir le singe apres le curseur ; au contact il attaque, et
-// parfois il vole carrement la fleche pour s'enfuir avec.
+// chasser fait courir le singe apres le curseur en lui jetant des bananes. De
+// pres, le jet bouscule la fleche, et peut tourner au vol pur et simple.
 func (v *Vie) chasser(dt, curseurX, curseurY float64) {
 	cx, cy := v.Centre()
 	d := math.Hypot(curseurX-cx, curseurY-cy)
-	if d > v.r.PorteeAttaque {
-		v.enPortee = 0
+
+	switch {
+	case v.lanceMS > 0:
+		// le geste est parti : il reste plante le temps de le finir
+		v.avancerLancer(dt, curseurX, curseurY)
+		if v.etat != Chasse {
+			return // le jet a tourne au vol de curseur
+		}
+	case d > v.r.PorteeAttaque:
 		v.animCourante = "marche"
 		v.avancerVers(curseurX, curseurY, dt, v.r.VitesseChasse)
-	} else {
-		v.animCourante = choisir(v.p, "attaque", "marche")
+	default:
+		// a bout de bras il ne recule pas, il attend le prochain jet
+		v.animCourante = choisir(v.p, "repos", "marche")
 		v.faceAu(curseurX, curseurY)
-		if !v.attaqueDite {
-			v.attaqueDite = true
-			v.Evenement = "attaque"
-		}
-		// le temps du swing, puis le coup part
-		v.enPortee += dt
-		if v.enPortee >= 0.45 {
-			v.enPortee -= 0.9
-			v.porterCoup(curseurX, curseurY)
-			if v.etat != Chasse {
-				return // le coup a tourne au vol de curseur
-			}
+	}
+
+	// la banane part a intervalles reguliers, quelle que soit la distance :
+	// c'est ce qui lui permet d'attaquer d'un bout a l'autre de l'ecran
+	if v.lanceMS <= 0 {
+		v.depuisLancer += dt
+		if v.depuisLancer >= v.r.EntreLancers {
+			v.commencerLancer(curseurX, curseurY)
 		}
 	}
 	// la proie ne bouge plus, ou la chasse s'eternise : il s'en desinteresse

@@ -47,7 +47,7 @@ func (v *Vie) corvee(dt float64) {
 	if v.viseMS > 0 {
 		// le temps du geste de lancer : il reste sur place, animation d'attaque
 		v.viseMS -= dt
-		v.animCourante = choisir(v.p, "attaque", "repos")
+		v.animCourante = choisir(v.p, "lance", "repos")
 		return
 	}
 	cx, cy := v.Centre()

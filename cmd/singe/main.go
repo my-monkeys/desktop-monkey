@@ -184,6 +184,7 @@ func lancer(r Reglages) error {
 	// les crottes vivent dans leurs propres fenetres : on ne les ouvre qu'ici
 	s.fenetresOK = true
 	defer s.fermerCrottes()
+	defer s.fermerBananes()
 
 	// icone dans la zone de notification : menu de reglages, quitter, demarrage.
 	// "Open settings" ouvre la fenetre de reglages (voir la boucle).
@@ -374,7 +375,13 @@ type scene struct {
 	corMode     int
 	corTimer    float64
 	corCooldown float64
-	videCrotte  *image.RGBA // image transparente qui masque la fenetre portee
+
+	// bananes : le fruit decoupe du sprite de lancer, et celles en vol
+	pSinge       *planche.Planche // la planche du singe, pour y decouper la banane
+	bananeImg    *image.RGBA
+	bananeDepart map[string]departBanane
+	bananes      []*banane
+	videCrotte   *image.RGBA // image transparente qui masque la fenetre portee
 }
 
 func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
@@ -402,6 +409,7 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 
 	s := &scene{
 		r:         r,
+		pSinge:    p,
 		v:         vie.Nouvelle(p, reg, larg, haut, bas),
 		ecranL:    larg,
 		hautEcran: haut,
@@ -427,6 +435,7 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 	}
 
 	s.chargerCrottes()
+	s.chargerBananes()
 
 	s.programmerParole()
 	s.parler("bonjour")
@@ -477,6 +486,13 @@ func (s *scene) avancer(dt float64) {
 	}
 	s.gererCrottes(dt, cx, cy, bouton)
 	s.gererCorvee(dt, cx, cy)
+
+	// bananes : une vraie prend le relais de celle du sprite quand le geste
+	// de lancer s'acheve, puis elle suit sa cloche jusqu'a sortir de l'ecran
+	if l, ok := s.v.PrendreLancer(); ok {
+		s.lancerBanane(l, s.v.X, s.v.Y)
+	}
+	s.gererBananes(dt)
 
 	// enchainement de la mort : agonie, coeur, disparition
 	if s.v.Etat() == vie.Mort && !s.mortTraitee && s.v.AnimationMorteFinie() {

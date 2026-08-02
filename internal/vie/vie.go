@@ -122,8 +122,14 @@ type Vie struct {
 
 	attaqueDite bool // une seule phrase d'attaque par chasse
 
-	enPortee       float64 // compte a rebours entre deux coups de patte
-	volTente       bool    // une seule tentative de vol du curseur par chasse
+	volTente bool // une seule tentative de vol du curseur par chasse
+
+	// lancer de banane (voir lancer.go)
+	lanceMS        float64 // temps restant du geste en cours
+	depuisLancer   float64 // secondes depuis le dernier jet
+	lanceAction    string  // le geste tire au sort
+	lanceEnAttente bool    // une banane attend d'etre mise en vol par la scene
+	lancer         Lancer
 	volX, volY     float64 // position imposee au curseur vole
 	fuiteX, fuiteY float64 // destination de la fuite avec le curseur
 
@@ -266,7 +272,8 @@ func (v *Vie) passerA(e Etat) {
 		v.animCourante = "marche"
 		v.attaqueDite = false
 		v.volTente = false
-		v.enPortee = 0
+		v.lanceMS = 0
+		v.depuisLancer = v.r.EntreLancers // il ouvre le feu tout de suite
 	case Fuite:
 		v.duree = 0 // il fuit tant que la souris reste sur ses talons
 		v.animCourante = "marche"
