@@ -567,15 +567,25 @@ let etatSinge = 'marche', cadre = 0, horloge = 0, decor = 0, coeursRestants = 0,
 function plancheActive(){
   return D.planches.find(p => p.cle === cfg.planche) || D.planches[0];
 }
-// echelleEcran : le sprite est dessine en pixels physiques par l'application ;
-// la page, elle, compte en pixels CSS. Diviser par le ratio de l'ecran remet
-// l'apercu a la taille reelle vue par l'utilisateur.
-function echelleEcran(){ return cfg.taille / (window.devicePixelRatio || 1); }
+// echelleEcran ramene le sprite a la taille qu'il aura vraiment sur le bureau.
+// Sur macOS la fenetre du singe est posee en points, un point par pixel de
+// l'image : rien a corriger. Sur Windows elle est en pixels physiques, qu'il
+// faut ramener en pixels CSS.
+function echelleEcran(){
+  const r = D.enPoints ? 1 : (window.devicePixelRatio || 1);
+  return cfg.taille / r;
+}
 
 function poserSinge(){
   const p = plancheActive();
   const b = p[etatSinge] && p[etatSinge].cadres ? p[etatSinge] : p.repos;
   dessinerSprite(singe, b, p.celL, p.celH, echelleEcran());
+  // le decor s'ouvre pour le laisser tenir en entier : un singe reglé grand
+  // doit avoir l'air grand ici aussi
+  const haut = Math.max(164, Math.min(268, p.celH * echelleEcran() + 46));
+  const d = $('#diorama');
+  d.style.height = haut + 'px';
+  d.style.flexBasis = haut + 'px';
   // ses pieds se posent sur le sol, quelle que soit la planche
   scene.style.bottom = (29 - p.pied * echelleEcran()) + 'px';
   singe.style.backgroundPositionX = '0px';

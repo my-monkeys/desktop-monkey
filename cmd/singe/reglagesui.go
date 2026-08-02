@@ -19,6 +19,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"runtime"
 	"sync/atomic"
 	"time"
 
@@ -130,10 +131,14 @@ func pageReglages(w http.ResponseWriter, req *http.Request) {
 			"plein": "data:image/png;base64," + coeurBase64(true),
 			"vide":  "data:image/png;base64," + coeurBase64(false),
 		},
-		"icone":   iconeAppBase64(),
-		"chemin":  filepath.Join(dossierConfig(), "config.json"),
-		"version": version,
-		"mots":    motsReglages(fr),
+		"icone": iconeAppBase64(),
+		// macOS pose la fenetre du singe en points (NSMakeRect), autant de
+		// points que l'image a de pixels : sa taille a l'ecran ne passe pas par
+		// le ratio Retina. Windows, lui, compte en pixels physiques.
+		"enPoints": runtime.GOOS == "darwin",
+		"chemin":   filepath.Join(dossierConfig(), "config.json"),
+		"version":  version,
+		"mots":     motsReglages(fr),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
