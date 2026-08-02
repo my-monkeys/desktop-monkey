@@ -23,6 +23,13 @@
     "Je te tiens !",
     "Paf ! Dans les moustaches !"
   ],
+  "attrape": [
+    "Hé ! Repose-moi !",
+    "Aaaah je vole !",
+    "Pas par la queue !!",
+    "Où tu m'emmènes ?",
+    "Je suis pas un jouet ! …bon, un peu."
+  ],
   "bonjour": [
     "Coucou 🐒",
     "Me revoilà !",
@@ -145,6 +152,13 @@
     "Et toi, tu as mangé ?",
     "Une banane, ça ne se refuse pas",
     "C'est l'heure du goûter quelque part dans le monde"
+  ],
+  "repose": [
+    "Ouf, la terre ferme.",
+    "Merci du voyage.",
+    "On recommence ?",
+    "J'ai eu le vertige.",
+    "Doucement la prochaine fois !"
   ],
   "retour": [
     "Je suis revenu 🐒",

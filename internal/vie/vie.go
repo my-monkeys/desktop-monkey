@@ -34,6 +34,8 @@ const (
 	Repas                 // il mange
 	Sieste                // il dort, apres une longue inactivite
 	Touche                // il encaisse un coup
+	Porte                 // on le tient a la souris et il suit le curseur
+	Chute                 // lache en l'air, il retombe
 	Mort                  // il n'a plus de coeur : agonie puis explosion
 	Cadavre               // il git sur la barre des taches, et se laisse deplacer
 	Cache                 // absent de l'ecran pour un moment
@@ -106,6 +108,12 @@ type Vie struct {
 	curseurX    float64
 	curseurY    float64
 	boutonAvant bool
+
+	// appui en cours sur le singe : court, c'est un coup ; maintenu, on
+	// l'attrape (voir prise.go)
+	appuiSur     bool
+	appuiDepuis  float64
+	hauteurLache float64 // hauteur de la derniere chute, pour doser la peur
 
 	vitesse  float64 // vitesse lissee, pour des departs et arrets progressifs
 	aAvance  bool    // un deplacement a eu lieu pendant ce pas de temps
@@ -311,6 +319,14 @@ func (v *Vie) passerA(e Etat) {
 	case Touche:
 		v.duree = 0.55
 		v.animCourante = choisir(v.p, "touche", "repos")
+	case Porte:
+		// suspendu par la peau du cou : il gigote, faute de pose dediee on
+		// reprend celle du coup
+		v.duree = 0
+		v.animCourante = choisir(v.p, "touche", "repos")
+	case Chute:
+		v.duree = 0
+		v.animCourante = choisir(v.p, "tombe", "repos")
 	case Mort:
 		v.duree = 0
 		v.animCourante = choisir(v.p, "meurt", "repos")
@@ -420,8 +436,13 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 		v.avancerCadavre(dt, curseurX, curseurY, boutonEnfonce, frontDescendant)
 		return
 	}
-	if frontDescendant && v.Visible() && v.etat != Mort && v.dansLeCadre(curseurX, curseurY) {
-		v.Coup()
+	if v.etat == Porte {
+		v.porter(dt, curseurX, curseurY, boutonEnfonce)
+		return
+	}
+	// un appui court le frappe, un appui maintenu le souleve : le verdict
+	// tombe au relachement ou au bout du seuil (voir prise.go)
+	if v.appuyer(dt, curseurX, curseurY, boutonEnfonce, frontDescendant) {
 		return
 	}
 
@@ -451,6 +472,9 @@ func (v *Vie) Avancer(dt float64, curseurX, curseurY float64, boutonEnfonce bool
 
 	case Touche:
 		v.encaisser(dt)
+
+	case Chute:
+		v.chuter(dt)
 
 	case Suivi:
 		v.suivre(dt, curseurX, curseurY)

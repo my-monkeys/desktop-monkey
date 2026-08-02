@@ -4,7 +4,7 @@
 
 **A tiny pixel-art monkey that lives on your desktop.**
 
-<img src="docs/suivre.gif" width="440" alt="The monkey walking across the desktop, following the cursor">
+<img src="https://desktop-monkey.my-monkey.fr/suivre.gif" width="440" alt="The monkey walking across the desktop, following the cursor">
 
 *Free, open source, no account, no dependencies — Windows & macOS.*
 
@@ -15,15 +15,16 @@
 Your cursor is his **best friend**: he follows it around, and when the mouse
 sits still too long he gets on with his own life — wandering, climbing,
 napping, and leaving the odd surprise on your desktop. Click him and he
-complains; click him enough and he keels over (you can revive him).
+complains; click him enough and he keels over (you can revive him). Hold the
+click instead and you can carry him around.
 
 ## What he does
 
 | | |
 |:---:|:---:|
-| <img src="docs/suivre.gif" width="380"><br>**Follows your cursor** everywhere | <img src="docs/chasse.gif" width="380"><br>**Hunts it down** and whacks it with bananas |
-| <img src="docs/degats.gif" width="380"><br>**Click him** — three hearts, then he keels over | <img src="docs/grimpe.gif" width="380"><br>**Climbs the screen edge**, then drops off |
-| <img src="docs/pond.gif" width="380"><br>**Leaves a steaming poop** — click it to pop it | |
+| <img src="https://desktop-monkey.my-monkey.fr/suivre.gif" width="380"><br>**Follows your cursor** everywhere | <img src="https://desktop-monkey.my-monkey.fr/chasse.gif" width="380"><br>**Hunts it down** and whacks it with bananas |
+| <img src="https://desktop-monkey.my-monkey.fr/degats.gif" width="380"><br>**Click him** — three hearts, then he keels over | <img src="https://desktop-monkey.my-monkey.fr/grimpe.gif" width="380"><br>**Climbs the screen edge**, then drops off |
+| <img src="https://desktop-monkey.my-monkey.fr/pond.gif" width="380"><br>**Leaves a steaming poop** — click it to pop it | |
 
 And that's not all:
 
@@ -32,6 +33,8 @@ And that's not all:
   mischief, a scared one keeps his distance, a drained one eats and naps.
   Peek at them in his tray menu.
 - **Tickle him**: shake the mouse right next to him and he giggles.
+- **Pick him up**: press and hold on him and he dangles from your cursor;
+  let go up high and he drops. A quick click still just bonks him.
 - **He cleans up** — old poops get picked up and flung off the screen… or
   thrown at your cursor. Hit him mid-carry and he drops everything.
 - **He digests**: no poop without a meal first, and never right after.

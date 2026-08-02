@@ -23,6 +23,13 @@
     "I've got you!",
     "Bam! Right in the whiskers!"
   ],
+  "attrape": [
+    "Hey! Put me down!",
+    "Aaaah I'm flying!",
+    "Not by the tail!!",
+    "Where are you taking me?",
+    "I'm not a toy! ...okay, a little."
+  ],
   "bonjour": [
     "Hey there 🐒",
     "I'm back!",
@@ -145,6 +152,13 @@
     "Did YOU eat?",
     "One does not refuse a banana",
     "It's snack time somewhere in the world"
+  ],
+  "repose": [
+    "Phew, solid ground.",
+    "Thanks for the ride.",
+    "Again?",
+    "That was dizzying.",
+    "Gentler next time!"
   ],
   "retour": [
     "I'm back 🐒",

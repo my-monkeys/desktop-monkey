@@ -108,6 +108,25 @@ func (v *Vie) jaugesRepas() {
 	v.energie = clampJauge(v.energie + 0.3)
 }
 
+// jaugesAttrape : se faire soulever surprend, mais c'est de l'attention.
+func (v *Vie) jaugesAttrape() {
+	v.peur = clampJauge(v.peur + 0.15)
+	v.ennui = clampJauge(v.ennui - 0.35)
+}
+
+// jaugesPorte : porte trop longtemps, il finit par s'inquieter et se fatiguer
+// a gigoter.
+func (v *Vie) jaugesPorte(dt float64) {
+	v.peur = clampJauge(v.peur + 0.05*dt)
+	v.energie = clampJauge(v.energie - 0.02*dt)
+}
+
+// jaugesChute : lache de haut, il a eu tres peur.
+func (v *Vie) jaugesChute() {
+	v.peur = clampJauge(v.peur + 0.35)
+	v.bonheur = clampJauge(v.bonheur - 0.2)
+}
+
 // --- guili : secouer la souris pres de lui le chatouille ----------------------
 
 const (
