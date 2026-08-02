@@ -70,6 +70,11 @@ func rendu(plein bool, echelle int) *image.RGBA {
 	return img
 }
 
+// Icone renvoie l'image d'un seul coeur, plein ou vide. La fenetre de reglages
+// s'en sert pour montrer les points de vie tels qu'ils apparaissent vraiment
+// au-dessus du singe.
+func Icone(plein bool, echelle int) *image.RGBA { return rendu(plein, echelle) }
+
 // Hauteur renvoie la hauteur de la rangee, en pixels.
 func Hauteur(echelle int) int { return hautCoeur * echelle }
 

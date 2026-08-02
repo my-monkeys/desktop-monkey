@@ -1,11 +1,14 @@
 package main
 
-// Outils partages par la page de reglages : l'apercu du singe, l'ecriture de
-// la configuration et le redemarrage qui applique tout.
+// Ce que la page de reglages a besoin pour se dessiner : l'apercu anime du
+// singe, ses coeurs, la police pixel — plus l'ecriture de la configuration et
+// le redemarrage qui applique le tout.
 
 import (
 	"bytes"
 	"encoding/base64"
+	"image"
+	"image/draw"
 	"image/png"
 	"log"
 	"os"
@@ -13,37 +16,69 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/my-monkeys/desktop-monkey/internal/coeurs"
 	"github.com/my-monkeys/desktop-monkey/internal/maj"
 	"github.com/my-monkeys/desktop-monkey/internal/planche"
 	"github.com/my-monkeys/desktop-monkey/internal/ressources"
 )
 
+// apercu decrit la bande d'images de marche envoyee a la page : les cadres y
+// sont poses cote a cote, la page les fait defiler.
 type apercu struct {
-	Png          string // PNG du singe au repos, en base64
-	BaseL, BaseH int    // pixels physiques par unite de taille
+	Png    string // la bande entiere, PNG en base64
+	Cadres int    // nombre d'images dans la bande
+	CelL   int    // largeur d'une image, en pixels physiques par unite de taille
+	CelH   int    // sa hauteur
+	MS     int    // duree d'affichage d'une image
 }
 
-// apercuSinge prepare l'image de l'apercu : le singe au repos, en pixels
-// physiques par unite de taille (facteur de plateforme compris) — la page la
-// remet a l'echelle de l'ecran via devicePixelRatio.
-func apercuSinge(chemin string) (apercu, bool) {
+// apercuMarche compose la bande de l'animation de marche. Les dimensions sont
+// donnees en pixels physiques pour une taille de 1 : la page les divise par la
+// densite de son ecran, donc l'apercu fait la taille reelle.
+func apercuMarche(chemin string) (apercu, bool) {
 	p, err := planche.Charger(ressources.Fichiers, chemin, 1)
 	if err != nil {
 		return apercu{}, false
 	}
-	img := p.Obtenir("repos", "droite").Image(0)
-	if img == nil {
+	a := p.Obtenir("marche", "droite")
+	if a == nil || len(a.Images) == 0 {
 		return apercu{}, false
 	}
-	var buf bytes.Buffer
-	if err := png.Encode(&buf, img); err != nil {
-		return apercu{}, false
+
+	l, h := p.Largeur, p.Hauteur
+	bande := image.NewRGBA(image.Rect(0, 0, l*len(a.Images), h))
+	for i, img := range a.Images {
+		draw.Draw(bande, image.Rect(i*l, 0, i*l+l, h), img, image.Point{}, draw.Src)
 	}
 	return apercu{
-		Png:   base64.StdEncoding.EncodeToString(buf.Bytes()),
-		BaseL: img.Bounds().Dx() * facteurAffichage,
-		BaseH: img.Bounds().Dy() * facteurAffichage,
+		Png:    versPngBase64(bande),
+		Cadres: len(a.Images),
+		CelL:   l * facteurAffichage,
+		CelH:   h * facteurAffichage,
+		MS:     a.MS,
 	}, true
+}
+
+// coeurBase64 renvoie l'image d'un coeur (plein ou vide) telle que le singe la
+// porte au-dessus de la tete.
+func coeurBase64(plein bool) string { return versPngBase64(coeurs.Icone(plein, 4)) }
+
+// policePixel renvoie la police des titres, embarquee dans le binaire : la
+// fenetre de reglages doit rester belle sans connexion.
+func policePixel() string {
+	brut, err := ressources.Fichiers.ReadFile("assets/pixel.woff2")
+	if err != nil {
+		return ""
+	}
+	return base64.StdEncoding.EncodeToString(brut)
+}
+
+func versPngBase64(img image.Image) string {
+	var tampon bytes.Buffer
+	if err := png.Encode(&tampon, img); err != nil {
+		return ""
+	}
+	return base64.StdEncoding.EncodeToString(tampon.Bytes())
 }
 
 // redemarrer relance le meme executable et s'efface : c'est ce qui applique
