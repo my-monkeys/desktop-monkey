@@ -201,16 +201,13 @@ func lancer(r Reglages) error {
 
 	// la page de reglages, servie en local ; la fenetre s'ouvre a la demande
 	urlReglages := demarrerReglagesUI()
-	titreReglages := "Monkey settings"
-	if enFrancais(r.Langue) {
-		titreReglages = "Réglages du singe"
-	}
+	titreReglages := titreFenetre(enFrancais(r.Langue))
 	ouvrirReglages := func() {
 		if urlReglages == "" {
 			return
 		}
 		if dialogue.Disponible() {
-			dialogue.Ouvrir(urlReglages, titreReglages, 660, 660)
+			dialogue.Ouvrir(urlReglages, titreReglages, 700, 700)
 		}
 	}
 
@@ -246,7 +243,9 @@ func lancer(r Reglages) error {
 		// humeurs dans le menu du tray, rafraichies deux fois par seconde
 		if depuisJauges += dt; depuisJauges >= 0.5 {
 			depuisJauges = 0
-			tray.MajJauges(lignesJauges(s.v.Jauges(), enFrancais(r.Langue)))
+			js := s.v.Jauges()
+			tray.MajJauges(lignesJauges(js, enFrancais(r.Langue)))
+			publierHumeurs(js) // la fenetre de reglages les montre en direct
 		}
 
 		// la fenetre de reglages : ouverture a la demande du menu, fermeture

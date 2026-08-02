@@ -60,3 +60,15 @@ func ReglagesDemande() bool { return C.tray_reglages_requested() != 0 }
 
 // Fermer retire l'icone de la barre des menus.
 func Fermer() { C.tray_fermer() }
+
+// AuDemarrage indique si le singe est lance a l'ouverture de session.
+func AuDemarrage() bool { return C.tray_au_demarrage() != 0 }
+
+// DefinirDemarrage active ou desactive le lancement a l'ouverture de session.
+func DefinirDemarrage(actif bool) {
+	v := C.int(0)
+	if actif {
+		v = 1
+	}
+	C.tray_definir_demarrage(v)
+}

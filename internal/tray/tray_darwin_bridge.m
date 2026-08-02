@@ -152,6 +152,19 @@ void tray_init(const char *nomApp, const char *exe, const char *config,
 
 int tray_quit_requested(void) { return gQuit; }
 
+int tray_au_demarrage(void) {
+    @autoreleasepool {
+        return (gTray != nil && [gTray auDemarrage]) ? 1 : 0;
+    }
+}
+
+void tray_definir_demarrage(int actif) {
+    @autoreleasepool {
+        if (gTray == nil) return;
+        if ([gTray auDemarrage] != (actif ? YES : NO)) [gTray basculerDemarrage:nil];
+    }
+}
+
 // tray_reglages_requested renvoie 1 si "Open settings" vient d'etre choisi, et
 // consomme la demande.
 int tray_reglages_requested(void) {

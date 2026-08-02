@@ -391,3 +391,13 @@ func ReglagesDemande() bool {
 	gReglages = false
 	return r
 }
+
+// AuDemarrage indique si le singe est lance a l'ouverture de session.
+func AuDemarrage() bool { return auDemarrage() }
+
+// DefinirDemarrage active ou desactive le lancement a l'ouverture de session.
+func DefinirDemarrage(actif bool) {
+	if auDemarrage() != actif {
+		basculerDemarrage()
+	}
+}

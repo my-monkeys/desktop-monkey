@@ -21,3 +21,9 @@ func MajJauges(lignes []string) {}
 
 // ReglagesDemande indique si "Open settings" a ete choisi (sans effet ici).
 func ReglagesDemande() bool { return false }
+
+// AuDemarrage indique si le singe est lance a l'ouverture de session.
+func AuDemarrage() bool { return false }
+
+// DefinirDemarrage active ou desactive le lancement a l'ouverture de session.
+func DefinirDemarrage(actif bool) {}
