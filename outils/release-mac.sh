@@ -23,8 +23,8 @@ if [ -d /Applications/Xcode.app ]; then
 fi
 
 echo "== 1. binaire universel =="
-CGO_ENABLED=1 GOARCH=arm64 go build -trimpath -o dist/mac-arm64 ./cmd/singe
-CGO_ENABLED=1 GOARCH=amd64 go build -trimpath -o dist/mac-amd64 ./cmd/singe
+CGO_ENABLED=1 GOARCH=arm64 go build -trimpath -ldflags "-X main.version=$VERSION" -o dist/mac-arm64 ./cmd/singe
+CGO_ENABLED=1 GOARCH=amd64 go build -trimpath -ldflags "-X main.version=$VERSION" -o dist/mac-amd64 ./cmd/singe
 lipo -create dist/mac-arm64 dist/mac-amd64 -output dist/mac-universal
 lipo -info dist/mac-universal
 

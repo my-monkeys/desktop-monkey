@@ -1,14 +1,13 @@
 //go:build !darwin && !windows
 
-// Sur les autres plateformes, le dialogue natif n'est pas implemente :
-// "Open settings" retombe sur le fichier de configuration.
+// Sur les autres plateformes, pas de fenetre : ces fonctions ne font rien.
 package dialogue
 
 // Ouvrir n'a pas d'effet ici.
-func Ouvrir(descJSON string) {}
+func Ouvrir(url, titre string, larg, haut int) {}
 
-// Resultat ne renvoie jamais rien ici.
-func Resultat() (string, bool) { return "", false }
+// Fermer n'a pas d'effet ici.
+func Fermer() {}
 
-// Disponible indique que la plateforme n'offre pas le dialogue natif.
+// Disponible indique que la plateforme ne sait pas afficher la fenetre.
 func Disponible() bool { return false }

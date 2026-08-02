@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-LDFLAGS_COMMUNS="-s -w"          # retire la table des symboles : binaire plus leger
+LDFLAGS_COMMUNS="-s -w -X main.version=${VERSION:-dev}" # -X : version pour l auto-mise a jour
 mkdir -p dist
 
 construire_windows() {

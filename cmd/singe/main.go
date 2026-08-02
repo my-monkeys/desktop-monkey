@@ -27,7 +27,9 @@ import (
 	"github.com/my-monkeys/desktop-monkey/internal/bulle"
 	"github.com/my-monkeys/desktop-monkey/internal/calque"
 	"github.com/my-monkeys/desktop-monkey/internal/coeurs"
+	"github.com/my-monkeys/desktop-monkey/internal/dialogue"
 	"github.com/my-monkeys/desktop-monkey/internal/langue"
+	"github.com/my-monkeys/desktop-monkey/internal/maj"
 	"github.com/my-monkeys/desktop-monkey/internal/paroles"
 	"github.com/my-monkeys/desktop-monkey/internal/planche"
 	"github.com/my-monkeys/desktop-monkey/internal/ressources"
@@ -84,6 +86,7 @@ func appliquerTaille(t float64) {
 func main() {
 	log.SetFlags(log.Ltime)
 	ouvrirJournal()
+	maj.NettoyerAncien()
 
 	var planCLI, capture string
 	var sansConfig, avecReglages bool
@@ -183,13 +186,33 @@ func lancer(r Reglages) error {
 	defer s.fermerCrottes()
 
 	// icone dans la zone de notification : menu de reglages, quitter, demarrage.
-	// "Open settings" ouvre la fenetre native de reglages (voir la boucle).
+	// "Open settings" ouvre la fenetre de reglages (voir la boucle).
 	exe, _ := os.Executable()
 	cfg := filepath.Join(dossierConfig(), "config.json")
 	if err := tray.Nouvelle(nomApp, exe, cfg, iconeSinge(s)); err != nil {
 		log.Printf("tray indisponible : %v", err)
 	}
 	defer tray.Fermer()
+
+	// mise a jour automatique : verification en arriere-plan, application au vol
+	if r.AutoMaj && version != "dev" {
+		go surveillerMisesAJour()
+	}
+
+	// la page de reglages, servie en local ; la fenetre s'ouvre a la demande
+	urlReglages := demarrerReglagesUI()
+	titreReglages := "Monkey settings"
+	if enFrancais(r.Langue) {
+		titreReglages = "Réglages du singe"
+	}
+	ouvrirReglages := func() {
+		if urlReglages == "" {
+			return
+		}
+		if dialogue.Disponible() {
+			dialogue.Ouvrir(urlReglages, titreReglages, 520, 700)
+		}
+	}
 
 	image := image.NewRGBA(image.Rect(0, 0, sceneLarg, sceneHaut))
 	intervalle := time.Second / imagesParSeconde
@@ -198,7 +221,7 @@ func lancer(r Reglages) error {
 	defer horloge.Stop()
 
 	if ouvrirReglagesAuLancement {
-		ouvrirReglagesNatifs()
+		ouvrirReglages()
 	}
 
 	depuisJauges := 0.0
@@ -226,12 +249,20 @@ func lancer(r Reglages) error {
 			tray.MajJauges(lignesJauges(s.v.Jauges(), enFrancais(r.Langue)))
 		}
 
-		// la fenetre native de reglages : ouverture a la demande du menu, et
-		// application (config + redemarrage) quand elle enregistre
+		// la fenetre de reglages : ouverture a la demande du menu, fermeture
+		// quand la page annule (l'enregistrement, lui, redemarre le singe)
 		if tray.ReglagesDemande() {
-			ouvrirReglagesNatifs()
+			ouvrirReglages()
 		}
-		recolterReglagesNatifs()
+		if demandeFermeture.Swap(false) {
+			dialogue.Fermer()
+		}
+
+		// une mise a jour telechargee s'applique par un simple redemarrage
+		if majPrete.Swap(false) {
+			log.Printf("mise a jour appliquee, redemarrage")
+			redemarrer()
+		}
 	}
 	return nil
 }

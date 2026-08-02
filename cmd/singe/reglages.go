@@ -32,6 +32,7 @@ type Reglages struct {
 	Resurrection    float64    `json:"secondes_avant_resurrection"`
 	CacheApresClic  float64    `json:"cache_apres_clic"`
 	Parle           bool       `json:"parle"`
+	AutoMaj         bool       `json:"auto_update"`
 	EntreParoles    [2]float64 `json:"secondes_entre_paroles"`
 	DureeBulle      float64    `json:"duree_bulle"`
 }
@@ -59,6 +60,7 @@ func reglagesParDefaut() Reglages {
 		Resurrection:    0,
 		CacheApresClic:  0,
 		Parle:           true,
+		AutoMaj:         true,
 		EntreParoles:    [2]float64{90, 240},
 		DureeBulle:      6,
 	}
@@ -92,6 +94,19 @@ func chargerReglages() Reglages {
 		}
 	}
 	return r
+}
+
+// ecrireReglages enregistre la configuration sur disque, indentee.
+func ecrireReglages(r Reglages) error {
+	d := dossierConfig()
+	if err := os.MkdirAll(d, 0o755); err != nil {
+		return err
+	}
+	brut, err := json.MarshalIndent(r, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filepath.Join(d, "config.json"), brut, 0o644)
 }
 
 // ecrireConfigExemple depose un config.json au premier lancement, pour que les

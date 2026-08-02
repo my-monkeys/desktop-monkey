@@ -1,13 +1,13 @@
 //go:build darwin
 
-// Package dialogue affiche la fenetre native de reglages : une vraie boite de
-// dialogue Cocoa a onglets (NSTabView), decrite en JSON par l'appelant. Le
-// detail AppKit vit dans darwin_bridge.m.
+// Package dialogue affiche la fenetre de reglages : une petite fenetre native
+// qui rend la page HTML servie par l'application (la meme interface sur toutes
+// les plateformes). Sous macOS, c'est une NSWindow portant une WKWebView.
 package dialogue
 
 /*
 #cgo CFLAGS: -x objective-c
-#cgo LDFLAGS: -framework Cocoa
+#cgo LDFLAGS: -framework Cocoa -framework WebKit
 #include <stdlib.h>
 #include "darwin_bridge.h"
 */
@@ -15,25 +15,18 @@ import "C"
 
 import "unsafe"
 
-// Ouvrir affiche la fenetre construite depuis la description JSON (voir le
-// bridge pour le format). Sans effet si elle est deja ouverte.
-func Ouvrir(descJSON string) {
-	c := C.CString(descJSON)
-	defer C.free(unsafe.Pointer(c))
-	C.dialogue_ouvrir(c)
+// Ouvrir montre la fenetre sur l'URL donnee ; si elle est deja ouverte, elle
+// revient simplement au premier plan.
+func Ouvrir(url, titre string, larg, haut int) {
+	cu := C.CString(url)
+	ct := C.CString(titre)
+	defer C.free(unsafe.Pointer(cu))
+	defer C.free(unsafe.Pointer(ct))
+	C.dialogue_ouvrir(cu, ct, C.int(larg), C.int(haut))
 }
 
-// Resultat renvoie les valeurs enregistrees (JSON cle -> valeur), une seule
-// fois : les appels suivants renvoient false jusqu'au prochain enregistrement.
-func Resultat() (string, bool) {
-	p := C.dialogue_resultat()
-	if p == nil {
-		return "", false
-	}
-	s := C.GoString(p)
-	C.free(unsafe.Pointer(p))
-	return s, true
-}
+// Fermer ferme la fenetre si elle est ouverte.
+func Fermer() { C.dialogue_fermer() }
 
-// Disponible indique que la plateforme offre le dialogue natif.
+// Disponible indique que la plateforme sait afficher la fenetre.
 func Disponible() bool { return true }
