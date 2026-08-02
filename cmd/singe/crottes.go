@@ -54,7 +54,7 @@ type crotte struct {
 // chargerCrottes prepare la planche des crottes ; son absence desactive
 // simplement la mecanique.
 func (s *scene) chargerCrottes() {
-	p, err := planche.Charger(ressources.Fichiers, "assets/crotte.json", facteurAffichage)
+	p, err := planche.Charger(ressources.Fichiers, "assets/crotte.json", echelleAff)
 	if err != nil {
 		log.Printf("crottes indisponibles : %v", err)
 		return

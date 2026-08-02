@@ -95,8 +95,8 @@ func (s *scene) gererCorvee(dt float64, cx, cy int) {
 	// dessinee dans la scene, voir composer ; fx/fy servent au lacher/lancer)
 	if c.porte {
 		hx, hy := s.v.PositionMain()
-		c.fx = hx - float64(s.pc.Largeur)/2 + crottePorteeDX*facteurAffichage
-		c.fy = hy - float64(s.crotteSol) + crottePorteeDY*facteurAffichage
+		c.fx = hx - float64(s.pc.Largeur)/2 + crottePorteeDX*echelleAff
+		c.fy = hy - float64(s.crotteSol) + crottePorteeDY*echelleAff
 		c.fenX, c.fenY = int(c.fx), int(c.fy)
 	}
 }

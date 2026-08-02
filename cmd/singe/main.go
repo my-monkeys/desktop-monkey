@@ -17,6 +17,7 @@ import (
 	"image/draw"
 	"image/png"
 	"log"
+	"math"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -38,20 +39,43 @@ import (
 const (
 	nomApp = "SingeDeBureau"
 
-	// Dimensions de la scene : assez large pour la plus grande bulle, assez
-	// haute pour la bulle posee au-dessus du singe.
-	sceneLarg = 420
-	sceneHaut = 300
-
 	imagesParSeconde = 60
 
 	// affichage des points de vie apres un coup
 	dureeAfficheCoeurs = 2.8
 )
 
-// echelleCoeur suit le facteur d'affichage pour que les coeurs restent a la
-// meme taille relative que le singe (deux fois plus grands sur macOS).
+// Dimensions de la scene : assez large pour la plus grande bulle, assez haute
+// pour la bulle posee au-dessus du singe. Elles grandissent avec l'echelle
+// d'affichage (voir appliquerTaille), sans descendre sous la taille qui loge
+// confortablement les bulles.
+var (
+	sceneLarg = 420
+	sceneHaut = 300
+)
+
+// echelleAff est l'echelle d'affichage effective : le facteur de la plateforme
+// (x2 sur macOS, cf affichage_darwin.go) multiplie par le reglage "taille" de
+// l'utilisateur. Tout ce qui se dessine passe par elle.
+var echelleAff = float64(facteurAffichage)
+
+// echelleCoeur suit l'echelle d'affichage pour que les coeurs restent a la
+// meme taille relative que le singe.
 var echelleCoeur = 2 * facteurAffichage
+
+// appliquerTaille fixe l'echelle effective d'apres le reglage utilisateur
+// (borne a un intervalle raisonnable ; 0 ou absent vaut 1), et dimensionne la
+// scene en consequence pour que le singe agrandi y tienne toujours.
+func appliquerTaille(t float64) {
+	if t <= 0 {
+		t = 1
+	}
+	t = math.Min(3, math.Max(0.5, t))
+	echelleAff = float64(facteurAffichage) * t
+	echelleCoeur = max(1, int(2*echelleAff+0.5))
+	sceneLarg = max(420, int(216*echelleAff))
+	sceneHaut = max(300, int(152*echelleAff))
+}
 
 func main() {
 	log.SetFlags(log.Ltime)
@@ -72,6 +96,7 @@ func main() {
 	if planCLI != "" {
 		r.Planche = planCLI
 	}
+	appliquerTaille(r.Taille)
 
 	if capture != "" {
 		log.SetOutput(os.Stderr)
@@ -305,7 +330,7 @@ type scene struct {
 }
 
 func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
-	p, err := planche.Charger(ressources.Fichiers, r.Planche, facteurAffichage)
+	p, err := planche.Charger(ressources.Fichiers, r.Planche, echelleAff)
 	if err != nil {
 		return nil, err
 	}
@@ -335,13 +360,13 @@ func nouvelleScene(r Reglages, larg, haut, bas int) (*scene, error) {
 		alea:      rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 
-	if s.b, err = bulle.Nouvelle(r.EchelleBulle * facteurAffichage); err != nil {
+	if s.b, err = bulle.Nouvelle(max(1, int(float64(r.EchelleBulle)*echelleAff+0.5))); err != nil {
 		return nil, err
 	}
 
 	// L'explosion de coeur et les phrases sont optionnelles : leur absence ne
 	// doit pas empecher l'application de demarrer.
-	if pc, err := planche.Charger(ressources.Fichiers, "assets/coeur.json", facteurAffichage); err == nil {
+	if pc, err := planche.Charger(ressources.Fichiers, "assets/coeur.json", echelleAff); err == nil {
 		s.coeur = pc.Obtenir("explose", "")
 	} else {
 		log.Printf("explosion de coeur indisponible : %v", err)
@@ -473,8 +498,8 @@ func (s *scene) composer(dst *image.RGBA) (int, int) {
 	if c := s.corCrotte; c != nil && c.porte && s.pc != nil {
 		if img := s.crotteImage(c); img != nil {
 			mx, my := s.v.PositionMain()
-			px := int(mx+crottePorteeDX*facteurAffichage) - fenX - s.pc.Largeur/2
-			py := int(my+crottePorteeDY*facteurAffichage) - fenY - s.crotteSol
+			px := int(mx+crottePorteeDX*echelleAff) - fenX - s.pc.Largeur/2
+			py := int(my+crottePorteeDY*echelleAff) - fenY - s.crotteSol
 			poser(dst, img, px, py)
 		}
 	}
@@ -483,7 +508,7 @@ func (s *scene) composer(dst *image.RGBA) (int, int) {
 	if s.v.Etat() == vie.Sieste && s.v.Visible() {
 		zx := sx + int(spriteL)/2
 		zy := sy + int(s.v.HautDuCorps()-s.v.Y)
-		dessinerZzz(dst, zx, zy, s.zzzT, facteurAffichage)
+		dessinerZzz(dst, zx, zy, s.zzzT, max(1, int(echelleAff+0.5)))
 	}
 
 	if s.coeurActif && s.coeur != nil {

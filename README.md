@@ -54,7 +54,8 @@ That's it — he has no window, he just lives on the desktop.
 - **Languages** — he speaks English, or French if your system is set to
   French. Force it with `"langue": "en"` / `"langue": "fr"` in the settings.
 - **Settings** — pick *Open settings* from his menu to edit `config.json`:
-  how clingy he is, how often he poops, how many clicks he survives, and more.
+  his size (`"taille"`, e.g. `0.8` for smaller or `1.5` for bigger), how
+  clingy he is, how often he poops, how many clicks he survives, and more.
 - **Uninstall** — `brew uninstall --cask desktop-monkey` on macOS; just delete
   `monkey.exe` on Windows.
 
