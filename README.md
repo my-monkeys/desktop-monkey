@@ -81,6 +81,19 @@ That's it — he has no window, he just lives on the desktop.
 - **Uninstall** — `brew uninstall --cask desktop-monkey` on macOS; just delete
   `monkey.exe` on Windows.
 
+## He isn't an only child
+
+Two other free, open-source things from [My-Monkey](https://my-monkey.fr) — no
+accounts there either:
+
+- 🎙️ **[OpenSuperWhisper](https://opensuperwhisper.com)** — speak, it types.
+  Voice dictation in any app on your Mac, with four transcription engines (three
+  of them entirely on-device). No subscription.
+  ([source](https://github.com/my-monkeys/OpenSuperWhisper))
+- 📊 **[Claude Monitor](https://github.com/my-monkeys/claude-monitor)** — a
+  menu-bar app that counts your Claude Code instances and MCP servers, and kills
+  a runaway swarm before it takes the whole Mac down.
+
 ## Credits
 
 - Monkey sprites: [Pixel Art Monkey](https://tiki-ted.itch.io/pixel-art-monkey) by tiki-ted
