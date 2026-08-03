@@ -465,14 +465,6 @@ func (s *scene) avancer(dt float64) {
 	bouton := souris.BoutonGauche()
 	s.v.Avancer(dt, float64(cx), float64(cy), bouton)
 
-	// le singe tient le curseur : c'est lui qui decide ou il va ; et ses
-	// coups de patte repoussent la fleche
-	if x, y, ok := s.v.TientCurseur(); ok {
-		souris.Placer(int(x), int(y))
-	} else if x, y, ok := s.v.PrendrePoussee(); ok {
-		souris.Placer(int(x), int(y))
-	}
-
 	// l'horloge des Z de la sieste
 	if s.v.Etat() == vie.Sieste {
 		s.zzzT += dt
@@ -492,7 +484,16 @@ func (s *scene) avancer(dt float64) {
 	if l, ok := s.v.PrendreLancer(); ok {
 		s.lancerBanane(l, s.v.X, s.v.Y)
 	}
-	s.gererBananes(dt)
+	s.gererBananes(dt, cx, cy)
+
+	// le singe tient le curseur : c'est lui qui decide ou il va ; et sa banane
+	// le repousse quand elle fait mouche. Ce test vient apres les bananes pour
+	// que la bousculade parte dans la meme image que l'impact.
+	if x, y, ok := s.v.TientCurseur(); ok {
+		souris.Placer(int(x), int(y))
+	} else if x, y, ok := s.v.PrendrePoussee(); ok {
+		souris.Placer(int(x), int(y))
+	}
 
 	// enchainement de la mort : agonie, coeur, disparition
 	if s.v.Etat() == vie.Mort && !s.mortTraitee && s.v.AnimationMorteFinie() {

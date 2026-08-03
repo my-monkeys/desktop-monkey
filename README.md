@@ -32,6 +32,9 @@ And that's not all:
   with how you treat him and weight everything he does: a bored monkey does
   mischief, a scared one keeps his distance, a drained one eats and naps.
   Peek at them in his tray menu.
+- **He throws bananas.** When he's after your cursor he lobs one at it, from
+  anywhere on screen — two different throws, and a hit knocks your pointer
+  aside. Miss, and the banana arcs on and falls off the bottom.
 - **Tickle him**: shake the mouse right next to him and he giggles.
 - **Pick him up**: press and hold on him and he dangles from your cursor —
   drop him wherever you like, he carries on from there. A quick click still

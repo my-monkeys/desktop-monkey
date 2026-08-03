@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image"
 	"math"
 	"testing"
 
@@ -57,6 +58,7 @@ func TestPlancheSansBananeNeCassePas(t *testing.T) {
 // singe, la banane decoupee, et les dimensions de l'ecran.
 func sceneBanane(t *testing.T) *scene {
 	t.Helper()
+	echelleAff = 1 // taille de reference, pour que les mesures soient stables
 	p, err := planche.Charger(ressources.Fichiers, "assets/singe2.json", echelleAff)
 	if err != nil {
 		t.Fatal(err)
@@ -124,5 +126,90 @@ func TestBananeVersLaGauche(t *testing.T) {
 	}
 	if b.vx >= 0 {
 		t.Errorf("vitesse horizontale %.0f : elle ne part pas vers la gauche", b.vx)
+	}
+}
+
+// suivre fait voler une banane image par image et dit si elle a touche le
+// curseur en chemin, sans passer par les fenetres du systeme.
+func suivre(b banane, img image.Rectangle, curseurX, curseurY float64, pas int) bool {
+	demiL, demiH := float64(img.Dx())/2, float64(img.Dy())/2
+	rayon := math.Hypot(demiL, demiH) + margeTouche*echelleAff
+	const dt = 1.0 / 60
+	for i := 0; i < pas; i++ {
+		avantX, avantY := b.fx+demiL, b.fy+demiH
+		b.vy += graviteBanane * dt
+		b.fx += b.vx * dt
+		b.fy += b.vy * dt
+		if distanceAuSegment(curseurX, curseurY, avantX, avantY,
+			b.fx+demiL, b.fy+demiH) <= rayon {
+			return true
+		}
+	}
+	return false
+}
+
+// Une banane lancee sur le curseur doit le toucher, pas le traverser.
+func TestBananeToucheLeCurseur(t *testing.T) {
+	s := sceneBanane(t)
+	for _, cible := range [][2]float64{{1200, 400}, {1600, 900}, {260, 520}, {900, 120}} {
+		b, ok := s.nouvelleBanane(vie.Lancer{
+			CibleX: cible[0], CibleY: cible[1], Action: "lance", Direction: "droite",
+		}, 200, 500)
+		if !ok {
+			t.Fatal("le jet a ete refuse")
+		}
+		if !suivre(b, s.bananeImg.Bounds(), cible[0], cible[1], 400) {
+			t.Errorf("la banane a traverse le curseur en %.0f,%.0f sans le toucher",
+				cible[0], cible[1])
+		}
+	}
+}
+
+// Meme tres rapide, elle ne doit pas sauter par-dessus le curseur entre deux
+// images : c'est tout le trajet qui compte, pas la seule position d'arrivee.
+func TestBananeRapideNeTraversePas(t *testing.T) {
+	s := sceneBanane(t)
+	img := s.bananeImg.Bounds()
+	// 4200 px/s, soit 70 px par image : bien plus que sa largeur. Le curseur est
+	// pose entre deux positions echantillonnees (x = 380 puis 450), la ou un
+	// simple test d'arrivee ne verrait jamais rien.
+	depart := banane{fx: 100, fy: 500, vx: 4200, vy: 0}
+	if !suivre(depart, img, 400, 505, 60) {
+		t.Error("la banane a franchi le curseur d'un bond")
+	}
+	// et pour prouver que c'est bien le trajet qui sauve : sans lui, elle rate
+	if toucheSansTrajet(depart, img, 400, 505, 60) {
+		t.Error("le test image par image suffisait : le cas n'est pas probant")
+	}
+}
+
+// toucheSansTrajet refait le vol en ne regardant que les positions d'arrivee,
+// comme le ferait un test naif : il sert de temoin.
+func toucheSansTrajet(b banane, img image.Rectangle, curseurX, curseurY float64, pas int) bool {
+	demiL, demiH := float64(img.Dx())/2, float64(img.Dy())/2
+	rayon := math.Hypot(demiL, demiH) + margeTouche*echelleAff
+	const dt = 1.0 / 60
+	for i := 0; i < pas; i++ {
+		b.vy += graviteBanane * dt
+		b.fx += b.vx * dt
+		b.fy += b.vy * dt
+		if math.Hypot(curseurX-(b.fx+demiL), curseurY-(b.fy+demiH)) <= rayon {
+			return true
+		}
+	}
+	return false
+}
+
+// Et elle ne doit pas toucher ce qu'elle ne croise pas.
+func TestBananeManqueLeCurseurEloigne(t *testing.T) {
+	s := sceneBanane(t)
+	b, ok := s.nouvelleBanane(vie.Lancer{
+		CibleX: 1200, CibleY: 400, Action: "lance", Direction: "droite",
+	}, 200, 500)
+	if !ok {
+		t.Fatal("le jet a ete refuse")
+	}
+	if suivre(b, s.bananeImg.Bounds(), 300, 90, 400) {
+		t.Error("elle a touche un curseur qui n'etait pas sur son chemin")
 	}
 }

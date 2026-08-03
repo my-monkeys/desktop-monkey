@@ -26,12 +26,14 @@ const (
 	volMin        = 0.35             // duree de vol minimale jusqu'a la cible
 	volMax        = 0.9              // et maximale : plus c'est loin, plus ca plane
 	volDistance   = 1400             // distance au-dela de laquelle le vol dure volMax
+	margeTouche   = 5                // tolerance de contact autour du fruit, en pixels
 )
 
 // banane est un fruit en vol : une petite fenetre qui suit une parabole.
 type banane struct {
 	fx, fy float64 // coin haut gauche de sa fenetre
 	vx, vy float64 // vitesse, en pixels par seconde
+	touche bool    // elle a deja bouscule le curseur : elle ne le fera plus
 	cal    *calque.Calque
 }
 
@@ -119,17 +121,36 @@ func (s *scene) lancerBanane(l vie.Lancer, celluleX, celluleY float64) {
 	s.bananes = append(s.bananes, &b)
 }
 
-// gererBananes fait suivre leur parabole aux bananes en vol et ramasse celles
-// qui ont quitte l'ecran.
-func (s *scene) gererBananes(dt float64) {
+// gererBananes fait suivre leur parabole aux bananes en vol, regarde si l'une
+// d'elles atteint le curseur, et ramasse celles qui ont quitte l'ecran.
+func (s *scene) gererBananes(dt float64, curseurX, curseurY int) {
+	if s.bananeImg == nil || len(s.bananes) == 0 {
+		return
+	}
+	img := s.bananeImg.Bounds()
+	demiL, demiH := float64(img.Dx())/2, float64(img.Dy())/2
+	rayon := math.Hypot(demiL, demiH) + margeTouche*echelleAff
+
 	vivantes := s.bananes[:0]
 	for _, b := range s.bananes {
+		avantX, avantY := b.fx+demiL, b.fy+demiH
 		b.vy += graviteBanane * dt
 		b.fx += b.vx * dt
 		b.fy += b.vy * dt
 
+		// le fruit va vite : il peut passer par-dessus le curseur entre deux
+		// images. On teste donc tout le segment parcouru, pas la seule arrivee.
+		if !b.touche && distanceAuSegment(float64(curseurX), float64(curseurY),
+			avantX, avantY, b.fx+demiL, b.fy+demiH) <= rayon {
+			b.touche = true
+			s.v.BananeTouche(float64(curseurX), float64(curseurY))
+			// elle a fait mouche : elle perd son elan et retombe
+			b.vx *= 0.15
+			b.vy = 60 * echelleAff
+		}
+
 		hors := b.fy > float64(s.hautEcran) ||
-			b.fx < -float64(s.bananeImg.Bounds().Dx()) ||
+			b.fx < -float64(img.Dx()) ||
 			b.fx > float64(s.ecranL)
 		if hors {
 			b.cal.Fermer()
@@ -139,6 +160,18 @@ func (s *scene) gererBananes(dt float64) {
 		vivantes = append(vivantes, b)
 	}
 	s.bananes = vivantes
+}
+
+// distanceAuSegment mesure l'ecart d'un point au trajet [a,b].
+func distanceAuSegment(px, py, ax, ay, bx, by float64) float64 {
+	dx, dy := bx-ax, by-ay
+	long := dx*dx + dy*dy
+	if long == 0 {
+		return math.Hypot(px-ax, py-ay)
+	}
+	t := ((px-ax)*dx + (py-ay)*dy) / long
+	t = math.Max(0, math.Min(1, t))
+	return math.Hypot(px-(ax+t*dx), py-(ay+t*dy))
 }
 
 func (s *scene) fermerBananes() {

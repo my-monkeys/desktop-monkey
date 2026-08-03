@@ -62,11 +62,11 @@ func (v *Vie) avancerLancer(dt, curseurX, curseurY float64) {
 		v.attaqueDite = true
 		v.Evenement = "attaque"
 	}
-	// de pres, le jet bouscule le curseur comme le faisait le coup de patte —
-	// et peut toujours tourner au vol de la fleche
+	// a bout portant, le jet peut tourner au chapardage ; la bousculade, elle,
+	// n'arrive plus au lancer mais a l'impact (voir BananeTouche)
 	cx, cy := v.Centre()
 	if math.Hypot(curseurX-cx, curseurY-cy) <= v.r.PorteeAttaque {
-		v.porterCoup(curseurX, curseurY)
+		v.tenterVol()
 	}
 }
 

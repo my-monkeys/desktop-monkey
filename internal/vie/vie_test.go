@@ -357,17 +357,21 @@ func TestAttaqueRepousseLeCurseur(t *testing.T) {
 		t.Fatalf("etat %v, attendu chasse", v.Etat())
 	}
 
-	// la souris ne bouge que sous ses coups : on applique chaque poussee,
-	// comme le ferait la boucle principale
+	// la souris ne bouge que sous ses bananes : chaque jet qui fait mouche la
+	// repousse, et on applique la poussee comme le ferait la boucle principale.
+	// C'est la scene qui voit l'impact, on le simule ici.
 	sx, sy := cx+40.0, cy
 	poussees := 0
 	evts := map[string]bool{}
 	for i := 0; i < 60*8; i++ {
 		v.Avancer(dt, sx, sy, false)
+		if _, ok := v.PrendreLancer(); ok {
+			v.BananeTouche(sx, sy)
+		}
 		if px, py, ok := v.PrendrePoussee(); ok {
 			ncx, ncy := v.Centre()
 			if math.Hypot(px-ncx, py-ncy) <= math.Hypot(sx-ncx, sy-ncy) {
-				t.Fatal("le coup devrait eloigner le curseur du singe")
+				t.Fatal("l'impact devrait eloigner le curseur du singe")
 			}
 			sx, sy = px, py
 			poussees++
@@ -377,7 +381,7 @@ func TestAttaqueRepousseLeCurseur(t *testing.T) {
 		}
 	}
 	if poussees == 0 {
-		t.Fatal("aucun coup n'a repousse le curseur")
+		t.Fatal("aucune banane n'a repousse le curseur")
 	}
 	// ces mouvements ne viennent pas de l'utilisateur : il finit par se lasser
 	if !evts["abandon"] {

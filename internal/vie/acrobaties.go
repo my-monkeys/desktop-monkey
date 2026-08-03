@@ -42,17 +42,30 @@ func (v *Vie) chasser(dt, curseurX, curseurY float64) {
 	}
 }
 
-// porterCoup conclut un swing d'attaque. Le premier coup d'une chasse peut
-// tourner au vol de la fleche ; les autres la repoussent, comme un vrai coup.
-func (v *Vie) porterCoup(curseurX, curseurY float64) {
-	if !v.volTente {
-		v.volTente = true
-		if v.alea.Float64() < v.r.ChanceVol {
-			v.passerA(Vol)
-			v.Evenement = "vole"
-			return
-		}
+// tenterVol donne sa chance au chapardage : le premier jet d'une chasse tire a
+// bout portant peut tourner au vol pur et simple de la fleche.
+func (v *Vie) tenterVol() bool {
+	if v.volTente {
+		return false
 	}
+	v.volTente = true
+	if v.alea.Float64() >= v.r.ChanceVol {
+		return false
+	}
+	v.passerA(Vol)
+	v.Evenement = "vole"
+	return true
+}
+
+// BananeTouche signale que la banane a atteint le curseur : elle le repousse,
+// comme le faisait le coup de patte qu'elle remplace. C'est la scene qui voit
+// l'impact, elle seule connait le vol du fruit.
+func (v *Vie) BananeTouche(curseurX, curseurY float64) {
+	v.repousser(curseurX, curseurY)
+}
+
+// repousser envoie le curseur valser a l'oppose du singe.
+func (v *Vie) repousser(curseurX, curseurY float64) {
 	cx, cy := v.Centre()
 	dx, dy := curseurX-cx, curseurY-cy
 	d := math.Hypot(dx, dy)
