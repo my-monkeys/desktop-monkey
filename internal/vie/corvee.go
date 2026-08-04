@@ -8,13 +8,16 @@ import "math"
 // arrivee ; le singe se contente de marcher jusque-la, puis d'attendre.
 
 // EnvoyerVers place le singe en Corvee et lui donne un point a rejoindre (centre
-// du sprite). A rappeler pour changer de cible en cours de besogne.
+// du sprite). A rappeler pour changer de cible en cours de besogne. La cible
+// peut etre hors de portee — le bord de l'ecran, par exemple : il ira alors
+// aussi loin qu'il peut, et se declarera arrive (voir corvee).
 func (v *Vie) EnvoyerVers(x, y float64) {
 	if v.etat != Corvee {
 		v.passerA(Corvee)
 	}
 	v.dirX, v.dirY = x, y
 	v.arrive = false
+	v.pietine = 0
 }
 
 // EnCorvee indique si le singe est aux ordres de la scene.
@@ -51,11 +54,39 @@ func (v *Vie) corvee(dt float64) {
 		return
 	}
 	cx, cy := v.Centre()
-	if math.Hypot(v.dirX-cx, v.dirY-cy) < 6 {
+	avant := math.Hypot(v.dirX-cx, v.dirY-cy)
+	if avant < 6 {
 		v.arrive = true
 		v.animCourante = "repos"
+		v.pietine = 0
 		return
 	}
+
 	v.animCourante = "marche"
 	v.avancerVers(v.dirX, v.dirY, dt, 1)
+
+	// La scene vise parfois un point que la marge de bord lui interdit
+	// d'atteindre : le bord de l'ecran, ou un curseur dans un coin. Sans ce
+	// garde-fou il pietinait la, sa crotte a la main, sans jamais la lancer.
+	//
+	// On regarde le terrain gagne vers la cible, et non le deplacement : plaque
+	// contre un mur, il glisse encore le long sans jamais s'en rapprocher.
+	ncx, ncy := v.Centre()
+	if avant-math.Hypot(v.dirX-ncx, v.dirY-ncy) < gainMinimal {
+		if v.pietine += dt; v.pietine >= dureePietine {
+			v.arrive = true
+			v.animCourante = "repos"
+		}
+		return
+	}
+	v.pietine = 0
 }
+
+const (
+	// gainMinimal est le terrain a gagner par image pour qu'il avance vraiment.
+	// Sa marche en couvre une cinquantaine de fois plus.
+	gainMinimal = 0.05
+	// dureePietine est le temps sans progres au bout duquel il tient sa cible
+	// pour atteinte.
+	dureePietine = 0.4
+)

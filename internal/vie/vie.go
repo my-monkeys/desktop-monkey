@@ -98,6 +98,7 @@ type Vie struct {
 	// crotte), et minuterie du geste de lancer
 	dirX, dirY float64
 	arrive     bool
+	pietine    float64 // secondes passees a pousser un mur, cible hors de portee
 	viseMS     float64
 
 	animMS       float64
